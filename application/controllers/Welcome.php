@@ -25,4 +25,11 @@ class Welcome extends CI_Controller {
 		print json_encode($this->mongo_db->get("lrs"));
 		$this->load->view('welcome_message');
 	}
+
+	public function mysql(){
+		//$this->db->query("INSERT INTO unit(pattern, name) VALUES ('1-1', 'CUHK')");
+		$query = $this->db->query('SELECT * FROM `unit`');
+		$row = $query->result_array();
+		print json_encode($row[0]['name']);
+	}
 }
