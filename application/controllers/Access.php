@@ -6,7 +6,83 @@ class Access extends Acc_Controller{
 	private $spec_right;
 
 	public function index(){
-		print json_encode($this->user);
+		print json_encode($this->user['id']);
+	}
+
+	public function home(){
+		$data['title'] = 'Keep Home';
+		$this->load->view('template/header', $data);
+		$this->load->view('home');
+		//$this->load->view('template/footer');
+	}
+
+	public function getPersonalStat($name){
+		if($name == "_self"){
+			$name = $this->user['name'];
+		}
+		$match = array(
+			"\$match"=>array(
+				"statement.actor.name"=>$name
+			),
+		);
+		$groupByVerb = array(
+			"\$group"=>array(
+				"_id"=>array(
+					"verb"=>"\$statement.verb.id",
+					"date"=>array(
+						"\$substr"=>array(
+							"\$statement.timestamp", 0, 9,
+						),
+					),
+				),
+				"dateCount"=>array(
+					"\$sum"=>1,
+				),
+			),
+		);
+		$sort2 = array(
+			"\$sort"=>array("statement.timestamp"=>-1),
+		);
+		$group2 = array(
+			"\$group"=>array(
+				"_id"=>"\$_id.verb",
+				"date"=>array(
+					"\$push"=>array(
+						"date"=>"\$_id.date",
+						"count"=>"\$dateCount",
+					),
+				),
+				"verbCount"=>array("\$sum"=>"\$dateCount"),
+			),
+		);
+		$sort = array(
+			"\$sort"=>array("verbCount" => -1),
+		);
+		$groupByDate = array(
+			"\$group"=>array(
+				"_id"=>array(
+					"date"=>array(
+						"\$substr"=>array(
+							"\$statement.timestamp", 0, 9,
+						),
+					),
+				),
+				"sum"=>array(
+					"\$sum"=>1,
+				),
+			),
+		);
+		$limit = array(
+			"\$limit"=>5,
+		);
+		$op = array($match, $sort2, $groupByVerb, $group2, $sort);
+		//$op = array($match, $sort2, $limit);
+		$result = $this->mongo_db->aggregate("statements", $op);
+		print json_encode($result);
+		// if($result['ok'] == 1)
+		// 	print json_encode($result['result']);
+		// else
+		// 	print '[]';
 	}
 
 	public function getData($course_id, $action, $resource){
@@ -28,11 +104,11 @@ class Access extends Acc_Controller{
 	}
 
 	private function checkRight($course_id, $action){
-		if($this->user == null){
+		if($this->user['id'] == null){
 			$this->error_info = "Please Login";
 			return false;
 		}
-		print $this->user;
+		print $this->user['id'];
 		$action = trim(strtolower($action));
 		if($action != "read" && $action != "write" && $action != "admin"){
 			$this->error_info = "Invalid Parameter";
@@ -40,15 +116,15 @@ class Access extends Acc_Controller{
 		}
 
 		$this->load->model("accessmodel");
-		$this->global_right = $this->accessmodel->checkGlobalRight($this->user, $course_id, $action);
+		$this->global_right = $this->accessmodel->checkGlobalRight($this->user['id'], $course_id, $action);
 		if($this->global_right == 1)
 			return true;
-		$this->spec_right = $this->accessmodel->checkSpecRights($this->user, $course_id, $action);
+		$this->spec_right = $this->accessmodel->checkSpecRights($this->user['id'], $course_id, $action);
 			return true;
 	}
 
 	// public function checkRight(){
-	// 	if($this->user == null){
+	// 	if($this->user['id'] == null){
 	// 		print 'please login';
 	// 		return;
 	// 	}
@@ -58,7 +134,7 @@ class Access extends Acc_Controller{
 	// 		print 'Invalid Parameter';
 	// 		return;
 	// 	}
-	// 	$res = $this->accessmodel->checkRights($postData['accesstoken'], $this->user);
+	// 	$res = $this->accessmodel->checkRights($postData['accesstoken'], $this->user['id']);
 	// 	//print json_encode($res);
 	// 	if($res){
 	// 		print 'OK';

@@ -20,10 +20,52 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->mongo_db->where_ne('title', 'Testing');
+		$match = array(
+			"\$match"=>array(
+				"statement.actor.name"=>"admin"
+			),
+		);
+		$group = array(
+			"\$group"=>array(
+				"_id"=>array(
+					"date"=>array(
+						"\$substr"=>array(
+							"\$statement.timestamp", 0, 9,
+						),
+					),
+				),
+				"sum"=>array(
+					"\$sum"=>1,
+				),
+			),
+		);
+		$op = array(
+			$match, $group,
+		);
+		// $op = array(
+		// 	"\$match"=>array(
+		// 		"statement.actor.name"=>"admin"
+		// 	),
+		// 	"\$group"=>array(
+		// 		"_id"=>array(
+		// 			"date"=>array(
+		// 				"\$substr"=>array(
+		// 					"[ \"\$statement.timestamp\", 0, 9]",
+		// 				),
+		// 			),
+		// 		),
+		// 		"sum"=>array(
+		// 			"\$sum"=>1,
+		// 		),
+		// 	),
+		// );
+		print json_encode($this->mongo_db->aggregate("statements", $op));
+		//$this->mongo_db->where_ne('title', 'Testing');
+		//$this->mongo_db->where('statement.actor.name', 'admin');
+		//$this->mongo_db->limit(10);
 
-		print json_encode($this->mongo_db->get("lrs"));
-		$this->load->view('welcome_message');
+		//print json_encode($this->mongo_db->get("statements"));
+		//$this->load->view('welcome_message');
 	}
 
 	public function mysql(){

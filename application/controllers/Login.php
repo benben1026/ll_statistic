@@ -3,7 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Login extends CI_Controller {
 	public function index(){
-
+		$data['title'] = "Please Login";
+		$this->load->view('template/header', $data);
+		$this->load->view('signin');
+		$this->load->view('template/footer');
 	}
 
 	public function checkLogin(){
@@ -17,6 +20,8 @@ class Login extends CI_Controller {
 		}
 		if($result == 'success'){
 			print 'login success';
+			$t['target'] = base_url() . "/index.php/access/home";
+			$this->load->view('jump', $t);
 		}else{
 			print $result;
 		}

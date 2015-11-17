@@ -58,7 +58,7 @@ class AccessModel extends CI_Model{
 	//return 0 -> permission denied; 1 -> allow; 2 -> not found	
 	function checkGlobalRight($user_id, $course_id, $right){
 		//*use course id to get the related unit id*//
-		$unit_id = 2;
+		$unit_id = $course_id;
 		//******************************************//
 		$query = $this->db->query("SELECT " . $right . "_priv FROM role WHERE unit_id=? AND user_id=? AND active=1;", array($unit_id, $user_id));
 		//$query = $this->db->query("SELECT " . $right . "_priv FROM role WHERE unit_id=" . $unit_id . " AND user_id=" . $user_id . " AND active=1;");
