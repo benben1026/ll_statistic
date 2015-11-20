@@ -13,7 +13,92 @@ class Access extends Acc_Controller{
 		$data['title'] = 'Keep Home';
 		$this->load->view('template/header', $data);
 		$this->load->view('home');
-		//$this->load->view('template/footer');
+		$this->load->view('template/footer');
+	}
+
+	private function constructDate($y, $m, $d){
+		$date = $y . '-' . $m . '-' . $d;
+		//print $date . '<br/>';
+		$d = DateTime::createFromFormat('Y-m-d', $date);
+		//print $d->format('Y-m-d') . '<br/>';
+		//print $date . '<br/>';
+    	if(!($d && $d->format('Y-m-d') == $date)){
+    		return false;
+    	}
+		return $d->format('Y-m-d') . ' 00:00:00';
+	}
+
+	public function getLecMat($from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
+		$name = $this->user['name'];
+		if(!$name){
+			return;
+		}
+		$from = $this->constructDate($from_y, $from_m, $from_d);
+		$to = $this->constructDate($to_y, $to_m, $to_d);
+		if(!$from || !$to){
+			print 'Invalid Date';
+			return;
+		}
+		$reg = "/(mod_book)|(mod_resource)|(mod_lesson)|(mod_url)|(mod_resource)|(mod_wiki)|(local_youtube_events)/i";
+		$this->load->model("datamodel");
+
+		$output = $this->datamodel->getDataAccToEventname($name, $reg, $from, $to);
+		$output['label'] = "Lecture Material";
+		print json_encode($output);
+	}
+
+	public function getAssessment($from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
+		$name = $this->user['name'];
+		if(!$name){
+			return;
+		}
+		$from = $this->constructDate($from_y, $from_m, $from_d);
+		$to = $this->constructDate($to_y, $to_m, $to_d);
+		if(!$from || !$to){
+			print 'Invalid Date';
+			return;
+		}
+		$reg = "/(mod_quiz)|(mod_assign)/i";
+		$this->load->model("datamodel");
+		$output = $this->datamodel->getDataAccToEventname($name, $reg, $from, $to);
+		$output['label'] = "Asscssment";
+		print json_encode($output);
+	}
+
+	public function getLogin($from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
+		$name = $this->user['name'];
+		if(!$name){
+			return;
+		}
+		$from = $this->constructDate($from_y, $from_m, $from_d);
+		$to = $this->constructDate($to_y, $to_m, $to_d);
+		if(!$from || !$to){
+			print 'Invalid Date';
+			return;
+		}
+		$reg = "/user_loggedin/i";
+		$this->load->model("datamodel");
+		$output = $this->datamodel->getDataAccToEventname($name, $reg, $from, $to);
+		$output['label'] = "Login";
+		print json_encode($output);
+	}
+
+	public function getForum($from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
+		$name = $this->user['name'];
+		if(!$name){
+			return;
+		}
+		$from = $this->constructDate($from_y, $from_m, $from_d);
+		$to = $this->constructDate($to_y, $to_m, $to_d);
+		if(!$from || !$to){
+			print 'Invalid Date';
+			return;
+		}
+		$reg = "/mod_forum/i";
+		$this->load->model("datamodel");
+		$output = $this->datamodel->getDataAccToEventname($name, $reg, $from, $to);
+		$output['label'] = "Forum";
+		print json_encode($output);
 	}
 
 	public function getPersonalStat($name){

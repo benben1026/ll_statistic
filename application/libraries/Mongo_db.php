@@ -1686,4 +1686,8 @@ Class Mongo_db{
 			$this->updates[ $method ] = array();
 		}
 	}
+
+	public function getMongoInstance(){
+		return $this->db;
+	}
 }

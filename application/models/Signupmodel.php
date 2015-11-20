@@ -10,7 +10,7 @@ class SignupModel extends CI_Model{
     }
 
     function getUnitList(){
-        $query = $this->db->query("SELECT id, name FROM unit WHERE level>1");
+        $query = $this->db->query("SELECT * FROM unit ORDER BY level");
         $row = $query->result_array();
         return $row;
     }

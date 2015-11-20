@@ -11,6 +11,11 @@ class Signup extends CI_Controller {
 		$this->load->view('template/footer');
 	}
 
+	public function getUnitList(){
+		$this->load->model("signupmodel");
+		print json_encode($this->signupmodel->getUnitList());
+	}
+
 	public function processSignup(){
 		$this->load->model("signupmodel");
 		$postData = $this->input->post();

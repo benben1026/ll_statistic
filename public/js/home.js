@@ -118,15 +118,17 @@ function gd(year, month, day) {
 		
 // 		});
 
-function clickSubmit(){
+function clickSubmit(fun){
+    var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#dateYFrom').val() + '/' +  $('#dateMFrom').val() + '/' +  $('#dateDFrom').val() + '/' +  $('#dateYTo').val() + '/' +  $('#dateMTo').val() + '/' +  $('#dateDTo').val();
+    console.log(url);
     $.ajax({
-        url: 'http://benjamin-zhou.com/ll_statistic/index.php/access/getPersonalStat/' + $('#username').val(),
+        url: url,
         type: 'GET',
         dataType: 'json',
+        async: false,
         success: function(data){
             if(data['ok'] == 1){
-                generateDataSet(data['result']);
-                plotAccordingToChoices();
+                generateDataSet(data['result'], data['label']);
             }
             else
                 alert("Fail to get data");
@@ -149,23 +151,36 @@ function getVerb(input){
 
 function getDate(rawDate){
     var t = rawDate.split('-');
-    return new Date(parseInt(t[0]), parseInt(t[1]), parseInt(t[2])).getTime();
+    return new Date(parseInt(t[0]), parseInt(t[1]) - 1, parseInt(t[2])).getTime();
 }
 
-function generateDataSet(data){
-    dataset = [];
-    for(var i = 0; i < data.length; i++){
-        var date = [];
-        for(var j = 0; j < data[i]['date'].length; j++){
-            var t = [];
-            t.push(getDate(data[i]['date'][j]['date']));
-            t.push(data[i]['date'][j]['count']);
-            date.push(t);
-        }
-        var label = getVerb(data[i]['_id']) + " Activity";
-        dataset.push({'label': label, 'data': date});
-    }
+function generateDataSet(data, label){
+    //dataset = [];
+    // for(var i = 0; i < data.length; i++){
+    //     var date = [];
+    //     for(var j = 0; j < data[i]['date'].length; j++){
+    //         var t = [];
+    //         t.push(getDate(data[i]['date'][j]['date']));
+    //         t.push(data[i]['date'][j]['count']);
+    //         date.push(t);
+    //     }
+    //     var label = getVerb(data[i]['_id']) + " Activity";
+    //     dataset.push({'label': label, 'data': date});
+    // }
 
+    var date = [];
+    for(var i = 0; i < data.length; i++){
+        var t = [];
+        t.push(getDate(data[i]['_id']['date']));
+        t.push(data[i]['sum']);
+        date.push(t);
+    }
+    dataset.push({'label': label, 'data': date});
+
+
+}
+
+function setPlot(){
     var i = 0;
     $.each(dataset, function(key, val) {
         val.color = i;
@@ -201,7 +216,14 @@ function plotAccordingToChoices() {
     }
 }
 
-$(window).load(function(){
-    $('#username').val('_self');
-    clickSubmit();
-});
+function init(){
+    dataset = [];
+    clickSubmit('Login');
+    clickSubmit('LecMat');
+    clickSubmit('Assessment');
+    clickSubmit('Forum');
+    setPlot();
+    plotAccordingToChoices();
+}
+
+$(window).load(init);
