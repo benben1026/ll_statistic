@@ -10,10 +10,22 @@ class Access extends Acc_Controller{
 	}
 
 	public function home(){
+		if($this->user['id'] == null){
+			$t['target'] = base_url() . "index.php/login";
+			$this->load->view('jump', $t);
+			return;
+		}
 		$data['title'] = 'Keep Home';
+		$data['username'] = $this->user['name'];
 		$this->load->view('template/header', $data);
 		$this->load->view('home');
 		$this->load->view('template/footer');
+	}
+
+	public function logout(){
+		$this->session->sess_destroy();
+		$t['target'] = base_url() . "index.php/login";
+		$this->load->view('jump', $t);
 	}
 
 	private function constructDate($y, $m, $d){

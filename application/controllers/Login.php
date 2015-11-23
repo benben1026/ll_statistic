@@ -1,8 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Login extends CI_Controller {
+class Login extends Acc_Controller {
 	public function index(){
+		if($this->user['id'] != null){
+			$t['target'] = base_url() . "index.php/access/home";
+			$this->load->view('jump', $t);
+			return;
+		}
 		$data['title'] = "Please Login";
 		$this->load->view('template/header', $data);
 		$this->load->view('signin');

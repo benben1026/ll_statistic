@@ -1,4 +1,4 @@
-	<div id="keepfooter"></div>
+	<div id="keepfooter" style="position:absolute; bottom:0"></div>
 
     <script>
         keepfooter("#666");

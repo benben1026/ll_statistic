@@ -39,7 +39,7 @@ var options = {
             },
             xaxis: {
                 mode: "time",
-                tickSize: [1, "day"],
+                tickSize: [5, "day"],
                 tickLength: 0,
                 axisLabel: "2015",
                 axisLabelUseCanvas: true,
@@ -119,7 +119,8 @@ function gd(year, month, day) {
 // 		});
 
 function clickSubmit(fun){
-    var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#dateYFrom').val() + '/' +  $('#dateMFrom').val() + '/' +  $('#dateDFrom').val() + '/' +  $('#dateYTo').val() + '/' +  $('#dateMTo').val() + '/' +  $('#dateDTo').val();
+    //var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#dateYFrom').val() + '/' +  $('#dateMFrom').val() + '/' +  $('#dateDFrom').val() + '/' +  $('#dateYTo').val() + '/' +  $('#dateMTo').val() + '/' +  $('#dateDTo').val();
+    var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#datepicker_from').val() + '/' +  $('#datepicker_to').val();
     console.log(url);
     $.ajax({
         url: url,
@@ -175,7 +176,7 @@ function generateDataSet(data, label){
         t.push(data[i]['sum']);
         date.push(t);
     }
-    dataset.push({'label': label, 'data': date});
+    dataset.push({'label': label + '&nbsp&nbsp', 'data': date});
 
 
 }

@@ -28,6 +28,8 @@ class Signup extends CI_Controller {
 		}
 		if($result){
 			print 'success';
+			$t['target'] = base_url() . "index.php/access/home";
+			$this->load->view('jump', $t);
 		}else{
 			print "fail: " . $this->signupmodel->error_info;
 		}

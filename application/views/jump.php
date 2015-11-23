@@ -1,1 +1,1 @@
-<meta http-equiv="refresh" content="1; url=<?php echo $target;?>">
+<meta http-equiv="refresh" content="0; url=<?php echo $target;?>">
