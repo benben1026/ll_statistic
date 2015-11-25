@@ -8,7 +8,6 @@ class Access extends Acc_Controller{
 	public function index(){
 		print json_encode($this->user['id']);
 	}
-
 	public function home(){
 		if($this->user['id'] == null){
 			$t['target'] = base_url() . "index.php/login";
@@ -37,11 +36,15 @@ class Access extends Acc_Controller{
     	if(!($d && $d->format('Y-m-d') == $date)){
     		return false;
     	}
+		//return $d->format('Y-m-d') . 'T00:00:00.000Z';
 		return $d->format('Y-m-d') . ' 00:00:00';
 	}
 
+
+	/*********************************API**********************************/
 	public function getLecMat($from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
 		$name = $this->user['name'];
+		//print $name;
 		if(!$name){
 			return;
 		}
@@ -70,6 +73,11 @@ class Access extends Acc_Controller{
 			print 'Invalid Date';
 			return;
 		}
+		//print "from = " . $from . " to = " . $to . "<br/>";
+		//print "Mongo Date = " . new MongoDate(strtotime($from)) . "<br/>";
+		//print "Mongo Date2 = " . new MongoDate(strtotime("2015-10-26 00:00:00")) . "<br/>";
+		//print "Mongo Date3 = " . new MongoDate(strtotime("2015-10-26T00:00:00.000Z")) . "<br/>";
+		//print "Mongo Date3 = " . new MongoDate(strtotime("2015-10-03T00:00:00.000Z")) . "<br/>";
 		$reg = "/(mod_quiz)|(mod_assign)/i";
 		$this->load->model("datamodel");
 		$output = $this->datamodel->getDataAccToEventname($name, $reg, $from, $to);
@@ -112,7 +120,73 @@ class Access extends Acc_Controller{
 		$output['label'] = "Forum";
 		print json_encode($output);
 	}
+	
+	public function getPersonalStat($from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
+		$output['data'] = array();
+		$name = $this->user['name'];
+		if(!$name){
+			return;
+		}
+		$from = $this->constructDate($from_y, $from_m, $from_d);
+		$to = $this->constructDate($to_y, $to_m, $to_d);
+		if(!$from || !$to){
+			print 'Invalid Date';
+			return;
+		}
+		$this->load->model("datamodel");
+		$forum = $this->datamodel->getDataAccToEventname($name, '/mod_forum/i', $from, $to);
+		$login = $this->datamodel->getDataAccToEventname($name, '/user_loggedin/i', $from, $to);
+		$assessment = $this->datamodel->getDataAccToEventname($name, '/(mod_quiz)|(mod_assign)/i', $from, $to);
+		$lecmat = $this->datamodel->getDataAccToEventname($name, '/(mod_book)|(mod_resource)|(mod_lesson)|(mod_url)|(mod_resource)|(mod_wiki)|(local_youtube_events)/i', $from, $to);
+		if($forum['ok'] == 1){
+			$output['data']['Forum'] = $forum['result'];
+			//array_push($output['data'], array('Forum'=>$forum['result']));
+		}
+		if($login['ok'] == 1){
+			$output['data']['Login'] = $login['result'];
+			//array_push($output['data'], array('Login'=>$login['result']));
+		}
+		if($assessment['ok'] == 1){
+			$output['data']['Assessment'] = $assessment['result'];
+			//array_push($output['data'], array('Assessment'=>$assessment['result']));
+		}
+		if($lecmat['ok'] == 1){
+			$output['data']['Lecture Material'] = $lecmat['result'];
+			//array_push($output['data'], array('Lecture Material'=>$lecmat['result']));
+		}
+		$output['ok'] = 1;
+		print json_encode($output);
+	}
 
+	public function getCourseInfo($courseId, $from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
+		$output = array();
+		$from = $this->constructDate($from_y, $from_m, $from_d);
+		$to = $this->constructDate($to_y, $to_m, $to_d);
+		if(!$from || !$to){
+			print 'Invalid Date';
+			return;
+		}
+		$this->load->model("datamodel");
+		$forum = $this->datamodel->getInfoAccToCourseId($courseId, '/mod_forum/i', $from, $to);
+		$login = $this->datamodel->getInfoAccToCourseId($courseId, '/user_loggedin/i', $from, $to);
+		$assessment = $this->datamodel->getInfoAccToCourseId($courseId, '/(mod_quiz)|(mod_assign)/i', $from, $to);
+		$lecmat = $this->datamodel->getInfoAccToCourseId($courseId, '/(mod_book)|(mod_resource)|(mod_lesson)|(mod_url)|(mod_resource)|(mod_wiki)|(local_youtube_events)/i', $from, $to);
+		if($forum['ok'] == 1){
+			array_push($output, array('Forum'=>$forum['result']));
+		}
+		if($login['ok'] == 1){
+			array_push($output, array('Login'=>$login['result']));
+		}
+		if($assessment['ok'] == 1){
+			array_push($output, array('Assessment', $assessment['result']));
+		}
+		if($lecmat['ok'] == 1){
+			array_push($output, array('Lecture Material', $lecmat['result']));
+		}
+		print json_encode($output);
+	}
+
+/*
 	public function getPersonalStat($name){
 		if($name == "_self"){
 			$name = $this->user['name'];
@@ -181,7 +255,7 @@ class Access extends Acc_Controller{
 		// else
 		// 	print '[]';
 	}
-
+*/
 	public function getData($course_id, $action, $resource){
 		$output;
 		$res = $this->checkRight($course_id, $action);

@@ -59,4 +59,43 @@ class DataModel extends CI_Model{
 		$op = array($match, $group);
 		return $this->mongo_db->aggregate("statements", $op);
 	}
+
+	function getInfoAccToCourseId($courseId, $reg, $from, $to){
+		$match = array(
+			"\$match"=>array(
+				"\$and"=>array(
+					array(
+						"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid"=>$courseId
+					),
+					array(
+						"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname"=>array(
+							"\$regex"=>new MongoRegex($reg)
+						)
+					),
+					array(
+						"timestamp"=>array(
+							"\$gte"=>new MongoDate(strtotime($from)),
+							"\$lt"=>new MongoDate(strtotime($to))
+						),
+					),
+				),
+			),
+		);
+		$group = array(
+			"\$group"=>array(
+				"_id"=>array(
+					"date"=>array(
+						"\$substr"=>array(
+							"\$statement.timestamp", 0, 9,
+						),
+					),
+				),
+				"sum"=>array(
+					"\$sum"=>1,
+				),
+			),
+		);
+		$op = array($match, $group);
+		return $this->mongo_db->aggregate("statements", $op);
+	}
 }

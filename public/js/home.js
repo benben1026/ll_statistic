@@ -118,18 +118,25 @@ function gd(year, month, day) {
 		
 // 		});
 
-function clickSubmit(fun){
+function clickSubmit(){
     //var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#dateYFrom').val() + '/' +  $('#dateMFrom').val() + '/' +  $('#dateDFrom').val() + '/' +  $('#dateYTo').val() + '/' +  $('#dateMTo').val() + '/' +  $('#dateDTo').val();
-    var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#datepicker_from').val() + '/' +  $('#datepicker_to').val();
+    //var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#datepicker_from').val() + '/' +  $('#datepicker_to').val();
+    var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/getPersonalStat/' +  $('#datepicker_from').val() + '/' +  $('#datepicker_to').val();
     console.log(url);
     $.ajax({
         url: url,
         type: 'GET',
         dataType: 'json',
-        async: false,
+        //async: false,
         success: function(data){
             if(data['ok'] == 1){
-                generateDataSet(data['result'], data['label']);
+                generateDataSet(data['data']['Login'], 'Login');
+                generateDataSet(data['data']['Forum'], 'Forum');
+                generateDataSet(data['data']['Assessment'], 'Assessment');
+                generateDataSet(data['data']['Lecture Material'], 'Lecture Material');
+                setPlot();
+                plotAccordingToChoices();
+                //generateDataSet(data['result'], data['label']);
             }
             else
                 alert("Fail to get data");
@@ -219,12 +226,14 @@ function plotAccordingToChoices() {
 
 function init(){
     dataset = [];
-    clickSubmit('Login');
-    clickSubmit('LecMat');
-    clickSubmit('Assessment');
-    clickSubmit('Forum');
-    setPlot();
-    plotAccordingToChoices();
+    clickSubmit();
+    // clickSubmit('Login');
+    // clickSubmit('LecMat');
+    // clickSubmit('Assessment');
+    // clickSubmit('Forum');
+    //setPlot();
+    //plotAccordingToChoices();
 }
 
-$(window).load(init);
+//$(window).load(init);
+$(document).ready(init);

@@ -28,7 +28,7 @@
 			<br />
 		</div>
 	</div>
-	<div class="row" style="margin-bottom: 50px;">
+	<div class="row" style="margin-bottom: 50px; margin-top:20px;">
 		<div class="col-md-3 col-md-offset-2">
 			<div class="form-group">
 				<label for="datepicker_from">From:</label>
@@ -42,15 +42,14 @@
 			</div>
 		</div>
 		<div class="col-md-2" style="padding-top:25px;">
-			<button class="btn btn-default" onclick="init()">Submit</button>
+			<button class="btn btn-default" onclick="init()">Update graph</button>
 		</div>
 	</div>
 </div>
 
 
 <script>
-  $(function() {
-    $( "#datepicker_from" ).datepicker({
+	$( "#datepicker_from" ).datepicker({
     	dateFormat: "yy/mm/dd",
     	defaultDate: +1
     });
@@ -58,11 +57,15 @@
     	dateFormat: "yy/mm/dd",
     	defaultDate: new Date()
     });
+    $( "#datepicker_from" ).datepicker("setDate", -30);
+    $( "#datepicker_to" ).datepicker("setDate", new Date());
+  //$(function() {
+    
     //$( "#datepicker_from" ).datepicker( "option", "dateFormat", "yy/mm/dd" );
     //$( "#datepicker_from" ).datepicker( "option", "defaultDate", -30 );
     //$( "#datepicker_to" ).datepicker( "option", "dateFormat", "yy/mm/dd" );
     //$( "#datepicker_to" ).datepicker( "option", "defaultDate", new Date() );
-  });
+  //});
 </script>
 
 <style>
