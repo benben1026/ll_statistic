@@ -34,7 +34,7 @@ class SignupModel extends CI_Model{
             return false;
         }
         $user_id = $this->db->insert_id();
-        $query = $this->db->query("INSERT INTO role(user_id, unit_id, active, read_priv, write_priv, admin_priv) VALUES (?,?,?,?,?,?)", array($user_id, $unit_id, 0, 0, 0, 0));
+        $query = $this->db->query("INSERT INTO role(user_id, unit_id, active, privilege, read_priv, write_priv, admin_priv) VALUES (?,?,?,?,?,?)", array($user_id, $unit_id, 0, 0, 0, 0, 0));
         if(!$query){
             $this->error_info = "Fail To Create Role Info";
             return false;

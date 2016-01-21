@@ -68,6 +68,25 @@ var options = {
             },
             colors: ["#FF0000", "#0022FF"]
         };
+
+var activitiesPieChartOptions = {
+	series: {
+        pie: {
+            show: true,
+			radius: 1,
+            label: {
+                show: true,
+                radius: 2/3,
+                formatter: labelFormatter,
+                threshold: 0.05
+            }
+        }
+    },
+    grid: {
+        hoverable: true,
+        clickable: true
+    }
+};
 /*
 $(document).ready(function () {
     $.plot($("#flot-placeholder"), dataset, options);
@@ -77,6 +96,9 @@ function gd(year, month, day) {
     return new Date(year, month, day).getTime();
 }
 
+function labelFormatter(label, series) {
+		return "<div style='font-size:8pt; text-align:center; padding:2px; color:black;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+}
 		
 // $(function() {
 // // hard-code color indices to prevent them from shifting as
@@ -119,6 +141,7 @@ function gd(year, month, day) {
 // 		});
 
 function clickSubmit(){
+    dataset = [];
     //var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#dateYFrom').val() + '/' +  $('#dateMFrom').val() + '/' +  $('#dateDFrom').val() + '/' +  $('#dateYTo').val() + '/' +  $('#dateMTo').val() + '/' +  $('#dateDTo').val();
     //var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/get' + fun + '/' +  $('#datepicker_from').val() + '/' +  $('#datepicker_to').val();
     var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/getPersonalStat/' +  $('#datepicker_from').val() + '/' +  $('#datepicker_to').val();
@@ -137,6 +160,10 @@ function clickSubmit(){
                 setPlot();
                 plotAccordingToChoices();
                 //generateDataSet(data['result'], data['label']);
+				
+				//plot pie chart
+				var pieChartDataSet = generatePieChartDataSet(data['data']);
+				$.plot('#activities-pie-chart', pieChartDataSet, activitiesPieChartOptions);
             }
             else
                 alert("Fail to get data");
@@ -184,8 +211,23 @@ function generateDataSet(data, label){
         date.push(t);
     }
     dataset.push({'label': label + '&nbsp&nbsp', 'data': date});
+}
 
-
+function generatePieChartDataSet(data){
+	var pieChartDataSet = [];
+	console.log(data);
+	for(var type in data){
+		console.log(type);
+		var sum = 0;
+		for(var i = 0; i < data[type].length; i++){
+			console.log(data[type][i]);
+			sum += parseInt(data[type][i]['sum']);
+		}
+		pieChartDataSet.push({'label': type, 'data': sum});
+		console.log(sum);
+	}
+	console.log(pieChartDataSet);
+	return pieChartDataSet;
 }
 
 function setPlot(){
@@ -237,3 +279,28 @@ function init(){
 
 //$(window).load(init);
 $(document).ready(init);
+
+// function checkCourseInfo(){
+//     dataset = [];
+//     var url = 'http://benjamin-zhou.com/ll_statistic/index.php/access/getCourseInfo/' +  $('#courseId').val() + '/' + $('#datepicker_from').val() + '/' +  $('#datepicker_to').val();
+//     console.log(url);
+//     $.ajax({
+//         url: url,
+//         type: 'GET',
+//         dataType: 'json',
+//         success: function(data){
+//             if(data['ok'] == 1){
+//                 generateDataSet(data['data']['Login'], 'Login');
+//                 generateDataSet(data['data']['Forum'], 'Forum');
+//                 generateDataSet(data['data']['Assessment'], 'Assessment');
+//                 generateDataSet(data['data']['Lecture Material'], 'Lecture Material');
+//                 setPlot();
+//                 plotAccordingToChoices();
+//             }
+//         },
+//         error: function(){
+//             alert("Fail to get data");
+//         }
+
+//     })
+// }

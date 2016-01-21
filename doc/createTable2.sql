@@ -31,6 +31,8 @@ CREATE TABLE `role`(
 	`user_id` BIGINT NOT NULL,
 	`unit_id` BIGINT NOT NULL,
 	`active` BOOLEAN NOT NULL,
+	`privilege` INT NOT NULL,
+	`if_inherit` INT NOT NULL,
 	`read_priv` TINYINT(1) NOT NULL,
 	`write_priv` TINYINT(1) NOT NULL,
 	`admin_priv` TINYINT(1) NOT NULL,
@@ -69,6 +71,12 @@ CREATE TABLE `role_has_priv_admin`(
 	FOREIGN KEY (`resource_id`) REFERENCES `resource`(`id`) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `privilege`(
+	`index` TINYINT NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(20) NOT NULL,
+	PRIMARY KEY (`index`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `ci_sessions` (
 	`id` varchar(40) NOT NULL,
 	`ip_address` varchar(45) NOT NULL,
@@ -76,3 +84,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 	`data` blob NOT NULL,
 	KEY `ci_sessions_timestamp` (`timestamp`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `privilege`(name) VALUES('admin');
+INSERT INTO `privilege`(name) VALUES('read');
+INSERT INTO `privilege`(name) VALUES('write');

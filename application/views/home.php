@@ -18,33 +18,52 @@
 			<button onclick="init()">Submit</button>
 		</div>
 	</div> -->
+	<div class="row" style="margin-bottom: 50px; margin-top:50px;">
+		<div class="col-md-3 col-md-offset-1">
+			<h2>Your activites</h2>
+		</div>
+		<!-- <form class="form-inline"> -->
+			<div class="col-md-3">
+				<div class="form-group">
+					<label for="datepicker_from">From:</label>
+					<input type="text" class="form-control" id="datepicker_from" value="2015/09/01" />
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="form-group">
+					<label for="datepicker_to">To:</label>
+					<input type="text" class="form-control" id="datepicker_to" value="2015/10/31"/>
+				</div>
+			</div>
+			<div class="col-md-2" style="padding-top:25px;">
+				<button class="btn btn-default" onclick="init()">Update graph</button>
+			</div>
+		<!-- </form> -->
+	</div>
+
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
-			<h1>Your activites</h1>
 			<div class="chart-container">
 				<div id="flot-placeholder"></div>
 				<p id="choices" style="float:right; width:185px;"></p>
 			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="chart-container">
+				<div id="activities-pie-chart"></div>
+			</div>
 			<br />
 		</div>
 	</div>
-	<div class="row" style="margin-bottom: 50px; margin-top:20px;">
+	<!-- <div class="row">
 		<div class="col-md-3 col-md-offset-2">
-			<div class="form-group">
-				<label for="datepicker_from">From:</label>
-				<input type="text" class="form-control" id="datepicker_from" value="2015/09/01" />
-			</div>
+			Check Course Data:
+			<input type="number" id="courseId" />
+			<button>Submit</button>
 		</div>
-		<div class="col-md-3">
-			<div class="form-group">
-				<label for="datepicker_to">To:</label>
-				<input type="text" class="form-control" id="datepicker_to" value="2015/10/31"/>
-			</div>
-		</div>
-		<div class="col-md-2" style="padding-top:25px;">
-			<button class="btn btn-default" onclick="init()">Update graph</button>
-		</div>
-	</div>
+	</div> -->
 </div>
 
 
@@ -57,7 +76,7 @@
     	dateFormat: "yy/mm/dd",
     	defaultDate: new Date()
     });
-    $( "#datepicker_from" ).datepicker("setDate", -30);
+    $( "#datepicker_from" ).datepicker("setDate", -60);
     $( "#datepicker_to" ).datepicker("setDate", new Date());
   //$(function() {
     
@@ -69,6 +88,10 @@
 </script>
 
 <style>
+#activities-pie-chart{
+	width:600px;
+    height:350px;
+}
 #flot-placeholder{
 	float:left;
     width:600px;
@@ -85,5 +108,6 @@
 <script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/flot/jquery.flot.symbol.js"></script>
 <script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/flot/jquery.flot.time.js"></script>
 <script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/flot/jquery.flot.axislabels.js"></script>
+<script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/flot/jquery.flot.pie.js"></script>
 
 <script type="text/javascript" src="<?= base_url() ?>/public/js/home.js"></script>

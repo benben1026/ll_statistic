@@ -8,6 +8,10 @@ class Access extends Acc_Controller{
 	public function index(){
 		print json_encode($this->user['id']);
 	}
+
+
+	/********************** VIEW ************************/
+
 	public function home(){
 		if($this->user['id'] == null){
 			$t['target'] = base_url() . "index.php/login";
@@ -21,24 +25,38 @@ class Access extends Acc_Controller{
 		$this->load->view('template/footer');
 	}
 
+	public function course(){
+		if($this->user['id'] == null){
+			$t['target'] = base_url() . "index.php/login";
+			$this->load->view('jump', $t);
+			return;
+		}
+		$data['title'] = 'Keep Home';
+		$data['username'] = $this->user['name'];
+		$this->load->view('template/header', $data);
+		$this->load->view('course');
+		$this->load->view('template/footer');
+	}
+
+	public function admin(){
+		if($this->user['id'] == null){
+			$t['target'] = base_url() . "index.php/login";
+			$this->load->view('jump', $t);
+			return;
+		}
+		$data['title'] = 'Admin';
+		$data['username'] = $this->user['name'];
+		$this->load->view('template/header', $data);
+		$this->load->view('admin');
+		$this->load->view('template/footer');
+	}
+
 	public function logout(){
 		$this->session->sess_destroy();
 		$t['target'] = base_url() . "index.php/login";
 		$this->load->view('jump', $t);
 	}
-
-	private function constructDate($y, $m, $d){
-		$date = $y . '-' . $m . '-' . $d;
-		//print $date . '<br/>';
-		$d = DateTime::createFromFormat('Y-m-d', $date);
-		//print $d->format('Y-m-d') . '<br/>';
-		//print $date . '<br/>';
-    	if(!($d && $d->format('Y-m-d') == $date)){
-    		return false;
-    	}
-		//return $d->format('Y-m-d') . 'T00:00:00.000Z';
-		return $d->format('Y-m-d') . ' 00:00:00';
-	}
+	/********************** VIEW END ***********************/
 
 
 	/*********************************API**********************************/
@@ -159,104 +177,66 @@ class Access extends Acc_Controller{
 	}
 
 	public function getCourseInfo($courseId, $from_y, $from_m, $from_d, $to_y, $to_m, $to_d){
-		$output = array();
+		if($this->user['id'] == null){
+			$output['ok'] = 0;
+			$output['error'] = "Please Login";
+			print json_encode($output);
+			return;
+		}
+		$output['data'] = array();
 		$from = $this->constructDate($from_y, $from_m, $from_d);
 		$to = $this->constructDate($to_y, $to_m, $to_d);
 		if(!$from || !$to){
-			print 'Invalid Date';
+			$output['ok'] = 0;
+			$output['error'] = "Invalid Date";
+			print json_encode($output);
 			return;
 		}
+		$res = $this->getPriv($courseId, 'read');
+		$global_priv = false;
+		if($res['scope'] == 'partial'){
+			$global_priv = false;
+		}else if($res['scope'] == 'all'){
+			$global_priv = true;
+		}
 		$this->load->model("datamodel");
-		$forum = $this->datamodel->getInfoAccToCourseId($courseId, '/mod_forum/i', $from, $to);
-		$login = $this->datamodel->getInfoAccToCourseId($courseId, '/user_loggedin/i', $from, $to);
-		$assessment = $this->datamodel->getInfoAccToCourseId($courseId, '/(mod_quiz)|(mod_assign)/i', $from, $to);
-		$lecmat = $this->datamodel->getInfoAccToCourseId($courseId, '/(mod_book)|(mod_resource)|(mod_lesson)|(mod_url)|(mod_resource)|(mod_wiki)|(local_youtube_events)/i', $from, $to);
-		if($forum['ok'] == 1){
-			array_push($output, array('Forum'=>$forum['result']));
+		if($global_priv || $res['data']['forum']){
+			$forum = $this->datamodel->getInfoAccToCourseId($courseId, '/mod_forum/i', $from, $to);
+			if($forum['ok'] == 1){
+				$output['data']['Forum'] = $forum['result'];
+			}
 		}
-		if($login['ok'] == 1){
-			array_push($output, array('Login'=>$login['result']));
+
+		if($global_priv || $res['data']['login']){
+			$login = $this->datamodel->getInfoAccToCourseId($courseId, '/user_loggedin/i', $from, $to);
+			if($login['ok'] == 1){
+				$output['data']['Login'] = $login['result'];
+			}
 		}
-		if($assessment['ok'] == 1){
-			array_push($output, array('Assessment', $assessment['result']));
+
+		if($global_priv || $res['data']['assessment']){
+			$assessment = $this->datamodel->getInfoAccToCourseId($courseId, '/(mod_quiz)|(mod_assign)/i', $from, $to);
+			if($assessment['ok'] == 1){
+				$output['data']['Assessment'] = $assessment['result'];
+			}
 		}
-		if($lecmat['ok'] == 1){
-			array_push($output, array('Lecture Material', $lecmat['result']));
+
+		if($global_priv || $res['data']['file']){
+			$lecmat = $this->datamodel->getInfoAccToCourseId($courseId, '/(mod_book)|(mod_resource)|(mod_lesson)|(mod_url)|(mod_resource)|(mod_wiki)|(local_youtube_events)/i', $from, $to);
+			if($lecmat['ok'] == 1){
+				$output['data']['Lecture Material'] = $lecmat['result'];
+			}
+		}
+		if(empty($output['data'])){
+			$output['ok'] = 0;
+			$output['error'] = "You don't have sufficient privilege to access this data";
+		}else{
+			$output['ok'] = 1;
 		}
 		print json_encode($output);
 	}
 
-/*
-	public function getPersonalStat($name){
-		if($name == "_self"){
-			$name = $this->user['name'];
-		}
-		$match = array(
-			"\$match"=>array(
-				"statement.actor.name"=>$name
-			),
-		);
-		$groupByVerb = array(
-			"\$group"=>array(
-				"_id"=>array(
-					"verb"=>"\$statement.verb.id",
-					"date"=>array(
-						"\$substr"=>array(
-							"\$statement.timestamp", 0, 9,
-						),
-					),
-				),
-				"dateCount"=>array(
-					"\$sum"=>1,
-				),
-			),
-		);
-		$sort2 = array(
-			"\$sort"=>array("statement.timestamp"=>-1),
-		);
-		$group2 = array(
-			"\$group"=>array(
-				"_id"=>"\$_id.verb",
-				"date"=>array(
-					"\$push"=>array(
-						"date"=>"\$_id.date",
-						"count"=>"\$dateCount",
-					),
-				),
-				"verbCount"=>array("\$sum"=>"\$dateCount"),
-			),
-		);
-		$sort = array(
-			"\$sort"=>array("verbCount" => -1),
-		);
-		$groupByDate = array(
-			"\$group"=>array(
-				"_id"=>array(
-					"date"=>array(
-						"\$substr"=>array(
-							"\$statement.timestamp", 0, 9,
-						),
-					),
-				),
-				"sum"=>array(
-					"\$sum"=>1,
-				),
-			),
-		);
-		$limit = array(
-			"\$limit"=>5,
-		);
-		$op = array($match, $sort2, $groupByVerb, $group2, $sort);
-		//$op = array($match, $sort2, $limit);
-		$result = $this->mongo_db->aggregate("statements", $op);
-		print json_encode($result);
-		// if($result['ok'] == 1)
-		// 	print json_encode($result['result']);
-		// else
-		// 	print '[]';
-	}
-*/
-	public function getData($course_id, $action, $resource){
+	public function getPriv($course_id, $action){
 		$output;
 		$res = $this->checkRight($course_id, $action);
 		if($res && $this->global_right == 1){
@@ -270,16 +250,11 @@ class Access extends Acc_Controller{
 			$output['status'] = false;
 			$output['error_info'] = $this->error_info;
 		}
-		print json_encode($output);
+		return $output;
 
 	}
 
 	private function checkRight($course_id, $action){
-		if($this->user['id'] == null){
-			$this->error_info = "Please Login";
-			return false;
-		}
-		print $this->user['id'];
 		$action = trim(strtolower($action));
 		if($action != "read" && $action != "write" && $action != "admin"){
 			$this->error_info = "Invalid Parameter";
@@ -294,24 +269,76 @@ class Access extends Acc_Controller{
 			return true;
 	}
 
-	// public function checkRight(){
-	// 	if($this->user['id'] == null){
-	// 		print 'please login';
-	// 		return;
-	// 	}
-	// 	$postData = $this->input->post();
-	// 	$this->load->model("accessmodel");
-	// 	if(!isset($postData['accesstoken'])){
-	// 		print 'Invalid Parameter';
-	// 		return;
-	// 	}
-	// 	$res = $this->accessmodel->checkRights($postData['accesstoken'], $this->user['id']);
-	// 	//print json_encode($res);
-	// 	if($res){
-	// 		print 'OK';
-	// 	}else{
-	// 		print 'Access Denied';
-	// 	}
-	// } 
-		// }
+	private function constructDate($y, $m, $d){
+		$date = $y . '-' . $m . '-' . $d;
+		$d = DateTime::createFromFormat('Y-m-d', $date);
+		//$d = DateTime::createFromFormat('Y-m-d', $date);
+		//print $date . '<br/>';
+		//print $d->format('Y-m-d') . '<br/>';
+		//print $d->format('Y-m-d H:i:s') . '<br/>';
+		//print strtotime("now") . "<br/>";
+		//print strtotime("2015-11-27 12:25:00") . "<br/>";
+    	// if(!($d && $d->format('Y-m-d') == $date)){
+    	// 	return false;
+    	// }
+		//return $d->format('Y-m-d') . 'T00:00:00.000Z';
+		return $d->format('Y-m-d H:i:s');
+	}
+
+	/***************************ADMIN***************************/
+	//login is required
+	public function getRoleList(){
+		if($this->user['id'] == null){
+			$t['target'] = base_url() . "index.php/login";
+			$this->load->view('jump', $t);
+			return;
+		}
+		$this->load->model("accessmodel");
+		$roles = $this->accessmodel->getRoles($this->user['id']);
+		print json_encode($roles);
+	}
+
+	//no privilege check, only login is required
+	public function getAllUnits($role_id){
+		if($this->user['id'] == null){
+			$t['target'] = base_url() . "index.php/login";
+			$this->load->view('jump', $t);
+			return;
+		}
+		$this->load->model("accessmodel");
+		$units = $this->accessmodel->getAllUnits($this->user['id'], $role_id);
+		print json_encode($units);
+	}
+
+	//will check if this user has admin privilege in this unit
+	public function getAllUsers($role_id, $unit_id){
+		if($this->user['id'] == null){
+			$t['target'] = base_url() . "index.php/login";
+			$this->load->view('jump', $t);
+			return;
+		}
+		$this->load->model("accessmodel");
+		print json_encode($this->accessmodel->getAllUsers($this->user['id'], $role_id, $unit_id));	
+
+	}
+
+	public function updateGlobalPrivilege(){
+		//post data should consist of role_id, target_role_id, privilege
+		$postData = $this->input->post();
+		if(!isset($postData['role_id'], $postData['target_role_id'], $postData['privilege'])){
+			print json_encode(array('result' => false, 'error' => 'Invalid Parameters'));
+			return;
+		}
+		//print '1 ';
+		if($this->user['id'] == null){
+			$t['target'] = base_url() . "index.php/login";
+			$this->load->view('jump', $t);
+			return;
+		}
+		//print '2 ';
+		$this->load->model("accessmodel");
+		$res = $this->accessmodel->updateGlobalPriv($this->user['id'], $postData['role_id'], $postData['target_role_id'], json_decode($postData['privilege']));
+		print json_encode($res);
+	}
+	/*************************END ADMIN*************************/
 }
