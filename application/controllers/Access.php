@@ -6,9 +6,37 @@ class Access extends Acc_Controller{
 	private $spec_right;
 
 	public function index(){
-		print json_encode($this->user['id']);
+		if($this->session->userdata('samlUserData')['login'][0] != null){
+			redirect('/access/overview');
+			return;
+		}
+		$data['title'] = "Welcome";
+		$data['firstname'] = $this->session->userdata('samlUserData')['firstname'][0];
+		$this->load->view('template/header', $data);
+		$this->load->view('landing');
+		$this->load->view('template/footer');
+		// print json_encode($this->session->all_userdata());
+		// print "<br/>";
+		// print "email:" . $this->session->userdata('samlUserData')['login'][0] . "<br/>";
+		// print "keepid:" . $this->session->userdata('samlUserData')['keepid'][0] . "<br/>";
+		// print "full name:" . $this->session->userdata('samlUserData')['fullname'][0] . "<br/>";
 	}
 
+	public function overview(){
+		$data['title'] = "Overview";
+		$data['firstname'] = $this->session->userdata('samlUserData')['firstname'][0];
+		$this->load->view('template/header', $data);
+		$this->load->view('overview');
+		$this->load->view('template/footer');
+	}
+
+	public function testLogin(){
+		if($this->session->userdata('samlUserData')['login'][0] != null){
+			print 'You are login with ' . $this->session->userdata('samlUserData')['login'][0];
+		}else{
+			print 'You are not login';
+		}
+	}
 
 	/********************** VIEW ************************/
 

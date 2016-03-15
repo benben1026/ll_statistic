@@ -5,6 +5,23 @@ class DataModel extends CI_Model{
 		parent::__construct();
 	}
 
+
+	function getData($domain, $auth, $pipeline){
+		$options = array(
+			'http' => array(
+				'header' => "Content-type: application/json\r\n"
+					. "Authorization: Basic " . $auth . "\r\n"
+					. "X-Experience-API-Version: 1.0.1",
+				'method' => 'GET',
+			)
+		);
+		$context = stream_context_create($options);
+		$result = file_get_contents($domain . $pipeline, false, $context);
+		if ($result === FALSE) { 
+			return false;
+		}
+		return json_decode($result);
+	}
 	// function getDataAccToEventname($name, $reg){
 	// 	$output = array();
 	// 	$mongo = $this->mongo_db->getMongoInstance();

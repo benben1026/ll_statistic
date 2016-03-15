@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Student</title>
+		<link rel="stylesheet" type="text/css" href="../bower_components/bootstrap/dist/css/bootstrap.css">
+	    <link rel="stylesheet" type="text/css" href="../keepfooter/example/keeplogo/keeplogo.css">
+	    <link rel="stylesheet" type="text/css" href="../keepfooter/dist/keepfooter.css">
+	    <link rel="stylesheet" type="text/css" href="../bower_components/components-font-awesome/css/font-awesome.css">
+	    <link rel="stylesheet" type="text/css" href="../keepmenu/dist/keepmenu.css">
+	    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.min.css">
+	    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.min.css">
+	    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.min.css">
+	    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.js"></script>
+	    <script type="text/javascript" src="../bower_components/handlebars/handlebars.js"></script>
+	    <script type="text/javascript" src="../keepfooter/dist/keepfooter.js"></script>
+	    <script type="text/javascript" src="../bower_components/devbridge-autocomplete/dist/jquery.autocomplete.js"></script>
+	    <script type="text/javascript" src="../keepmenu/dist/keepmenu.js"></script>
+		<!-- Bootstrap Core JavaScript -->
+		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="../js/echarts.min.js"></script>
+		<script type="text/javascript" src="../js/xapi.js"></script>
+		<script type="text/javascript" src="https://keep.edu.hk/keepmenu/keepmenu.js"></script>
+		<script type="text/javascript" src="https://keep.edu.hk/keepfooter/keepfooter.js"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+		    	//The samlUserData come from the IDP’s attributes
+		    	var name = "{{Session::get('samlUserData')['firstname'][0]}}";
+		    	var loginURL = "/test/login";
+		    	var logoutURL = "/test/logout";
+		   	 
+		    	// -- KEEP Menu --
+		    	keepmenu('KEEP', null, name, loginURL, logoutURL);
+
+		    	// -- KEEP Footer --
+		    	keepfooter("#666");
+			});
+		</script>
+	</head>
+	<body style="background-color: #ccc; min-height:100%">
+		<input type="hidden" id="username" value="Test" />
+		<nav id="keepmenu"></nav>
+
+	   <!--  <script>
+	        var mission = { title: "Mission", url: "/mission" };
+	        var partners = { title: "Partners", url: "/partners" };
+	        var team = { title: "Team", url: "/team" };
+	        var about = { title: "About", url: "about", submenu: [mission, partners, team] }; 
+	        var news = { title: "News", url: "news" };
+	        var services = { title: "Services", url: "services" };
+	        var contact = { title: "Contact", url: "contact" };
+	        var menu = [about, news, services, contact];
+
+	        // When logined
+	        //keepmenu('KEEP', menu, 'Jane', 'loginUrl', 'logoutUrl', null, 'q', 'collection2', 'en');
+	        // When not logined
+	        if($('#username').val() == ''){
+				keepmenu('KEEP', menu, '', 'login', 'logout', 'searchUrl');
+	        }else{
+	        	keepmenu('KEEP', menu, $('#username').val(), 'login', 'logout', null, 'q', 'collection2', 'en');
+	        }
+	        
+	    </script> -->
+		<style type="text/css">
+			/*
+		 * Base structure
+		 */
+
+		/* Move down content because we have a fixed navbar that is 50px tall */
+		body {
+		  /*padding-top: 50px;*/
+		}
+
+
+		/*
+		 * Global add-ons
+		 */
+
+		.sub-header {
+		  padding-bottom: 10px;
+		  border-bottom: 1px solid #eee;
+		}
+
+		/*
+		 * Top navigation
+		 * Hide default border to remove 1px line.
+		 */
+		.navbar-fixed-top {
+		  border: 0;
+		}
+
+		/*
+		 * Sidebar
+		 */
+
+		/* Hide for mobile, show later */
+		.sidebar {
+		  display: none;
+		}
+		@media (min-width: 768px) {
+		  .sidebar {
+		    position: fixed;
+		    top: 51px;
+		    bottom: 0;
+		    left: 0;
+		    z-index: 1000;
+		    display: block;
+		    padding: 20px;
+		    overflow-x: hidden;
+		    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+		    background-color: #f5f5f5;
+		    border-right: 1px solid #eee;
+		  }
+		}
+
+		/* Sidebar navigation */
+		.nav-sidebar {
+		  margin-right: -21px; /* 20px padding + 1px border */
+		  margin-bottom: 20px;
+		  margin-left: -20px;
+		}
+		.nav-sidebar > li > a {
+		  padding-right: 20px;
+		  padding-left: 20px;
+		}
+		.nav-sidebar > .active > a,
+		.nav-sidebar > .active > a:hover,
+		.nav-sidebar > .active > a:focus {
+		  color: #fff;
+		  background-color: #428bca;
+		}
+
+
+		/*
+		 * Main content
+		 */
+
+		.main {
+		  padding: 20px;
+		}
+		@media (min-width: 768px) {
+		  .main {
+		    padding-right: 40px;
+		    padding-left: 40px;
+		  }
+		}
+		.main .page-header {
+		  margin-top: 0;
+		}
+
+
+		/*
+		 * Placeholder dashboard ideas
+		 */
+
+		.placeholders {
+		  margin-bottom: 30px;
+		  text-align: center;
+		}
+		.placeholders h4 {
+		  margin-bottom: 0;
+		}
+		.placeholder {
+		  margin-bottom: 20px;
+		}
+		.placeholder img {
+		  display: inline-block;
+		  border-radius: 50%;
+		}
+		</style>
+
+		<div class="container-fluid">
+	      <div class="row">
+	        <div class="col-sm-3 col-md-2 sidebar">
+		        <ul class="nav nav-sidebar">
+		        	<li><div class="input-group" style="margin-left: 2px; margin-right: 2px;">
+				      <input type="text" class="form-control" placeholder="Search Courses">
+				      <span class="input-group-btn">
+				        <button class="btn btn-default" type="button">Go!</button>
+				      </span>
+				    </div><!-- /input-group --></li>
+		        </ul>
+	          <ul class="nav nav-sidebar">
+	            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+	          </ul>
+	          <ul class="nav nav-sidebar">
+	            <li><a href="">Active Course</a></li>
+	            <ul>
+	            	<li><a href="">CSCI2100</a></li>
+	            	<li><a href="">CSCI3100</a></li>
+	            	<li><a href="">CSCI3180</a></li>
+	            	<li><a href="">CSCI4140</a></li>
+	            </ul>
+	          </ul>
+	          <ul class="nav nav-sidebar">
+	            <li><a href="">Closed Course</a></li>
+	          </ul>
+	        </div>
+	        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+	          	<h1 class="page-header">Overview</h1>
+
+				<h2 class="sub-header">Enrolled Courses</h2>
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr><th>#</th><th>Course Code</th><th>Course Title</th><th>Platform</th><th>Instructor</th></tr>
+						</thead>
+						<tbody>
+							<tr><td>1</td><td>CSCI2100</td><td>Data Structure</td><td>KEEPMoodle</td><td>Prof. Irwin King</td></tr>
+							<tr><td>2</td><td>CSCI3100</td><td>Software Engineering</td><td>OpenedX</td><td>Prof. Michael Lyu</td></tr>
+							<tr><td>3</td><td>CSCI3180</td><td>Priciple of Programming Language</td><td>KEEPMoodle</td><td>Prof. Jimmy Lee</td></tr>
+							<tr><td>4</td><td>CSCI4140</td><td>Open Source</td><td>KEEPMoodle</td><td>Dr. TY Wong</td></tr>
+							<tr><td>5</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td></tr>
+							<tr><td>6</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td></tr>
+							<tr><td>7</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td></tr>
+							<tr><td>8</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td><td>XXXXXXXX</td></tr>                
+						</tbody>
+					</table>
+	          	</div>
+	          	<h2 class="sub-header">Course Distribution</h2>
+				<div id="course-distribution" style="width: 1000px;height:400px;"></div>
+				<h2 class="sub-header">Overall Engagement</h2>
+				<div id="engagement" style="width: 1000px;height:400px;"></div>
+				<h2 class="sub-header">Top 3 viewed threads</h2>
+				<table class="table table-striped">
+					<thead>
+						<tr><th>Ranking</th><th>Question</th><th>Course Code</th><th>Course Title</th><th>Viewed</th></tr>
+					</thead>
+					<tbody>
+						<tr><td>1</td><td>How to write Quick Sort?</td><td>CSCI2100</td><td>Data Structure</td><td>245</td></tr>
+						<tr><td>2</td><td>How to design a UML</td><td>CSCI3100</td><td>Software Engineering</td><td>145</td></tr>
+						<tr><td>3</td><td>How to program in Fortran</td><td>CSCI3180</td><td>Priciple of Programming Language</td><td>97</td></tr>       
+					</tbody>
+				</table>
+	        </div>
+	      </div>
+	    </div>
+
+
+	<script type="text/javascript">
+	function drawCourseInPlatform(){
+	    var myChart = echarts.init(document.getElementById('course-distribution'));
+	    var labelRight = {normal: {label : {position: 'right'}}};
+	    var d = new Date();
+	    var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	    option = {
+	        title: {
+	            text: 'Courses in Platforms',
+	            subtext: 'By ' + month[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + ', ' + d.getHours() + ':' + d.getMinutes()
+	        },
+	        tooltip : {
+	            trigger: 'axis',
+	            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+	                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+	            }
+	        },
+	        grid: {
+	            top: 80,
+	            bottom: 30
+	        },
+	        xAxis : [
+	            {
+	                type : 'value',
+	                position: 'top',
+	                splitLine: {lineStyle:{type:'dashed'}},
+	            }
+	        ],
+	        yAxis : [
+	            {
+	                type : 'category',
+	                axisLine: {show: false},
+	                axisLabel: {show: false},
+	                axisTick: {show: false},
+	                splitLine: {show: false},
+	                data : ['ILC', 'KEEPMoodle', 'CourseBuilder', 'ewant', 'Udacity', 'FutureLearn', 'xuetangX', 'Coursera', 'edX']
+	            }
+	        ],
+	        series : [
+	            {
+	                name:'No. of Courses',
+	                type:'bar',
+	                stack: 'No.',
+	                itemStyle : { normal: {
+	                    borderRadius: 5,
+	                    label : {
+	                        show: true,
+	                        position: 'left',
+	                        formatter: '{b}'
+	                    }
+	                }},
+	                data:[5, 8, 2, 1, 2, 3, 2, 1, 1]
+	            }
+	        ]
+	    };
+	    myChart.setOption(option);
+	}
+
+	function drawEngagement(){
+    // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('engagement'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: 'Your Activities'
+            },
+            tooltip: {},
+            legend: {
+                data:['Forum', 'Assessment', 'Lecture Material']
+            },
+            xAxis: {
+                data: ["Jan 14","Jan 15","Jan 16","Jan 17","Jan 18","Jan 19","Jan 20","Jan 21","Jan 22","Jan 23","Jan 24","Jan 25","Jan 26","Jan 27"]
+            },
+            yAxis: [
+            {
+                type : 'value',
+                name : 'Activity Level'
+            }
+			],
+            series: [
+            {
+                name: 'Forum',
+                type: 'line',
+                data: [10, 5, 3, 1, 2, 5, 5, 3, 1, 2, 5, 5, 3, 1]
+            },
+            {
+                name: 'Assessment',
+                type: 'line',
+                data: [15, 30, 40, 5, 7, 10, 15, 30, 40, 5, 7, 10, 11, 2]
+            },
+            {
+                name: 'Lecture Material',
+                type: 'line',
+                data: [2, 6, 4, 2, 8, 3, 2, 6, 4, 2, 8, 3, 4, 2]
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+	}
+
+	function init(){
+		drawCourseInPlatform();
+		drawEngagement();
+	}
+
+	$(document).ready(init);
+	</script>
+	</body>
+</html>

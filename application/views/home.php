@@ -22,23 +22,33 @@
 		<div class="col-md-3 col-md-offset-1">
 			<h2>Your activites</h2>
 		</div>
-		<!-- <form class="form-inline"> -->
-			<div class="col-md-3">
-				<div class="form-group">
-					<label for="datepicker_from">From:</label>
-					<input type="text" class="form-control" id="datepicker_from" value="2015/09/01" />
-				</div>
+		<div class="col-md-3">
+			<div class="form-group">
+				<label for="datepicker_from">From:</label>
+				<input type="text" class="form-control" id="datepicker_from" value="2015/09/01" />
 			</div>
-			<div class="col-md-3">
-				<div class="form-group">
-					<label for="datepicker_to">To:</label>
-					<input type="text" class="form-control" id="datepicker_to" value="2015/10/31"/>
-				</div>
+		</div>
+		<div class="col-md-3">
+			<div class="form-group">
+				<label for="datepicker_to">To:</label>
+				<input type="text" class="form-control" id="datepicker_to" value="2015/10/31"/>
 			</div>
-			<div class="col-md-2" style="padding-top:25px;">
-				<button class="btn btn-default" onclick="init()">Update graph</button>
-			</div>
-		<!-- </form> -->
+		</div>
+		<div class="col-md-2" style="padding-top:25px;">
+			<button class="btn btn-default" onclick="init()">Update graph</button>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div id="testChart1" style="width: 1000px;height:400px;"></div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div id="testChart2" style="width: 1000px;height:400px;"></div>
+		</div>
 	</div>
 
 	<div class="row">
