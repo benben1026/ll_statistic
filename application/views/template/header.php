@@ -21,7 +21,8 @@
 		<script type="text/javascript" src="<?= base_url() ?>/public/js/echarts.min.js"></script>
 		<script type="text/javascript" src="https://keep.edu.hk/keepmenu/keepmenu.js"></script>
 		<script type="text/javascript" src="https://keep.edu.hk/keepfooter/keepfooter.js"></script>
-
+		<script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/morris/morris.min.js"></script>
+		<script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/morris/raphael.min.js"></script>
 	</head>
 	<body style="background-color: #ccc; min-height:100%">
 		<input type="hidden" id="firstname" value="<?php echo isset($firstname) ? $firstname : ""; ?>" />

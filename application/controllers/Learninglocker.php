@@ -17,15 +17,28 @@ class Learninglocker extends CI_Controller{
 		print $this->domain;
 	}
 
-	public function test(){
+	public function getEngagement($keepId, $from, $to){
+		//$from = DateTime::createFromFormat('Y-m-d', $from);
+		//$to = DateTime::createFromFormat('Y-m-d', $to);
+		$from = $from . "T00:00";
+		$to = $to . "T00:00";
 		$match = array(
 			"\$match" => array(
 				"statement.actor.name" => array(
-					"\$eq" => "stud01"
+					//"\$eq" => "stud01"
+					"\$eq" => $keepId
 				),
 				"statement.verb.id" => array(
 					"\$eq" => "http://id.tincanapi.com/verb/viewed"
-				)
+				),
+				"statement.timestamp" =>array(
+					//"\$gte"=>new MongoDate(strtotime($from->format('Y-m-d H:i:s'))),
+					//"\$lt"=>new MongoDate(strtotime($to->format('Y-m-d H:i:s'))),
+					"\$gte" => $from,
+					"\$lt" => $to,
+					//"\$gte" => "2015-01-01T00:00",
+      				//"\$lt" => "2016-12-28T00:00"
+				),
 			),
 		);
 		$sort = array(

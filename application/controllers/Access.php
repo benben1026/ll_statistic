@@ -26,7 +26,8 @@ class Access extends Acc_Controller{
 		$data['title'] = "Overview";
 		$data['firstname'] = $this->session->userdata('samlUserData')['firstname'][0];
 		$this->load->view('template/header', $data);
-		$this->load->view('overview');
+		//$this->load->view('overview');
+		$this->load->view('charts/engagement');
 		$this->load->view('template/footer');
 	}
 
