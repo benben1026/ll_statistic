@@ -37,7 +37,8 @@ class CourseinfoModel extends CI_Model{
 				array_push($this->output['data'], array($lrs => null));
 				continue;
 			}
-			array_push($this->output['data'], array($lrs => $this->sendRequest($lrs, $lrs_url)));
+			//array_push($this->output['data'], array($lrs => $this->sendRequest($lrs, $lrs_url)));
+			$this->output['data'][$lrs] = $this->sendRequest($lrs, $lrs_url);
 		}
 		return $this->output;
 	}

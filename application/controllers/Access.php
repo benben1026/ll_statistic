@@ -28,6 +28,7 @@ class Access extends Acc_Controller{
 		$this->load->view('template/header', $data);
 		//$this->load->view('overview');
 		$this->load->view('charts/engagement');
+		$this->load->view('charts/courseOverview');
 		$this->load->view('template/footer');
 	}
 

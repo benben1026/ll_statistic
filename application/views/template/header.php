@@ -23,6 +23,10 @@
 		<script type="text/javascript" src="https://keep.edu.hk/keepfooter/keepfooter.js"></script>
 		<script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/morris/morris.min.js"></script>
 		<script type="text/javascript" src="<?= base_url() ?>/public/js/plugins/morris/raphael.min.js"></script>
+
+		<!-- Load DataTable -->
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/dt/dt-1.10.11/datatables.min.css"/>
+		<script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11/datatables.min.js"></script>
 	</head>
 	<body style="background-color: #ccc; min-height:100%">
 		<input type="hidden" id="firstname" value="<?php echo isset($firstname) ? $firstname : ""; ?>" />
