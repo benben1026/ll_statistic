@@ -7,11 +7,19 @@ class CourseInfo extends CI_Controller{
 		$this->load->model('courseinfomodel');
 	}
 
-	public function index(){
-		echo 'test';
+	public function index($lrs_para = "all"){
+		$result = $this->getUserCourseList($lrs_para);
+		$this->output->set_content_type('application/json');
+		$this->output->set_output(json_encode($result));
 	}
 
-	public function getUserCourseList($keepId, $lrs_para = "all"){
+	protected function getUserCourseList($lrs_para){
+		//this id should be return from the login information
+		$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
+		$sessData = $this->checkCourseInfoSession();
+		if($sessData !== false){
+			return $sessData;
+		}
 		$lrs = strtolower($lrs_para);
 		$url_para = "/user/" . $keepId;
 		if($lrs == "all"){
@@ -24,8 +32,25 @@ class CourseInfo extends CI_Controller{
 				$lrs => $url_para,
 			);
 		}
-//echo json_encode($url_list);
-		echo json_encode($this->courseinfomodel->getData($url_list));
+		$output = $this->courseinfomodel->getData($url_list);
+		if($lrs == "all" && $output['ok']){
+			$session_data = array(
+				"courseInfo" => $output,
+				"courseInfoSessExp" => time(),
+			);
+			$this->session->set_userdata($session_data);
+		}
+		
+		return $output;
+	}
+
+	private function checkCourseInfoSession(){
+		$preTime = $this->session->userdata('courseInfoSessExp');
+		if($preTime == null || time() - $preTime > 300){
+			return false;
+		}else{
+			return $this->session->userdata('courseInfo');
+		}
 	}
 
 }

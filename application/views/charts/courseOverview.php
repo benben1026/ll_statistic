@@ -1,23 +1,25 @@
-<div>
+<div style="margin: 30px;">
 	<table id="enrolled-courses">
-		<tr>
-			<th>No.</th><th>Course Name</th><th>Platform</th><th>Role</th>
-		</tr>
+		<thead>
+			<tr>
+				<th>No.</th><th>Course Name</th><th>Platform</th><th>Role</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
 	</table>
 </div>
-<div id="platform-distribution" style="width: 1000px;height:400px;"></div>
+<div id="platform-distribution" style="height: 200px; margin: 0px 30px 30px 30px;"></div>
 
 <script type="text/javascript">
 	function get_courses_list(){
-		var keepid = '563a82e2-96ed-11e4-bf37-080027087aa9';
 		$.ajax({
-			url: 'http://localhost/fyp/ll_statistic/index.php/courseinfo/getUserCourseList/' + keepid,
+			url: 'http://localhost/fyp/ll_statistic/index.php/courseinfo',
 			type: 'GET',
 			dataType: 'json',
 			success: function(data){
 				if(data['ok']){
-					drawCourseInPlatform(data['data']);
 					render_enrolled_courses_table(data['data']);
+					drawCourseInPlatform(data['data']);
 				}
 			},
 			error: function(){
@@ -28,7 +30,7 @@
 
 	function render_enrolled_courses_table(data){
 		var i = 1;
-		var table = $('#enrolled-courses');
+		var table = $('#enrolled-courses tbody');
 		for(var lrs in data){
 			var num = data[lrs]['total_results'];
 			for(var $j = 0; $j < num; $j++){
@@ -36,7 +38,7 @@
 				i++;
 			}
 		}
-		table.DataTable();
+		$('#enrolled-courses').DataTable();
 	}
 
 	function drawCourseInPlatform(data){
