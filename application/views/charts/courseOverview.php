@@ -1,3 +1,4 @@
+<input type="hidden" id="role" value="<?php echo $role == 'student' ? 'student' : 'teacher'; ?>" >
 <div style="margin: 30px;">
 	<table id="enrolled-courses">
 		<thead>
@@ -11,15 +12,20 @@
 <div id="platform-distribution" style="height: 200px; margin: 0px 30px 30px 30px;"></div>
 
 <script type="text/javascript">
+	var role = $('#role').val();
+	var numOfCourseAccToRole = {};
+
 	function get_courses_list(){
 		$.ajax({
-			url: 'http://localhost/fyp/ll_statistic/index.php/courseinfo',
+			url: '../courseinfo',
 			type: 'GET',
 			dataType: 'json',
 			success: function(data){
 				if(data['ok']){
 					render_enrolled_courses_table(data['data']);
 					drawCourseInPlatform(data['data']);
+					$('#moodle-course-num').html(numOfCourseAccToRole['moodle']);
+					$('#edx-course-num').html(numOfCourseAccToRole['edx']);
 				}
 			},
 			error: function(){
@@ -33,9 +39,14 @@
 		var table = $('#enrolled-courses tbody');
 		for(var lrs in data){
 			var num = data[lrs]['total_results'];
+			numOfCourseAccToRole[lrs] = 0;
 			for(var $j = 0; $j < num; $j++){
-				table.append($('<tr><td>' + i + '</td><td>' + data[lrs]['results'][$j]['course_name'] + '</td><td>' + lrs + '</td><td>' + data[lrs]['results'][$j]['role_name'] + '</td></tr>'));
+				if(data[lrs]['results'][$j]['role_name'] != role){
+					continue;
+				}
+				table.append($('<tr><td>' + i + '</td><td><a href="courseDetail?courseId=' + data[lrs]['results'][$j]['course_id'] + '&platform=' + lrs + '">' + data[lrs]['results'][$j]['course_name'] + '</a></td><td>' + lrs + '</td><td>' + data[lrs]['results'][$j]['role_name'] + '</td></tr>'));
 				i++;
+				numOfCourseAccToRole[lrs]++;
 			}
 		}
 		$('#enrolled-courses').DataTable();
@@ -46,7 +57,7 @@
 		var xData = [];
 		for(var lrs in data){
 			yData.push(lrs);
-			xData.push(data[lrs]['total_results']);
+			xData.push(numOfCourseAccToRole[lrs]);
 		}
 
 	    var myChart = echarts.init(document.getElementById('platform-distribution'));

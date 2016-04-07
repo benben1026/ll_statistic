@@ -14,8 +14,11 @@ class CourseInfo extends CI_Controller{
 	}
 
 	protected function getUserCourseList($lrs_para){
-		//this id should be return from the login information
+		//this id should be return from the login information -- TO MODIFY
+		//demo account
 		$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
+		//teacher account
+		//$keepId = "fb9de522-167c-4444-98c3-d56742e53814";
 		$sessData = $this->checkCourseInfoSession();
 		if($sessData !== false){
 			return $sessData;

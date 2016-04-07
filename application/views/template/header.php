@@ -31,7 +31,7 @@
 	    <!-- MetisMenu CSS -->
 	    <link href="<?= base_url() ?>public/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 	    <!-- Morris Charts CSS -->
-	   <!--  <link href="<?= base_url() ?>public/bower_components/morrisjs/morris.css" rel="stylesheet"> -->
+	    <link href="<?= base_url() ?>public/bower_components/morrisjs/morris.css" rel="stylesheet">
 	    <!-- Custom Fonts -->
 	    <link href="<?= base_url() ?>public/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	    <!-- Timeline CSS -->
@@ -47,7 +47,7 @@
 	    <script src="<?= base_url() ?>public/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 	    <!-- Morris Charts JavaScript -->
 	    <script src="<?= base_url() ?>public/bower_components/raphael/raphael-min.js"></script>
-	   <!--  <script src="<?= base_url() ?>public/bower_components/morrisjs/morris.min.js"></script> -->
+	    <script src="<?= base_url() ?>public/bower_components/morrisjs/morris.min.js"></script>
 	   <!--  <script src="<?= base_url() ?>public/js/morris-data.js"></script> -->
 	    <!-- Custom Theme JavaScript -->
 	    <script src="<?= base_url() ?>public/sb-dist/js/sb-admin-2.js"></script>
@@ -92,20 +92,43 @@
                             </div>
                             <!-- /input-group -->
                         </li>
-                        <li>
+                       <!--  <li id="sidebar-teacher-view" style="display:none">
+                        	<a href="#"><i class="fa fa-dashboard fa-fw"></i>Teacher View<span class="fa arrow"></span></a>
+                            <ul id="moodle-course-list" class="nav nav-second-level">
+                            </ul>
+                        </li>
+                        <li id="sidebar-student-view" style="display:none">
+                        	<a href="#"><i class="fa fa-dashboard fa-fw"></i>Student View<span class="fa arrow"></span></a>
+                            <ul id="moodle-course-list" class="nav nav-second-level">
+                            </ul>
+                        </li> -->
+
+                        <!-- <li>
                             <a href="overview"><i class="fa fa-dashboard fa-fw"></i> Overview</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-dashboard fa-fw"></i>KEEP Moodle Courses<span class="fa arrow"></span></a>
                             <ul id="moodle-course-list" class="nav nav-second-level">
                             </ul>
-                            <!-- /.nav-second-level -->
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-dashboard fa-fw"></i>KEEP Open edX Courses<span class="fa arrow"></span></a>
                             <ul id="edx-course-list" class="nav nav-second-level">
                             </ul>
-                            <!-- /.nav-second-level -->
+                        </li> -->
+
+                        <li id="sidebar-teacher-view" style="display:none">
+                        	<a href="#"><i class="fa fa-dashboard fa-fw"></i>Teacher View<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                            	<li><a href="overviewTea">Overview</a></li>
+                            </ul>
+                        </li>
+
+                        <li id="sidebar-student-view" style="display:none">
+                            <a href="#"><i class="fa fa-dashboard fa-fw"></i>Student View<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                            	<li><a href="overviewStu">Overview</a></li>
+                            </ul>
                         </li>
                         
                     </ul>
@@ -114,5 +137,60 @@
             </div>
             <!-- /.navbar-static-side -->
         </nav>
+
+        <script type="text/javascript">        
+			function processCourseList(data){
+				var numOfTeach = 0;
+				var numOfStudy = 0;
+				var courseList = {'teach': [], 'study': []};
+				for(var lrs in data){
+					for(var i = 0; i < data[lrs]['total_results']; i++){
+						if(data[lrs]['results'][i]['role_name'] == 'student'){
+							numOfStudy ++;
+							courseList['study'].push({'course_id': data[lrs]['results'][i]['course_id'], 'course_name': data[lrs]['results'][i]['course_name'], 'platform': lrs});
+						}
+					}
+				}
+				//console.log(JSON.stringify(courseList));
+				if(numOfTeach != 0){
+					for(var i = 0; i < numOfTeach; i++){
+						$('#sidebar-teacher-view ul').append('<li><a href="courseDetail?courseId=' + courseList['teach'][i]['course_id'] + '&platform=' + courseList['teach'][i]['platform'] + '">' + courseList['teach'][i]['course_name'] + '</a></li>');
+					}
+					$('#sidebar-teacher-view').show();
+				}
+				if(numOfStudy != 0){
+					for(var i = 0; i < numOfStudy; i++){
+						$('#sidebar-student-view ul').append('<li><a href="courseDetail?courseId=' + courseList['study'][i]['course_id'] + '&platform=' + courseList['study'][i]['platform'] + '">' + courseList['study'][i]['course_name'] + ' (' + courseList['study'][i]['platform'] + ')</a></li>');
+					}
+					$('#sidebar-student-view').show();
+				}
+			}
+
+        	$.ajax({
+				url: '../courseInfo',
+				type: 'GET',
+				dataType: 'json',
+				success: function(data){
+					if(!data['ok']){
+						console.log('fail to get course infomation');
+						return;
+					}
+
+					// $('#moodle-course-num').html(data['data']['moodle']['total_results']);
+					// $('#edx-course-num').html(data['data']['edx']['total_results']);
+					// for(var i = 0; i < data['data']['moodle']['total_results']; i++){
+					// 	$('#moodle-course-list').append($('<li><a href="../courseDetail?courseId=' + data['data']['moodle']['results'][i]['course_id'] + '">' + data['data']['moodle']['results'][i]['course_name'] + '</a></li>'))
+					// }
+					// for(var i = 0; i < data['data']['edx']['total_results']; i++){
+					// 	$('#edx-course-list').append($('<li><a href="../courseDetail?courseId=' + data['data']['edx']['results'][i]['course_id'] + '">' + data['data']['edx']['results'][i]['course_name'] + '</a></li>'))
+					// }
+					processCourseList(data['data']);
+				},
+				error: function(){
+
+				}
+			});
+
+        </script>
 
 

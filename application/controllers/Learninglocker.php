@@ -14,85 +14,96 @@ class Learninglocker extends CourseInfo{
 		$this->load->model('datamodel');
 	}
 
-	public function getEngagement($keepId, $from = "2015-01-01", $to = "2020-12-31"){
-		//$from = DateTime::createFromFormat('Y-m-d', $from);
-		//$to = DateTime::createFromFormat('Y-m-d', $to);
-		$from = $from . "T00:00";
-		$to = $to . "T00:00";
+	
+
+	public function getForumViewingStu($platform = "all"){
+		$moodleCourseId = array();
+		for($i = 0; $i < $this->courseInfo['data']['moodle']['total_results']; $i++){
+			$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->courseInfo['data']['moodle']['results'][$i]['course_id']));
+			array_push($moodleCourseId, $t);
+		}
 		$match = array(
 			"\$match" => array(
-				"statement.actor.name" => array(
-					//"\$eq" => "stud01"
-					"\$eq" => $keepId
+				//uncomment the next line when production server is ready
+				//"\$or" => $moodleCourseId,
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array(
+					"\$eq" => "95"
 				),
-				"statement.verb.id" => array(
-					"\$eq" => "http://id.tincanapi.com/verb/viewed"
+
+
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array(
+					"\$eq" => "\\mod_forum\\event\\discussion_viewed"
 				),
-				"statement.timestamp" =>array(
-					"\$gte" => $from,
-					"\$lt" => $to,
+
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.rolename" => array("\$eq" => "student"
 				),
 			),
-		);
-		$sort = array(
-			"\$sort" => array(
-				"statement.timestamp" => -1,
-			)
 		);
 		$group = array(
-			"\$group"=>array(
-				"_id"=>array(
-					"date"=>array(
-						"\$substr"=>array(
-							"\$statement.timestamp", 0, 10,
-						),
-					),
+			"\$group" => array(
+				"_id" => array(
+					"forum_id" => "\$statement.object.id",
+					"forum_name" => "\$statement.object.definition.name.en"
 				),
-				"value"=>array(
-					"\$sum"=>1,
-				),
-			),
-		);
-		$project = array(
-			"\$project" => array(
-				"_id" => 0,
+				"count" => array("\$sum" => 1),
 			)
 		);
-		$limit = array(
-			"\$limit" => 5,
+		$sort = array(
+			"\$sort" => array("count" => -1)
 		);
 		$pipeline = array(
 			"moodle" => array($match, $group, $sort),
-			"edx" => array($match, $group, $sort)
-		); 
-		$output = $this->datamodel->getData($pipeline, "all");
-		
-		// foreach($this->authentication as $key => $value){
-		// 	//$temp = $this->datamodel->getData($this->domain, $value, "?pipeline=" . json_encode($pipeline) . "");
-		// 	$temp = $this->datamodel->getInternalData($this->domain, $value, "?pipeline=" . json_encode($pipeline) . "");
-		// 	//$temp = $this->datamodel->getData($pipeline);
-		// 	//$temp = json_decode($temp);
-		// 	//$temp = get_object_vars($temp);
-		// 	$temp['LRS'] = $key;
-		// 	$result = array();
-		// 	$element = array();
-		// 	foreach($temp['result'] as $k => $v){
-		// 		//$v = get_object_vars($v);
-		// 		//$v['_id'] = get_object_vars($v['_id']);
-		// 		$element = array(
-		// 			"date" => $v['_id']['date'],
-		// 			"value" => $v['value'],
-		// 		);
-		// 		array_push($result, $element);
-		// 	}
-		// 	$temp['result'] = $result;
-		// 	if($temp !== FALSE){
-		// 		array_push($output, $temp);
-		// 	}
-		// }
+		);
+		$output = $this->datamodel->getData($pipeline);
 		$this->output->set_content_type('application/json');
 		$this->output->set_output(json_encode($output));
-		
+	}
+
+	public function getForumReplyStu($platform = "all"){
+		$moodleCourseId = array();
+		for($i = 0; $i < $this->courseInfo['data']['moodle']['total_results']; $i++){
+			$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->courseInfo['data']['moodle']['results'][$i]['course_id']));
+			array_push($moodleCourseId, $t);
+		}
+		$match = array(
+			"\$match" => array(
+				//uncomment the next line when production server is ready
+				//"\$or" => $moodleCourseId,
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array(
+					"\$eq" => "95"
+				),
+
+
+				"statement.verb.id" => array(
+					"\$eq" => "http://adlnet.gov/expapi/verbs/responded",
+				),
+
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array(
+					"\$eq" => "\\mod_forum\\event\\post_created"
+				),
+
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.rolename" => array("\$eq" => "student"
+				),
+			),
+		);
+		$group = array(
+			"\$group" => array(
+				"_id" => array(
+					"forum_id" => "\$statement.object.id",
+					"forum_name" => "\$statement.object.definition.name.en"
+				),
+				"count" => array("\$sum" => 1),
+			)
+		);
+		$sort = array(
+			"\$sort" => array("count" => -1)
+		);
+		$pipeline = array(
+			"moodle" => array($match, $group, $sort),
+		);
+		$output = $this->datamodel->getData($pipeline);
+		$this->output->set_content_type('application/json');
+		$this->output->set_output(json_encode($output));
 	}
 
 	//$courseId should be an array consists of a list of course Id
@@ -141,7 +152,7 @@ class Learninglocker extends CourseInfo{
 	}
 
 	public function getFileViewingAccToTime($filename, $from = "2015-01-01", $to = "2017-01-01"){
-		$filename = str_replace("%20", " ", $filename);;
+		$filename = str_replace("%20", " ", $filename);
 		$from = $from . "T00:00";
 		$to = $to . "T00:00";
 		$match = array(
@@ -229,5 +240,255 @@ class Learninglocker extends CourseInfo{
 		$output = $this->datamodel->getData($pipeline);
 		$this->output->set_content_type('application/json');
 		$this->output->set_output(json_encode($output));
+	}
+
+	//API prepared for Course Detail Page
+	public function getAsgList(){
+		$courseId = $this->input->get('courseId');
+		$platform = $this->input->get('platform');
+		//this id should be return from the login information -- TO MODIFY
+		$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
+		// if(!$this->checkCourseAcc($courseId, $platform)){
+		// 	$output = array('ok' => false, 'message' => 'You cannot access this course');
+		// 	$this->output->set_content_type('application/json');
+		// 	$this->output->set_output(json_encode($output));
+		// 	return;
+		// }
+
+		$match = array(
+			"\$match" => array(
+				"statement.actor.name" => array("\$eq" => $keepId),
+				"statement.verb.id" => array("\$eq" => "http://adlnet.gov/expapi/verbs/completed"),
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.component" => array("\$eq" => "mod_assign"),
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $courseId),
+			),
+		);
+
+		$sort = array(
+			"\$sort" => array(
+				"statement.timestamp" => -1,
+			)
+		);
+		$group = array(
+			"\$group" => array(
+				"_id" => array(
+					"asg_name" => "\$statement.object.definition.name.en"
+				)
+			),
+		);
+
+		$pipeline = array(
+			"moodle" => array($match, $sort, $group),
+		);
+		$output = $this->datamodel->getData($pipeline);
+		$this->output->set_content_type('application/json');
+		$this->output->set_output(json_encode($output));
+	}
+
+	public function getAsgDisStu(){
+		$courseId = $this->input->get('courseId');
+		$platform = $this->input->get('platform');
+		$asg = $this->input->get('asg');
+		$asg = str_replace("%20", " ", $asg);
+		// -- TO MODIFY
+		// if(!$this->checkCourseAcc($courseId, $platform)){
+		// 	$output = array('ok' => false, 'message' => 'You cannot access this course');
+		// 	$this->output->set_content_type('application/json');
+		// 	$this->output->set_output(json_encode($output));
+		// 	return;
+		// }
+
+		$match = array(
+			"\$match" => array(
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\core\\event\\user_graded"),
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $courseId),
+				"statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/evaluated"),
+				"statement.context.contextActivities.grouping" => array(
+					"\$elemMatch" => array("definition.name.en" => array("\$eq" => $asg))
+				),
+			)
+		);
+
+		$sort = array(
+			"\$sort" => array(
+				"statement.object.name" => 1,
+				"statement.timestamp" => -1,
+				//"statement.result.score.raw" => 1,
+			)
+		);
+
+		$project = array(
+			"\$project" => array(
+				"_id" => 0,
+				"statement.result.score" => 1,
+				"statement.object.name" => 1,
+				"statement.timestamp" => 1,
+			)
+		);
+
+		$pipeline = array(
+			"moodle" => array($match, $sort, $project),
+		);
+		$output = $this->datamodel->getData($pipeline);
+
+		//find out users' score --TO MODIFY
+
+		//instructor can make multiple assessments to one assignment,
+		//so we need to delete the redundance record
+		$newData = array();
+		$lastId = 0;
+		for($i = 0; $i < count($output['data']['moodle']['result']); $i++){
+			if($lastId != $output['data']['moodle']['result'][$i]['statement']['object']['name']){
+				array_push($newData, $output['data']['moodle']['result'][$i]);
+				$lastId = $output['data']['moodle']['result'][$i]['statement']['object']['name'];
+			}
+		}
+		$output['data'] = $newData;
+		$this->output->set_content_type('application/json');
+		$this->output->set_output(json_encode($output));
+
+	}
+
+	public function getEngagement($from = "2015-01-01", $to = "2020-12-31"){
+		//this id should be return from the login information -- TO MODIFY
+		$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
+
+		$courseId = $this->input->get('courseId');
+		$platform = $this->input->get('platform');
+		$from = $from . "T00:00";
+		$to = $to . "T00:00";
+		$eventMapping = array(
+			'\\mod_resource\\event\\course_module_viewed' => 'View File',
+			'\\local_youtube_events\\event\\video_played' => 'Watch Video',
+			'\\mod_forum\\event\\discussion_created' => 'Create Post',
+			'\\mod_forum\\event\\discussion_viewed' => 'View Post',
+			'\\mod_forum\\event\\post_created' => 'Reply Post',
+			'\\mod_assign\\event\\submission_status_viewed' => 'View Assignment',
+			'\\mod_assign\\event\\assessable_submitted' => 'Submit Assignment',
+			'\\mod_quiz\\event\\attempt_started' => 'Attempt Quiz',
+		);
+
+		$match = array(
+			"\$match" => array(
+				"statement.actor.name" => array("\$eq" => $keepId),
+				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $courseId),
+				"\$or" => array(
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_resource\\event\\course_module_viewed"),
+					),//view file					
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\local_youtube_events\\event\\video_played"),
+					),//play a video
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_forum\\event\\discussion_created"),
+					),//create new post
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_forum\\event\\discussion_viewed"),
+					),//view post
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_forum\\event\\post_created"),
+					),//reply to a post
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_assign\\event\\submission_status_viewed"),
+					),//view an asg
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_assign\\event\\assessable_submitted"),
+					),//submit an asg
+					array(
+					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_quiz\\event\\attempt_started"),
+					),//attempt a quiz
+				),
+				
+				"statement.timestamp" =>array(
+					"\$gte" => $from,
+					"\$lt" => $to,
+				),
+			),
+		);
+		$sortDate = array(
+			"\$sort" => array(
+				"statement.timestamp" => -1,
+			)
+		);
+		$group = array(
+			"\$group" => array(
+				"_id" => array(
+					"eventname" => "\$statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname",
+					"date" => array("\$substr"=>array(
+							"\$statement.timestamp", 0, 10,
+						),
+					)
+				),
+				"numOfEvent" => array("\$sum" => 1),
+			)
+		);
+		$sortEvent = array(
+			"\$sort" => array(
+				"_id.eventname" => 1
+			)
+		);
+		$pipeline = array(
+			"moodle" => array($match, $group, $sortEvent),
+			"edx" => array($match, $sortDate, $group, $sortEvent)
+		); 
+		$output = $this->datamodel->getData($pipeline, "all");
+
+		$dataProcess = array();
+		$temp = $output['data']['moodle']['result'];
+		for($i = 0; $i < count($temp); $i++){
+			if(!isset($dataProcess[$temp[$i]['_id']['date']])){
+				$dataProcess[$temp[$i]['_id']['date']] = array();
+				foreach($eventMapping as $raw => $event){
+					$dataProcess[$temp[$i]['_id']['date']][$event] = 0;
+				}
+			}
+			$dataProcess[$temp[$i]['_id']['date']][$eventMapping[$temp[$i]['_id']['eventname']]] = $temp[$i]['numOfEvent'];
+		}
+
+		$newData = array();
+		foreach($dataProcess as $date => $event){
+			$t = array('date' => $date);
+			foreach($event as $name => $num){
+				$t[$name] = $num;
+			}
+			array_push($newData, $t);
+		}
+		$ykeys = array();
+		foreach($eventMapping as $raw => $event){
+			array_push($ykeys, $event);
+		}
+		//$output['dataProcess'] = $dataProcess;
+		$output['data']['data'] = $newData;
+		$output['data']['ykeys'] = $ykeys;
+
+		$this->output->set_content_type('application/json');
+		$this->output->set_output(json_encode($output));
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	private function checkCourseAcc($courseId, $platform){
+		if(isset($this->courseInfo['data'][$platform])){
+			foreach($this->courseInfo['data'][$platform]['results'] as $course){
+				if($course['course_id'] == $courseId){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

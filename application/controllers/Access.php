@@ -33,6 +33,23 @@ class Access extends Acc_Controller{
 		$this->load->view('template/footer');
 	}
 
+	public function overviewTea(){
+		$this->load->view('template/header', array('title' => 'Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
+		$this->load->view('overview-tea');
+		$this->load->view('template/footer');
+	}
+
+	public function overviewStu(){
+		$this->load->view('template/header', array('title' => 'Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
+		$this->load->view('overview-stu', array('role' => 'student'));
+		$this->load->view('template/footer');
+	}
+
+	public function courseDetail(){
+		$courseId = $this->input->get('courseId');
+		$platform = $this->input->get('platform');
+	}
+
 	public function testLogin(){
 		if($this->session->userdata('samlUserData')['login'][0] != null){
 			print 'You are login with ' . $this->session->userdata('samlUserData')['login'][0];
