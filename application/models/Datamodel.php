@@ -78,15 +78,16 @@ class DataModel extends CI_Model{
 	}
 
 	function sendRequest($key, $pipeline){
-		$proxy = "192.168.1.149:8000";
+		//$proxy = "192.168.1.149:8000";
 
 		$header = array();
 		$header[] = 'Authorization: Basic ' . $key;
 		$header[] = 'X-Experience-API-Version: 1.0.1';
 
 		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_PROXY, $proxy);
+		//curl_setopt($ch, CURLOPT_PROXY, $proxy);
 		curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
 		curl_setopt($ch, CURLOPT_URL, $this->pipeline_url . $pipeline);
 		$result = curl_exec($ch);
