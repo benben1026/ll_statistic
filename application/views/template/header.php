@@ -148,13 +148,16 @@
 						if(data[lrs]['results'][i]['role_name'] == 'student'){
 							numOfStudy ++;
 							courseList['study'].push({'course_id': data[lrs]['results'][i]['course_id'], 'course_name': data[lrs]['results'][i]['course_name'], 'platform': lrs});
+						}else{
+							numOfTeach ++;
+							courseList['teach'].push({'course_id': data[lrs]['results'][i]['course_id'], 'course_name': data[lrs]['results'][i]['course_name'], 'platform': lrs});
 						}
 					}
 				}
 				//console.log(JSON.stringify(courseList));
 				if(numOfTeach != 0){
 					for(var i = 0; i < numOfTeach; i++){
-						$('#sidebar-teacher-view ul').append('<li><a href="courseDetail?courseId=' + courseList['teach'][i]['course_id'] + '&platform=' + courseList['teach'][i]['platform'] + '">' + courseList['teach'][i]['course_name'] + '</a></li>');
+						$('#sidebar-teacher-view ul').append('<li><a href="courseDetail?courseId=' + courseList['teach'][i]['course_id'] + '&platform=' + courseList['teach'][i]['platform'] + '">' + courseList['teach'][i]['course_name'] + ' (' + courseList['study'][i]['platform'] + ')</a></li>');
 					}
 					$('#sidebar-teacher-view').show();
 				}
@@ -167,7 +170,7 @@
 			}
 
         	$.ajax({
-				url: '../courseInfo',
+				url: '../courseInfo/',
 				type: 'GET',
 				dataType: 'json',
 				success: function(data){

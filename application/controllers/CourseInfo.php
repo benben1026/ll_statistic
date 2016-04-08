@@ -14,11 +14,39 @@ class CourseInfo extends CI_Controller{
 	}
 
 	protected function getUserCourseList($lrs_para){
+		// return array(
+		// 	"ok" => true,
+		// 	"message" => "",
+		// 	"moodle" => array(
+		// 		"error" => array("code" => "404", "message" => "Not Found"),
+		// 	),
+		// 	"edx" => array(
+		// 		"total_results" => "2",
+		// 		"results" => array(
+		// 			array(
+		// 				"course_id" => "course-v1:cuhk+csci2100a+2015_2",
+		// 				"course_name" => "Data Structures",
+		// 				"role_name" => "instructor"
+		// 			),
+		// 			array(
+		// 				"course_id" => "course-v1:keep+guide03+2015_1",
+		// 				"course_name" => "KEEP Open edX Course Management",
+		// 				"role_name" => "student"
+		// 			)
+		// 		),
+		// 	),
+		// );
+		
 		//this id should be return from the login information -- TO MODIFY
 		//demo account
-		$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
+		//$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
 		//teacher account
 		//$keepId = "fb9de522-167c-4444-98c3-d56742e53814";
+		
+		//production account (instructor of data structure on edx)
+		$keepId = "e9fed8e0-cfcc-11e4-8b2a-080027087aa9";
+
+
 		$sessData = $this->checkCourseInfoSession();
 		if($sessData !== false){
 			return $sessData;

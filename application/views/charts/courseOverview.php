@@ -1,31 +1,87 @@
-<input type="hidden" id="role" value="<?php echo $role == 'student' ? 'student' : 'teacher'; ?>" >
-<div style="margin: 30px;">
-	<table id="enrolled-courses">
-		<thead>
-			<tr>
-				<th>No.</th><th>Course Name</th><th>Platform</th><th>Role</th>
-			</tr>
-		</thead>
-		<tbody></tbody>
-	</table>
+<div class="row">
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-tasks fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div id="moodle-course-num" class="huge">0</div>
+                        <div>KEEP Moodle Course</div>
+                    </div>
+                </div>
+            </div>
+            <a href="#enrolled-courses">
+                <div class="panel-footer">
+                    <span class="pull-left">View Details</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+	</div>
+	<div class="col-lg-3 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-tasks fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div id="edx-course-num" class="huge">0</div>
+                        <div>KEEP edX Course</div>
+                    </div>
+                </div>
+            </div>
+            <a href="#enrolled-courses">
+                <div class="panel-footer">
+                    <span class="pull-left">View Details</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+	</div>
 </div>
-<div id="platform-distribution" style="height: 200px; margin: 0px 30px 30px 30px;"></div>
 
+<input type="hidden" id="role" value="<?php echo $role == 'student' ? 'student' : 'teacher'; ?>" >
+<div class="row">
+	<div class="col-lg-10">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Enrolled Courses List
+            </div>
+			<div style="margin: 30px;">
+				<table id="enrolled-courses">
+					<thead>
+						<tr>
+							<th>No.</th><th>Course Name</th><th>Platform</th><th>Role</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<div id="platform-distribution" style="height: 200px; margin: 0px 30px 30px 30px;"></div>
+
+		</div>
+	</div>
+</div>
 <script type="text/javascript">
 	var role = $('#role').val();
 	var numOfCourseAccToRole = {};
 
 	function get_courses_list(){
 		$.ajax({
-			url: '../courseinfo',
+			url: '../courseInfo/',
 			type: 'GET',
 			dataType: 'json',
 			success: function(data){
 				if(data['ok']){
 					render_enrolled_courses_table(data['data']);
-					drawCourseInPlatform(data['data']);
 					$('#moodle-course-num').html(numOfCourseAccToRole['moodle']);
 					$('#edx-course-num').html(numOfCourseAccToRole['edx']);
+					drawCourseInPlatform(data['data']);
 				}
 			},
 			error: function(){
@@ -41,8 +97,14 @@
 			var num = data[lrs]['total_results'];
 			numOfCourseAccToRole[lrs] = 0;
 			for(var $j = 0; $j < num; $j++){
-				if(data[lrs]['results'][$j]['role_name'] != role){
-					continue;
+				if(role == 'student'){
+					if(data[lrs]['results'][$j]['role_name'] != role){
+						continue;
+					}
+				}else{
+					if(data[lrs]['results'][$j]['role_name'] == 'student'){
+						continue;
+					}
 				}
 				table.append($('<tr><td>' + i + '</td><td><a href="courseDetail?courseId=' + data[lrs]['results'][$j]['course_id'] + '&platform=' + lrs + '">' + data[lrs]['results'][$j]['course_name'] + '</a></td><td>' + lrs + '</td><td>' + data[lrs]['results'][$j]['role_name'] + '</td></tr>'));
 				i++;

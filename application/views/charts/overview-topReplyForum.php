@@ -1,12 +1,21 @@
-<div style="margin: 30px;">
-	<table id="overview-topReplyForum">
-		<thead>
-			<tr>
-				<th>No.</th><th>Thread Name</th><th>Platform</th><th>Num of Reply</th>
-			</tr>
-		</thead>
-		<tbody></tbody>
-	</table>
+<div class="row">
+	<div class="col-lg-10">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Top Replying Forum
+            </div>
+			<div style="margin: 30px;">
+				<table id="overview-topReplyForum">
+					<thead>
+						<tr>
+							<th>No.</th><th>Thread Name</th><th>Platform</th><th>Num of Reply</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script type="text/javascript">

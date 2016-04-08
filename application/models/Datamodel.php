@@ -1,10 +1,10 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class DataModel extends CI_Model{
-	private $pipeline_url = "http://10.11.2.7/api/v1/statements/aggregate?pipeline=";
+	private $pipeline_url = "http://lrs.keep.edu.hk/public/api/v1/statements/aggregate?pipeline=";
 	private $auth = array(
-		"moodle" => "MGU3NmEyZGQxZjc4NmI5NzEzMjVkMmQ4YWUzY2FmMTI1NjczZDgyNTpjMTUxZDg2NWNlNGY1NjFiNWIyZDFlNTI5MmM3OTgyZDhiMDc3ZGVj",
-		"edx" => "ZmNlOWY0MWMwMWJmOTllOTg4YjFkNGZlYzhiZjlkNjYyZmFjODIzOTo1MzU5NzUxNzdlNTlhYWEzZmQ0MGIyNWFmMzI0YWZhNjAxMzdiNzcy",
+		"moodle" => "ZGVmYTRiMjM5ODFhY2Q5YmRkNGU0OGM4N2I3NGU1NDhmYmNiNjEwYzplMzAwOWJkM2RiNTZiMTNmMjg5ZGQ2YTM2M2Y4MWQ3OGY4OTdkMzVm",
+		"edx" => "Y2M5ZTQ0YmUwMmE2NTg4MTRmNDJlMmZmNDI1ODBkYjE3ZGVmMjMyMDo3ZGQyMzk5MjhmNmZkMzIyNjFjODgzODM1MmI0YjA4ZDQ5NzQ1Mjk3",
 	);
 	private $output = array(
 		"ok" => false,

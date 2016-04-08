@@ -12,7 +12,7 @@ class Page extends CourseInfo{
 
 	public function overviewTea(){
 		$this->load->view('template/header', array('title' => 'Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-		$this->load->view('tea_overview', array('role' => 'student'));
+		$this->load->view('tea_overview', array('role' => 'teacher'));
 		$this->load->view('template/footer');
 	}
 

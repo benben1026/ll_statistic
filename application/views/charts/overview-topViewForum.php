@@ -1,12 +1,21 @@
-<div style="margin: 30px;">
-	<table id="overview-topViewForum">
-		<thead>
-			<tr>
-				<th>No.</th><th>Thread Name</th><th>Platform</th><th>Num of Views</th>
-			</tr>
-		</thead>
-		<tbody></tbody>
-	</table>
+<div class="row">
+	<div class="col-lg-10">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Top Viewing Forum
+            </div>
+			<div style="margin: 30px;">
+				<table id="overview-topViewForum">
+					<thead>
+						<tr>
+							<th>No.</th><th>Thread Name</th><th>Platform</th><th>Num of Views</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script type="text/javascript">
