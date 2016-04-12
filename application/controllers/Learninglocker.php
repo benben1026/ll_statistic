@@ -324,13 +324,14 @@ class Learninglocker extends CourseInfo {
 		$courseId = $this->input->get('courseId');
 		$platform = $this->input->get('platform');
 		//this id should be return from the login information -- TO MODIFY
-		$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
-		// if(!$this->checkCourseAcc($courseId, $platform)){
-		// 	$output = array('ok' => false, 'message' => 'You cannot access this course');
-		// 	$this->output->set_content_type('application/json');
-		// 	$this->output->set_output(json_encode($output));
-		// 	return;
-		// }
+		//$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
+		$keepId = $this->session->userdata('samlUserData')['keepid'][0];
+		if($keepId == null || !$this->checkCourseAcc($courseId, $platform)){
+			$output = array('ok' => false, 'message' => 'You cannot access this course');
+			$this->output->set_content_type('application/json');
+			$this->output->set_output(json_encode($output));
+			return;
+		}
 
 		$match = array(
 			"\$match" => array(
@@ -427,9 +428,7 @@ class Learninglocker extends CourseInfo {
 	}
 
 	public function getEngagement($from = "2015-01-01", $to = "2020-12-31"){
-		//this id should be return from the login information -- TO MODIFY
-		//$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
-		$keepId = "fb4d945c-1964-4055-a833-8d843eea3c76";
+		$keepId = $this->session->userdata('samlUserData')['keepid'][0];
 
 		$courseId = str_replace(" ", "+", $this->input->get('courseId'));
 		$platform = $this->input->get('platform');

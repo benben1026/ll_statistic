@@ -11,39 +11,47 @@ class Page extends CourseInfo{
 	}
 
 	public function overviewTea(){
+		if($this->session->userdata('samlUserData')['login'][0] == null){
+			redirect('/Saml2Controller/fake_landing');
+			return;
+		}
 		$this->load->view('template/header', array('title' => 'Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 		$this->load->view('tea_overview', array('role' => 'teacher'));
 		$this->load->view('template/footer');
 	}
 
 	public function overviewStu(){
+		if($this->session->userdata('samlUserData')['login'][0] == null){
+			redirect('/Saml2Controller/fake_landing');
+			return;
+		}
 		$this->load->view('template/header', array('title' => 'Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 		$this->load->view('stu_overview', array('role' => 'student'));
 		$this->load->view('template/footer');
 	}
 
 	public function courseDetail(){
-		$courseId = $this->input->get('courseId');
+		$courseId = str_replace(" ", "+", $this->input->get('courseId'));
 		$platform = $this->input->get('platform');
 		//temporarily disable course accessable check --TO MODIFY
-		// if(isset($this->courseInfo['data'][$platform])){
-		// 	foreach($this->courseInfo['data'][$platform]['results'] as $course){
-		// 		if($course['course_id'] == $courseId){
-		// 			$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-		// 			if($course['role_name'] == 'student'){
-		// 				$this->load->view('stu_course_detail', array('course_name' => $course['course_name'], ));
-		// 			}else{
-		// 				$this->load->view('tea_course_detail');
-		// 			}
-		// 			$this->load->view('template/footer');
-		// 			return;
-		// 		}
-		// 	}
-		// }
-		//echo 'You Do Not Have the Access To This Course';
-		$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-		$this->load->view('stu_course_detail', array('course_name' => 'NEWCOURSE3', ));
-		$this->load->view('template/footer');
+		if(isset($this->courseInfo['data'][$platform])){
+			foreach($this->courseInfo['data'][$platform]['results'] as $course){
+				if($course['course_id'] == $courseId){
+					$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
+					if($course['role_name'] == 'student'){
+						$this->load->view('stu_course_detail', array('course_name' => $course['course_name'], ));
+					}else{
+						$this->load->view('tea_course_detail');
+					}
+					$this->load->view('template/footer');
+					return;
+				}
+			}
+		}
+		echo 'You Do Not Have the Access To This Course';
+		// $this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
+		// $this->load->view('stu_course_detail', array('course_name' => 'NEWCOURSE3', ));
+		// $this->load->view('template/footer');
 		return;
 	}
 }

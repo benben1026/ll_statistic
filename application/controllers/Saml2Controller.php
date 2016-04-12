@@ -12,6 +12,39 @@ class Saml2Controller extends Saml_Controller {
 		print site_url();
 	}
 
+	//-----------------------------------TEST-----------------------------------
+	public function fake_landing(){
+		echo "click to login";
+		echo "<a href=\"/index.php/Saml2Controller/fake_login\"><button>Login</button></a>";
+	}
+	public function fake_login(){
+		$login_data = array(
+			"id" => array("999"),
+			"login" => array("zhouwei1026@163.com"),
+			//change keepid here
+			"keepid" => array("fb4d945c-1964-4055-a833-8d843eea3c76"),
+
+			"enckeepid" => array(""),
+			"fullname" => array("Benjamin Zhou"),
+			"firstname" => array("Benjamin"),
+			"lastname" => array("Zhou"),
+			"password" => array(""),
+			"activated" => array("1"),
+			"policyagreed" => array("0"),
+			"deleted" => array("0"),
+			"facebook" => array(""),
+			"twitter" => array(""),
+			"google" => array(""),
+		);
+		$data = array(
+    		'samlUserData' => $login_data
+    	);
+    	$this->session->set_userdata($data);
+    	redirect('/page/overviewStu');
+	}
+
+	//---------------------------------END TEST----------------------------------
+
 	//Route: http://benjamin-zhou.com/ll_statistic/index.php/saml2Controller/login
 	//       http://benjamin-zhou.com/ll_statistic/index.php/saml2Controller/login?returnTo=url-for-redirection
 	//This function will be invoked when user wants to perform login at your site

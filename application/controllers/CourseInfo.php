@@ -38,7 +38,11 @@ class CourseInfo extends CI_Controller{
 		//$keepId = "990600a6-fc56-48d0-b7d0-f72d73390a26";
 
 		//$keepId = "990600a6-fc56-48d0-b7d0-f72d73390a26";
-		$keepId = "59f8bbbf-9f17-48bd-92e0-9a44cca76f5f";
+		//$keepId = "59f8bbbf-9f17-48bd-92e0-9a44cca76f5f";
+		$keepId = $this->session->userdata('samlUserData')['keepid'][0];
+		if($keepId == null){
+			return;
+		}
 		$sessData = $this->checkCourseInfoSession();
 		if($sessData !== false){
 			return $sessData;

@@ -23,14 +23,15 @@ class Access extends Acc_Controller{
 	}
 
 	public function overview(){
-		$data['title'] = "Overview";
-		$data['firstname'] = $this->session->userdata('samlUserData')['firstname'][0];
-		$this->load->view('template/header', $data);
-		$this->load->view('overview');
-		//$this->load->view('overview');
-		// $this->load->view('charts/engagement');
-		// $this->load->view('charts/courseOverview');
-		$this->load->view('template/footer');
+echo json_encode($this->session->userdata('samlUserData'));
+		// $data['title'] = "Overview";
+		// $data['firstname'] = $this->session->userdata('samlUserData')['firstname'][0];
+		// $this->load->view('template/header', $data);
+		// $this->load->view('overview');
+		// //$this->load->view('overview');
+		// // $this->load->view('charts/engagement');
+		// // $this->load->view('charts/courseOverview');
+		// $this->load->view('template/footer');
 	}
 
 	public function overviewTea(){
