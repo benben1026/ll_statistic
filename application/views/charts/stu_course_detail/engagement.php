@@ -3,31 +3,116 @@
 		<div class="panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i> Engagement
+                
+                	<form id="dateForm" class="form-inline" style="float: right;">
+	                	<div class="form-group">
+							<label for="datepicker_from">From</label>
+							<input type="text" class="form-control" id="datepicker_from" value="2015/09/01" >
+						</div>
+						<div class="form-group">
+							<label for="datepicker_to">To</label>
+							<input type="text" class="form-control" id="datepicker_to" value="2015/10/31" >
+						</div>
+						<button type="submit" class="btn btn-default">Update</button>
+                	</form>
+                
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <div id="engagement" style="height: 300px;"></div>
+            	<img id="engagement_loading" src="<?= base_url() ?>public/resource/loading.gif" style="width: 100px;">
+                <div id="engagement" class="engagement_content" style="height: 300px; width:75%; float: left; display: none"></div>
+                <div id="engagement_legend" class="engagement_content" style="width:20%; float: left; margin-left: 5%; margin-top: 20px; display: none"></div>
             </div>
             <!-- /.panel-body -->
         </div>
 	</div>
 </div>
 <script type="text/javascript">
-	var courseId = '95';
-	$.ajax({
-		url: '../learninglocker/getEngagement?courseId=' + courseId,
-		type: 'get',
-		dataType: 'json',
-		success: function(data){
-			if(!data['ok']){
-				console.log('fail to get engagement');
-				return;
+	$( "#datepicker_from" ).datepicker({
+    	dateFormat: "yy-mm-dd",
+    	defaultDate: +1
+    });
+    $( "#datepicker_to" ).datepicker({
+    	dateFormat: "yy-mm-dd",
+    	defaultDate: new Date()
+    });
+    $( "#datepicker_from" ).datepicker("setDate", -60);
+    $( "#datepicker_to" ).datepicker("setDate", new Date());
+
+    $('#dateForm').submit(function(e){
+    	e.preventDefault();
+    	sendAjax();
+    })
+    function startLoading(){
+    	$('#engagement_loading').show();
+    	$('.engagement_content').hide();
+    }
+    function endLoading(){
+    	$('#engagement_loading').hide();
+    	$('.engagement_content').show();
+    }
+	var raw_data;
+	function sendAjax(){
+		startLoading();
+		$.ajax({
+			url: '../learninglocker/getEngagement/' + $('#datepicker_from').val() + '/' + $('#datepicker_to').val() + '?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+			type: 'get',
+			dataType: 'json',
+			success: function(data){
+				endLoading();
+				if(!data['ok']){
+					console.log('fail to get engagement');
+					return;
+				}
+				raw_data = data['data'];
+				draw_legend(data['data']['ykeys']);
+				//draw_engagement(data['data']);
 			}
-			draw_engagement(data['data']);
+		});
+	}
+	sendAjax();
+
+	function draw_legend(ykeys){
+		$('#engagement_legend').html('');
+		for(var i = 0; i < ykeys.length; i++){
+			$('#engagement_legend').append('<input type="checkbox" class="engagement_legendlist" value="' + ykeys[i] + '" checked />' + ykeys[i] + '<br/>');
 		}
-	});
+		legend_update();
+		$('.engagement_legendlist').click(legend_update);
+	}
+
+	function legend_update(){
+		var tempData = {'ykeys': [], 'data': []};
+		for(var i = 0; i < raw_data['ykeys'].length; i++){
+			if($('.engagement_legendlist:eq(' + i + ')').is(':checked')){
+				tempData['ykeys'].push(raw_data['ykeys'][i]);
+			}
+		}
+		// $('.engagement_legendlist').each(function(index){
+		// 	if($(this).is(":checked")){
+		// 		tempData['ykeys'].push(raw_data['ykeys'][index]);
+		// 	}
+		// });
+		for(var i = 0; i < raw_data['data'].length; i++){
+			var j = 0;
+			var tempNode = {};
+			for(var t in raw_data['data'][i]){
+				if(t == 'date'){
+					tempNode['date'] = raw_data['data'][i]['date'];
+					continue;
+				}
+				if($('.engagement_legendlist:eq(' + j + ')').is(':checked')){
+					tempNode[t] = raw_data['data'][i][t];
+				}
+				j++;
+			}
+			tempData['data'].push(tempNode);
+		}
+		draw_engagement(tempData);
+	}
 
 	function draw_engagement(data){
+		$('#engagement').html('');
 		new Morris.Line({
 		  // ID of the element in which to draw the chart.
 		  element: 'engagement',

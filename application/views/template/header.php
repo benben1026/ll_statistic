@@ -53,6 +53,13 @@
 	    <script src="<?= base_url() ?>public/sb-dist/js/sb-admin-2.js"></script>
 	    <!-- End Load SB Dashboard -->
 
+
+	    <!-- jQuery UI -->
+	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.min.css">
+	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.theme.min.css">
+	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.structure.min.css">
+	    <script type="text/javascript" src="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+
 	</head>
 	<body style="background-color: #ccc; min-height:100%">
 		<input type="hidden" id="firstname" value="<?php echo isset($firstname) ? $firstname : ""; ?>" />

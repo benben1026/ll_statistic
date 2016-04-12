@@ -7,36 +7,24 @@ class CourseInfo extends CI_Controller{
 		$this->load->model('courseinfomodel');
 	}
 
+	public function test(){
+		$url_list = array(
+			'moodle' => '/',
+			'edx' => '/',
+		);
+		$result = $this->courseinfomodel->getData($url_list);
+		$this->output->set_content_type('application/json');
+		$this->output->set_output(json_encode($result));
+	}
+
 	public function index($lrs_para = "all"){
 		$result = $this->getUserCourseList($lrs_para);
 		$this->output->set_content_type('application/json');
 		$this->output->set_output(json_encode($result));
 	}
 
-	protected function getUserCourseList($lrs_para){
-		// return array(
-		// 	"ok" => true,
-		// 	"message" => "",
-		// 	"moodle" => array(
-		// 		"error" => array("code" => "404", "message" => "Not Found"),
-		// 	),
-		// 	"edx" => array(
-		// 		"total_results" => "2",
-		// 		"results" => array(
-		// 			array(
-		// 				"course_id" => "course-v1:cuhk+csci2100a+2015_2",
-		// 				"course_name" => "Data Structures",
-		// 				"role_name" => "instructor"
-		// 			),
-		// 			array(
-		// 				"course_id" => "course-v1:keep+guide03+2015_1",
-		// 				"course_name" => "KEEP Open edX Course Management",
-		// 				"role_name" => "student"
-		// 			)
-		// 		),
-		// 	),
-		// );
-		
+	protected function getUserCourseList($lrs_para){		
+//KEEP ID 
 		//this id should be return from the login information -- TO MODIFY
 		//demo account
 		//$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
@@ -44,9 +32,13 @@ class CourseInfo extends CI_Controller{
 		//$keepId = "fb9de522-167c-4444-98c3-d56742e53814";
 		
 		//production account (instructor of data structure on edx)
-		$keepId = "e9fed8e0-cfcc-11e4-8b2a-080027087aa9";
+		//$keepId = "e9fed8e0-cfcc-11e4-8b2a-080027087aa9";
 
+		//production account (student on moodle)
+		//$keepId = "990600a6-fc56-48d0-b7d0-f72d73390a26";
 
+		//$keepId = "990600a6-fc56-48d0-b7d0-f72d73390a26";
+		$keepId = "59f8bbbf-9f17-48bd-92e0-9a44cca76f5f";
 		$sessData = $this->checkCourseInfoSession();
 		if($sessData !== false){
 			return $sessData;

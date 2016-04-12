@@ -29,8 +29,18 @@
 					console.log('fail to get course information');
 					return;
 				}
-				for(var i = 0; i < data['data']['moodle']['result'].length; i++){
-					$('#overview-topReplyForum tbody').append('<tr><td>' + (i+1) + '</td><td><a target="_blank" href="' + data['data']['moodle']['result'][i]['_id']['forum_id'] + '">' + data['data']['moodle']['result'][i]['_id']['forum_name'] + '</a></td><td>KEEP Moodle</td><td>' + data['data']['moodle']['result'][i]['count'] + '</td></tr>')
+				var lrs;
+				if(data['data']['edx']['ok']){
+					lrs = 'edx';
+				}else if(data['data']['moodle']['ok']){
+					lrs = 'moodle';
+				}else{
+					$('#overview-topReplyForum tbody').append('<tr><td></td><td></td><td></td><td></td></tr>');
+					$('#overview-topReplyForum').dataTable();
+					return;
+				}
+				for(var i = 0; i < data['data'][lrs]['result'].length; i++){
+					$('#overview-topReplyForum tbody').append('<tr><td>' + (i+1) + '</td><td><a target="_blank" href="' + data['data'][lrs]['result'][i]['_id']['forum_id'] + '">' + data['data'][lrs]['result'][i]['_id']['forum_name'] + '</a></td><td>' + lrs + '</td><td>' + data['data'][lrs]['result'][i]['count'] + '</td></tr>')
 				}
 				$('#overview-topReplyForum').dataTable();
 			},
