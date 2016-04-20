@@ -53,7 +53,6 @@
 	    <script src="<?= base_url() ?>public/sb-dist/js/sb-admin-2.js"></script>
 	    <!-- End Load SB Dashboard -->
 
-
 	    <!-- jQuery UI -->
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.min.css">
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.theme.min.css">
@@ -61,7 +60,7 @@
 	    <script type="text/javascript" src="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 
 	</head>
-	<body style="background-color: #ccc; min-height:100%">
+	<body style="background-color: #ffffff; min-height:100%">
 		<input type="hidden" id="firstname" value="<?php echo isset($firstname) ? $firstname : ""; ?>" />
 
 
@@ -164,7 +163,7 @@
 				//console.log(JSON.stringify(courseList));
 				if(numOfTeach != 0){
 					for(var i = 0; i < numOfTeach; i++){
-						$('#sidebar-teacher-view ul').append('<li><a href="courseDetail?courseId=' + courseList['teach'][i]['course_id'] + '&platform=' + courseList['teach'][i]['platform'] + '">' + courseList['teach'][i]['course_name'] + ' (' + courseList['study'][i]['platform'] + ')</a></li>');
+						$('#sidebar-teacher-view ul').append('<li><a href="courseDetail?courseId=' + courseList['teach'][i]['course_id'] + '&platform=' + courseList['teach'][i]['platform'] + '">' + courseList['teach'][i]['course_name'] + ' (' + courseList['teach'][i]['platform'] + ')</a></li>');
 					}
 					$('#sidebar-teacher-view').show();
 				}

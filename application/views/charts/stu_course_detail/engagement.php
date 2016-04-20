@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col-lg-12">
-		<div class="panel panel-default">
-            <div class="panel-heading">
+		<div class="panel panel-green">
+            <div class="panel-heading" style="height: 50px;">
                 <i class="fa fa-bar-chart-o fa-fw"></i> Engagement
                 
                 	<form id="dateForm" class="form-inline" style="float: right;">
@@ -18,8 +18,8 @@
                 
             </div>
             <!-- /.panel-heading -->
-            <div class="panel-body">
-            	<img id="engagement_loading" src="<?= base_url() ?>public/resource/loading.gif" style="width: 100px;">
+            <div class="panel-body" style="height: 320px;">
+            	<img id="engagement_loading" src="<?= base_url() ?>public/resource/loadbar.gif" style="width: 50%; height: 10%; margin-left: 25%; margin-top: 10%">
                 <div id="engagement" class="engagement_content" style="height: 300px; width:75%; float: left; display: none"></div>
                 <div id="engagement_legend" class="engagement_content" style="width:20%; float: left; margin-left: 5%; margin-top: 20px; display: none"></div>
             </div>

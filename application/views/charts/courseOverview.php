@@ -7,7 +7,7 @@
                         <i class="fa fa-tasks fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                        <div id="moodle-course-num" class="huge">0</div>
+                        <div id="moodle-course-num" class="huge"><img class="course-overview-loading" src="<?= base_url() ?>public/resource/loading3.gif" style="width:50px;"></div>
                         <div>KEEP Moodle Course</div>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
                         <i class="fa fa-tasks fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                        <div id="edx-course-num" class="huge">0</div>
+                        <div id="edx-course-num" class="huge"><img class="course-overview-loading" src="<?= base_url() ?>public/resource/loading3.gif" style="width:50px;"></div>
                         <div>KEEP edX Course</div>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
 <input type="hidden" id="role" value="<?php echo $role == 'student' ? 'student' : 'teacher'; ?>" >
 <div class="row">
 	<div class="col-lg-10">
-		<div class="panel panel-default">
+		<div class="panel panel-green">
 			<div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i> Enrolled Courses List
             </div>
@@ -62,8 +62,8 @@
 					<tbody></tbody>
 				</table>
 			</div>
-			<div id="platform-distribution" style="height: 200px; margin: 0px 30px 30px 30px;"></div>
-
+			<div id="platform-distribution" style="height: 200px; margin: 0px 30px 30px 30px; display:none;"></div>
+			<img id="platform-distribution-loading" src="<?= base_url() ?>public/resource/loadbar.gif" style="width: 50%; height: 15%; margin-left: 25%;">
 		</div>
 	</div>
 </div>
@@ -81,7 +81,10 @@
 					render_enrolled_courses_table(data['data']);
 					$('#moodle-course-num').html(numOfCourseAccToRole['moodle']);
 					$('#edx-course-num').html(numOfCourseAccToRole['edx']);
+					$('#platform-distribution').show();
 					drawCourseInPlatform(data['data']);
+					$('.course-overview-loading').parent().html('0');
+					$('#platform-distribution-loading').hide();
 				}
 			},
 			error: function(){
@@ -127,6 +130,7 @@
 	    var d = new Date();
 	    var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	    option = {
+	    	color: ['#3eaddb', '#e54273', '#948d8b', '#f69b00'],
 	        title: {
 	            text: 'Courses in Platforms',
 	            subtext: 'By ' + month[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + ', ' + d.getHours() + ':' + d.getMinutes()

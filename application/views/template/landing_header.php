@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -42,26 +41,15 @@
 	    <script src="<?= base_url() ?>public/sb-dist/js/sb-admin-2.js"></script>
 	</head>
 	<body style="background-color: #ccc; min-height:100%">
-
+		<div id="wrapper">
 		<!-- Navigation -->
-        <nav id="keepmenu"></nav>
-        <script type="text/javascript">
-			$(document).ready(function(){
-		    	//The samlUserData come from the IDP’s attributes
-		    	var loginURL = "/index.php/saml2Controller/login";
-		    	var logoutURL = "/index.php/saml2Controller/logout";
-		   	 	keepmenu('KEEP', null, '', loginURL, logoutURL);
-			});
-		</script>
-
-		<div>
-			<h3 style="position: absolute; font-size: 50px; color: #3eaddb; margin-top: 25px; margin-left: 10%">Welcome to KEEPER</h3>
-			<img src="<?= base_url() ?>public/resource/bg.jpg" style="width: 100%">
-		</div>
-
-		<div id="keepfooter" style="position:absolute; bottom:0"></div>
-	    <script>
-	        keepfooter("#666");
-	    </script>
-	</body>
-</html>
+	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+	        	<nav id="keepmenu"></nav>
+	        <script type="text/javascript">
+				$(document).ready(function(){
+			    	//The samlUserData come from the IDP’s attributes
+			    	var loginURL = "/index.php/saml2Controller/login";
+			    	var logoutURL = "/index.php/saml2Controller/logout";
+			   	 	keepmenu('KEEP', null, '', loginURL, logoutURL);
+				});
+			</script>

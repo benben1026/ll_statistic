@@ -4,7 +4,7 @@
 $sp_host = 'https://stat.benjamin-zhou.com/index.php';
 
 //KEEP's identity provider location
-$idp_host = 'https://testaccount.keep.edu.hk/idp';
+$idp_host = 'https://account.keep.edu.hk/idp';
 
 $config['saml'] = array(
 	/*****

@@ -10,15 +10,9 @@
 
 <?php
 	include_once "charts/courseOverview.php";
-?>
 
-	
-<?php
 	include_once "charts/overview-topViewForum.php";
-?>
 
-
-<?php
 	include_once "charts/overview-topReplyForum.php";
 ?>
 

@@ -15,15 +15,29 @@ class Saml2Controller extends Saml_Controller {
 	//-----------------------------------TEST-----------------------------------
 	public function fake_landing(){
 		echo "click to login";
-		echo "<a href=\"/index.php/Saml2Controller/fake_login\"><button>Login</button></a>";
+		echo "<a href=\"/index.php/Saml2Controller/fake_login\"><button>Fake Login</button></a>";
 	}
-	public function fake_login(){
+	
+	public function fake_login($role){
 		$login_data = array(
 			"id" => array("999"),
 			"login" => array("zhouwei1026@163.com"),
 			//change keepid here
+			//csci2100 student
 			"keepid" => array("fb4d945c-1964-4055-a833-8d843eea3c76"),
 
+			//city u student
+			//"keepid" => array("ffd66e3a-0e8d-4edf-9f40-40e023f82673"),
+
+			//instructor
+			//"keepid" => array("8417532a-d290-44d8-9592-9c77b18cfb85"),
+
+			//prof King
+			//"keepid" => array("ff42109d-5c1b-11e5-93e8-5254004c24f3"),
+
+			//Moodle Student
+			//"keepid" => array("10ff02cb-628d-4f6f-b282-106c5bfef0ea"),
+			
 			"enckeepid" => array(""),
 			"fullname" => array("Benjamin Zhou"),
 			"firstname" => array("Benjamin"),
@@ -40,7 +54,7 @@ class Saml2Controller extends Saml_Controller {
     		'samlUserData' => $login_data
     	);
     	$this->session->set_userdata($data);
-    	redirect('/page/overviewStu');
+    	redirect('/page/overview');
 	}
 
 	//---------------------------------END TEST----------------------------------
@@ -50,7 +64,7 @@ class Saml2Controller extends Saml_Controller {
 	//This function will be invoked when user wants to perform login at your site
 	public function login(){
 		$returnTo = $this->input->get('returnTo');
-		$re = !$returnTo ? site_url() . "/access/overview" : $returnTo;
+		$re = !$returnTo ? site_url() . "/page/overview" : $returnTo;
 
 		//SSO starts here
 
@@ -105,7 +119,7 @@ class Saml2Controller extends Saml_Controller {
     	if($RelayState){
     		redirect($RelayState);
     	}else{
-    		redirect('/access/overview');
+    		redirect('/page/overview');
     	}
 	}
 
@@ -120,7 +134,7 @@ class Saml2Controller extends Saml_Controller {
 
 		//------------------------------------------
 		//redirect to landing page
-		redirect('/access');
+		redirect('/page/landing');
 	}
 
 	//Route: http://benjamin-zhou.com/ll_statistic/index.php/saml2Controller/metadata
