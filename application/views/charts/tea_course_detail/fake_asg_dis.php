@@ -53,11 +53,6 @@
                 name: 'Number of Students',
                 type: 'bar',
                 data: [0, 0, 0, 0, 0, 1, 3, 5, 3, 7, 15, 20, 20, 22, 24, 20, 36, 20, 10, 5],
-                markPoint: {
-                    data: [
-                        {name: 'Your Grade', value: 57, xAxis: 13, yAxis: 25}
-                    ],
-                },
                 markLine: {
                     data: [
                         [

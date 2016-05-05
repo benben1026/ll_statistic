@@ -28,7 +28,7 @@
 		var datatableStudentVitality = $('#courseStudentVitality').DataTable({
 			"order": [[ 8, "desc" ]],
 		});
-		datatableStudentVitality.ajax.url('../learninglocker/getStudentCourseVitality?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=view').load();
+		datatableStudentVitality.ajax.url('../performance/stuVitality?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=view').load();
 	}
 	getCourseStudentVitality();
 </script>

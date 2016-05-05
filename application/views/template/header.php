@@ -176,7 +176,7 @@
 			}
 
         	$.ajax({
-				url: '../courseInfo/',
+				url: '../course/courseList',
 				type: 'GET',
 				dataType: 'json',
 				success: function(data){

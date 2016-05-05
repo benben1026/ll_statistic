@@ -17,7 +17,7 @@
 	var linkList = [];
 	function getCourseFileViewing(){
 		$.ajax({
-			url: '../learninglocker/getCourseFileView?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+			url: '../file/detail?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
 			type: 'get',
 			dataType: 'json',
 			success: function(data){
@@ -25,7 +25,7 @@
 					$('#courseFileView_loading').hide();					
 					$('#tea-file-view').html('Fail to get data');
 					$('#tea-file-view').show();
-					console.log('Fail to get data');
+					console.log(data['message']);
 					return;
 				}
 				$('#courseFileView_loading').hide();

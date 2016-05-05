@@ -29,7 +29,7 @@
 				{ "width": "15%" },
 			]
 		} );
-		datatable.ajax.url('../learninglocker/getForumViewingStu').load();
+		datatable.ajax.url('../forum/overview/view').load();
 		// $.ajax({
 		// 	url: '../learninglocker/getForumViewingStu',
 		// 	type: 'GET',

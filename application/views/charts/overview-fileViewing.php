@@ -17,7 +17,7 @@
 	var linkList = [];
 	function getFileViewing(){
 		$.ajax({
-			url: '../learninglocker/getFileViewing',
+			url: '../file/overview',
 			type: 'get',
 			dataType: 'json',
 			success: function(data){

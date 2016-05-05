@@ -55,7 +55,7 @@
 	function sendAjax(){
 		startLoading();
 		$.ajax({
-			url: '../learninglocker/getEngagement/' + $('#datepicker_from').val() + '/' + $('#datepicker_to').val() + '?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+			url: '../engagement/detail?from=' + $('#datepicker_from').val() + '&to=' + $('#datepicker_to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
 			type: 'get',
 			dataType: 'json',
 			success: function(data){

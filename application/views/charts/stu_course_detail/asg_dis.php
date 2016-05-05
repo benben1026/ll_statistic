@@ -27,7 +27,7 @@
 	var platform = "moodle";
 	var courseId = "95";
 	$.ajax({
-		url: '../learninglocker/getAsgList?courseId=' + courseId + '&platform=' + platform,
+		url: '../assignment/getAsgList?courseId=' + courseId + '&platform=' + platform,
 		type: 'get',
 		dataType: 'json',
 		success: function(data){
@@ -46,7 +46,7 @@
 
 	function getAsgDis(asg){
 		$.ajax({
-			url: '../learninglocker/getAsgDisStu?courseId=' + courseId + '&platform=' + platform + '&asg=' + asg,
+			url: '../assignment/getAsgDis?courseId=' + courseId + '&platform=' + platform + '&asg=' + asg,
 			type: 'get',
 			dataType: 'json',
 			success: function(data){

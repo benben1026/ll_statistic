@@ -17,14 +17,19 @@
 
 <script type="text/javascript">
     $.ajax({
-        url: '../learninglocker/getPersonalPerformance?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+        url: '../performance/stuPerformance?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
         type: 'get',
         dataType: 'json',
         success: function(data){
+            if(!data['ok']){
+                console.log(data['message']);
+                $('#personalPerformance_loading').hide();
+                return;
+            }
             $('#personalPerformance_loading').hide();
             $('#stu-performance').show();
             $('#stu-performance2').show();
-            drawPersonalPerformance(data['personal'], data['average']);
+            drawPersonalPerformance(data['data']['personal'], data['data']['average']);
         }
     });
 

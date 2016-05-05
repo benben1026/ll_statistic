@@ -15,42 +15,25 @@ class Learninglocker extends CourseInfo {
 	public function test(){
 		$match = array(
 			"\$match" => array(
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => "33"),
-				//"statement.verb.display.en-US" => array("\$eq" => "started playing"),
-				//"statement.object.definition.name.en-US" => array("\$eq" => "a video"),
+				"statement.verb.id" => array("\$eq" => "http://adlnet.gov/expapi/verbs/responded"),
+					"statement.object.id" => array("\$regex" => "/discussion/", "\$options" => "i"),
+
+				"statement.timestamp" =>array(
+						"\$gte" => "2016-03-20T00:00",
+						"\$lt" => "2016-05-04T00:00",
+					),
 			),
 		);
-		// $group = array(
-		// 	"\$group" => array(
-		// 		"_id" => array(
-		// 			"id" => "\$statement.actor.name",
-		// 			"name" => "\$statement.actor.account.name",
-		// 			"role" => "\$statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.role"
-		// 		)
-		// 	)
-		// );
-		$group = array(
-			"\$group" => array(
-				"_id" => array(
-					"verb" => "\$statement.verb.id",
-					"object" => "\$statement.object.definition.name.en"
-				),
-				"count" => array("\$sum" => 1),
-			),
-		);
-		$sort = array(
-			"\$sort" => array(
-				"statement.timestamp" => -1
+		$project = array(
+			"\$project" => array(
+				"statement.verb" => 1,
+				"statement.object" => 1
 			)
 		);
-		$pipeline = array(
-			"moodle" => array($match, $group, array("\$limit" => 100)),
-		);
+		$pipeline = array("edx" => array($match, $project));
 		$output = $this->datamodel->getData($pipeline);
-		$this->output->set_content_type('application/json');
-		$this->output->set_output(json_encode($output));
+		echo json_encode($output);
 	}
-
 
 	/***************************** API Prepared for Overview Page ***********************************/
 
@@ -122,6 +105,8 @@ class Learninglocker extends CourseInfo {
 		}
 		$output = $this->datamodel->getData($pipeline);
 		$result = array();
+
+		//merge data from moodle and edx
 		if(array_key_exists('edx', $output['data'])){
 			for($i = 0; $i < count($output['data']['edx']['result']); $i++){
 				$forum_name = array_key_exists("forum_name", $output['data']['edx']['result'][$i]['_id']) ? $output['data']['edx']['result'][$i]['_id']['forum_name'] : "Forum";
@@ -297,6 +282,15 @@ class Learninglocker extends CourseInfo {
 			$pipeline['edx'] = array($edx_match, $edx_group, $edx_sort);
 		}
 		$output = $this->datamodel->getData($pipeline);
+
+		//TO DO: merge data from edx and moodle
+		if(array_key_exists('edx', $output['data'])){
+
+		}
+		if(array_key_exists('moodle', $output['data'])){
+
+		}
+
 		$this->output->set_content_type('application/json');
 		$this->output->set_output(json_encode($output));
 	}
@@ -309,7 +303,7 @@ class Learninglocker extends CourseInfo {
 
 		//statement prepared for moodle
 		if(($platform == "all" || $platform == "moodle") && isset($this->courseInfo['data']['moodle']['total_results'])){
-
+			//TO DO
 		}
 
 		//statement prepared for edx
@@ -351,62 +345,27 @@ class Learninglocker extends CourseInfo {
 			//TO DO rearrange data to fit the frontend library
 		}
 		$output = $this->datamodel->getData($pipeline);
+		//TO DO: merge data from edx and moodle
+		if(array_key_exists('edx', $output['data'])){
+
+		}
+		if(array_key_exists('moodle', $output['data'])){
+
+		}
 		$this->output->set_content_type('application/json');
 		$this->output->set_output(json_encode($output));
 	}
 
 	public function getVideoWatching($platform = "all"){
-		$courseId_json = $this->input->post("courseId");
-		$courseId = json_decode($courseId_json);
-		//$courseId = array("59", "65");
-		$temp = array();
-		for($i = 0; $i < count($courseId); $i++){
-			$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $courseId[$i]),
-				);
-			array_push($temp, $t);
-		}
-		$match = array(
-			"\$match" => array(
-				"\$or" => $temp,
-
-				"statement.verb.id" => array(
-					"\$eq" => "http://activitystrea.ms/schema/1.0/start"
-				),
-			),
-		);
-		$group = array(
-			"\$group" => array(
-				"_id" => array(
-					"name" => "\$statement.object.definition.name.en",
-					"courseid" => "\$statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid"
-				),
-				"count" => array("\$sum" => 1),
-			),
-		);
-		$sort = array(
-			"\$sort" => array("count" => -1),
-		);
-
-		$limit = array(
-			"\$limit" => 5,
-		);
-
-		$pipeline = array(
-			"moodle" => array($match, $group, $sort),
-			"edx" => array($match, $group, $sort)
-		);
-		$output = $this->datamodel->getData($pipeline);
-		$this->output->set_content_type('application/json');
-		$this->output->set_output(json_encode($output));
+		//TO DO: we cannot get the video name in statement
 	}
 
 
 /********************** API Prepared for Course Detail Page ****************************/
 	public function getAsgList(){
+		//only moodle has assignment
 		$courseId = $this->input->get('courseId');
 		$platform = $this->input->get('platform');
-		//this id should be return from the login information -- TO MODIFY
-		//$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
 		$keepId = $this->session->userdata('samlUserData')['keepid'][0];
 		if($keepId == null || !$this->checkCourseAcc($courseId, $platform)){
 			$output = array('ok' => false, 'message' => 'You cannot access this course');
@@ -446,11 +405,12 @@ class Learninglocker extends CourseInfo {
 	}
 
 	public function getAsgDisStu(){
+		//only moodle has assignment
 		$courseId = $this->input->get('courseId');
 		$platform = $this->input->get('platform');
 		$asg = $this->input->get('asg');
 		$asg = str_replace("%20", " ", $asg);
-		// -- TO MODIFY
+		// -- TO DO
 		// if(!$this->checkCourseAcc($courseId, $platform)){
 		// 	$output = array('ok' => false, 'message' => 'You cannot access this course');
 		// 	$this->output->set_content_type('application/json');
@@ -510,6 +470,7 @@ class Learninglocker extends CourseInfo {
 	}
 
 	public function getEngagement($from = "2015-01-01", $to = "2020-12-31"){
+		//TO DO: check privilege
 		$keepId = $this->session->userdata('samlUserData')['keepid'][0];
 
 		$courseId = str_replace(" ", "+", $this->input->get('courseId'));

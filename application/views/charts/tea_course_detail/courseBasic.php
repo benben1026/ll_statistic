@@ -47,7 +47,7 @@
 
 <script type="text/javascript">
     $.ajax({
-        url: '../learninglocker/getCourseEnrollStudent?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+        url: '../course/addDrop/num?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
         type: 'get',
         dataType: 'json',
         success: function(data){

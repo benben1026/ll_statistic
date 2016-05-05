@@ -48,14 +48,14 @@
 		$('#courseEngagement_loading').show();
     	$('.courseEngagement_content').hide();
 		$.ajax({
-			url: '../learninglocker/getCourseEngagement/' + $('#course-engagement-datepicker-from').val() + '/' + $('#course-engagement-datepicker-to').val() + '?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+			url: '../engagement/detail?from=' + $('#course-engagement-datepicker-from').val() + '&to=' + $('#course-engagement-datepicker-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
 			type: 'get',
 			dataType: 'json',
 			success: function(data){
 				$('#courseEngagement_loading').hide();
     			$('.courseEngagement_content').show();
 				if(!data['ok']){
-					console.log('fail to get engagement');
+					console.log(data['message']);
 					return;
 				}
 				raw_data = data['data'];

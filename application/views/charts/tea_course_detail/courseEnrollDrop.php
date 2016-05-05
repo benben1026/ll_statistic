@@ -46,7 +46,7 @@
         $('#courseEnrolldrop_loading').show();
         $('.courseEnrolldrop_content').hide();
         $.ajax({
-            url: '../learninglocker/getCourseAddDrop/' + $('#course-enrolldrop-datepicker-from').val() + '/' + $('#course-enrolldrop-datepicker-to').val() + '?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+            url: '../course/addDrop/timeline?from=' + $('#course-enrolldrop-datepicker-from').val() + '&to=' + $('#course-enrolldrop-datepicker-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
             type: 'get',
             dataType: 'json',
             success: function(data){
