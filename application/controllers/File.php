@@ -215,7 +215,10 @@ class File extends CI_Controller{
 				"\$or" => array(
 					array("statement.object.id" => array("\$regex" => "asset", "\$options" => "i")),
 				),
-				
+				"statement.timestamp" =>array(
+					"\$gte" => $this->apimodel->getFromDate(),
+					"\$lt" => $this->apimodel->getToDate(),
+				),				
 			),
 		);
 		$edx_group = array(

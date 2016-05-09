@@ -2,20 +2,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-green">
             <div class="panel-heading" style="height: 50px;">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Engagement
-                
-                	<form id="dateForm" class="form-inline" style="float: right;">
-	                	<div class="form-group">
-							<label for="datepicker_from">From</label>
-							<input type="text" class="form-control" id="datepicker_from" value="2015/09/01" >
-						</div>
-						<div class="form-group">
-							<label for="datepicker_to">To</label>
-							<input type="text" class="form-control" id="datepicker_to" value="2015/10/31" >
-						</div>
-						<button type="submit" class="btn btn-default">Update</button>
-                	</form>
-                
+                <i class="fa fa-bar-chart-o fa-fw"></i> Engagement                
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body" style="height: 320px;">
@@ -28,21 +15,6 @@
 	</div>
 </div>
 <script type="text/javascript">
-	$( "#datepicker_from" ).datepicker({
-    	dateFormat: "yy-mm-dd",
-    	defaultDate: +1
-    });
-    $( "#datepicker_to" ).datepicker({
-    	dateFormat: "yy-mm-dd",
-    	defaultDate: new Date()
-    });
-    $( "#datepicker_from" ).datepicker("setDate", -60);
-    $( "#datepicker_to" ).datepicker("setDate", new Date());
-
-    $('#dateForm').submit(function(e){
-    	e.preventDefault();
-    	sendAjax();
-    })
     function startLoading(){
     	$('#engagement_loading').show();
     	$('.engagement_content').hide();
@@ -52,10 +24,10 @@
     	$('.engagement_content').show();
     }
 	var raw_data;
-	function sendAjax(){
+	function sendEngagementAjax(){
 		startLoading();
 		$.ajax({
-			url: '../engagement/detail?from=' + $('#datepicker_from').val() + '&to=' + $('#datepicker_to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+			url: '../engagement/detail?from=' + $('#date-from').val() + '&to=' + $('#date-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
 			type: 'get',
 			dataType: 'json',
 			success: function(data){
@@ -70,7 +42,8 @@
 			}
 		});
 	}
-	sendAjax();
+	sendEngagementAjax();
+	registerFunList.push(sendEngagementAjax);
 
 	function draw_legend(ykeys){
 		$('#engagement_legend').html('');
@@ -88,11 +61,6 @@
 				tempData['ykeys'].push(raw_data['ykeys'][i]);
 			}
 		}
-		// $('.engagement_legendlist').each(function(index){
-		// 	if($(this).is(":checked")){
-		// 		tempData['ykeys'].push(raw_data['ykeys'][index]);
-		// 	}
-		// });
 		for(var i = 0; i < raw_data['data'].length; i++){
 			var j = 0;
 			var tempNode = {};

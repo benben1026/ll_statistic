@@ -22,13 +22,15 @@
 	</div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript">	
+	var datatableStudentVitality = $('#courseStudentVitality').DataTable({
+		"order": [[ 8, "desc" ]],
+	});
 	
 	function getCourseStudentVitality(){
-		var datatableStudentVitality = $('#courseStudentVitality').DataTable({
-			"order": [[ 8, "desc" ]],
-		});
-		datatableStudentVitality.ajax.url('../performance/stuVitality?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=view').load();
+		datatableStudentVitality.clear().draw();
+		datatableStudentVitality.ajax.url('../performance/stuVitality?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=view&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();
 	}
+	registerFunList.push(getCourseStudentVitality);
 	getCourseStudentVitality();
 </script>

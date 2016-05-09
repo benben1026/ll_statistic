@@ -2,18 +2,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-green">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Course Enrollment &amp Dropout                    
-                <form id="course-enrolldrop-dateForm" class="form-inline" style="float: right; margin-top: -2px;">
-                    <div class="form-group" >
-                        <label for="course-enrolldrop-datepicker-from">From</label>
-                        <input type="text" class="form-control" id="course-enrolldrop-datepicker-from" value="2015/09/01" style="height: 23px;">
-                    </div>
-                    <div class="form-group">
-                        <label for="course-enrolldrop-datepicker-to">To</label>
-                        <input type="text" class="form-control" id="course-enrolldrop-datepicker-to" value="2015/10/31" style="height: 23px;">
-                    </div>
-                    <button type="submit" class="btn btn-xs btn-default">Update</button>
-                </form>
+                <i class="fa fa-bar-chart-o fa-fw"></i> Course Enrollment &amp Dropout
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body" style="height: 400px;">
@@ -26,27 +15,12 @@
 </div>
 
 <script type="text/javascript">
-    $( "#course-enrolldrop-datepicker-from" ).datepicker({
-        dateFormat: "yy-mm-dd",
-        //defaultDate: +1
-    });
-    $( "#course-enrolldrop-datepicker-to" ).datepicker({
-        dateFormat: "yy-mm-dd",
-        //defaultDate: new Date()
-    });
-    $( "#course-enrolldrop-datepicker-from" ).datepicker("setDate", -90);
-    $( "#course-enrolldrop-datepicker-to" ).datepicker("setDate", new Date());
-
-    $('#course-enrolldrop-dateForm').submit(function(e){
-        e.preventDefault();
-        sendEnrollDropAjax();
-    })
     
     function sendEnrollDropAjax(){
         $('#courseEnrolldrop_loading').show();
         $('.courseEnrolldrop_content').hide();
         $.ajax({
-            url: '../course/addDrop/timeline?from=' + $('#course-enrolldrop-datepicker-from').val() + '&to=' + $('#course-enrolldrop-datepicker-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+            url: '../course/addDrop/timeline?from=' + $('#date-from').val() + '&to=' + $('#date-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
             type: 'get',
             dataType: 'json',
             success: function(data){
@@ -56,12 +30,16 @@
                     console.log('fail to get engagement');
                     return;
                 }
-                draw_enrolldrop(data['data']);
+                if(data['data'].length == 0){
+                    draw_enrolldrop([{date: $('#date-from').val(), Enroll:0, Drop: 0}, {date: $('#date-to').val(), Enroll:0, Drop: 0}]);
+                }else{
+                    draw_enrolldrop(data['data']);
+                }
             }
         });
     }
     sendEnrollDropAjax();
-
+    registerFunList.push(sendEnrollDropAjax);
     function draw_enrolldrop(data){
         $('#courseEnrolldrop').html('');
         new Morris.Line({
