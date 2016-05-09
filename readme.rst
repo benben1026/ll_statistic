@@ -21,14 +21,14 @@ Installation
 
 1.	Deploy the source code from this git
 2.	Create database in MySQL and set database name, username and password.
-3.	Create session table in the database using following SQL
-	CREATE TABLE IF NOT EXISTS `ci_sessions` (
-		`id` varchar(40) NOT NULL,
-		`ip_address` varchar(45) NOT NULL,
-		`timestamp` int(10) unsigned NOT NULL DEFAULT '0',
-		`data` blob NOT NULL,
-		KEY `ci_sessions_timestamp` (`timestamp`)
-	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+3.	Create session table in the database using following SQL::
+	|CREATE TABLE IF NOT EXISTS `ci_sessions` (
+	|	`id` varchar(40) NOT NULL,
+	|	`ip_address` varchar(45) NOT NULL,
+	|	`timestamp` int(10) unsigned NOT NULL DEFAULT '0',
+	|	`data` blob NOT NULL,
+	|	KEY `ci_sessions_timestamp` (`timestamp`)
+	|) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 4.	Configure database connection information
 	The configuration file can be found in ./application/config/database.php
 
