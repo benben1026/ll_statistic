@@ -15,13 +15,12 @@ class Learninglocker extends CourseInfo {
 	public function test(){
 		$match = array(
 			"\$match" => array(
-				"statement.verb.id" => array("\$eq" => "http://adlnet.gov/expapi/verbs/responded"),
-					"statement.object.id" => array("\$regex" => "/discussion/", "\$options" => "i"),
+				"statement.verb.display.en-US" => array("\$eq" => "evaluated"),
 
-				"statement.timestamp" =>array(
-						"\$gte" => "2016-03-20T00:00",
-						"\$lt" => "2016-05-04T00:00",
-					),
+				// "statement.timestamp" =>array(
+				// 		"\$gte" => "2016-03-20T00:00",
+				// 		"\$lt" => "2016-05-04T00:00",
+				// 	),
 			),
 		);
 		$project = array(

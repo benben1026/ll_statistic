@@ -18,7 +18,7 @@ class Forum extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -26,7 +26,7 @@ class Forum extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			$printJson($this->returnData);
 			return;
 		}
 		$pipeline = array();
@@ -120,7 +120,7 @@ class Forum extends CI_Controller{
 		}
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = $data;
-		$this->printJson();
+		printJson($this->returnData);
 	}
 
 	public function detail($type){
@@ -129,7 +129,7 @@ class Forum extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -140,7 +140,7 @@ class Forum extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 
@@ -176,7 +176,7 @@ class Forum extends CI_Controller{
 			$this->returnData['data'] = $data;
 			$this->returnData['ok'] = true;
 		}
-		$this->printJson();
+		printJson($this->returnData);
 	}
 
 	private function getViewFromMoodle(){
@@ -284,8 +284,4 @@ class Forum extends CI_Controller{
 		return $this->datamodel->getData($pipeline);
 	}
 
-	private function printJson(){
-		$this->output->set_content_type('application/json');
-		$this->output->set_output(json_encode($this->returnData));
-	}
 }
