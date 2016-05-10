@@ -12,14 +12,20 @@ class Course extends CI_Controller{
 		parent::__contruct();
 	}
 
+	// Get the course list
 	public function courseList(){
 		$this->load->model('apimodel');
+		
+		// Auth checking
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
 			printJson($this->returnData);
 			return;
 		}
+		
+		// Get and build the data
+		// Return in JSON format
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = $this->apimodel->getCourseInfo()['data'];
 		printJson($this->returnData);
@@ -29,6 +35,8 @@ class Course extends CI_Controller{
 	public function addDrop($type){
 		$this->load->model('apimodel');
 		$this->load->model('datamodel');
+		
+		// Auth checking
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
@@ -74,7 +82,7 @@ class Course extends CI_Controller{
 			$edx_group = array(
 				"\$group" => array(
 					"_id" => array(
-						"event" => "\$statement.verb.display.en-US",
+						"event" => "\$statement.verb.display.en-us",
 						"date" => array("\$substr"=>array("\$statement.timestamp", 0, 10),),
 					),
 					"count" => array("\$sum" => 1)
@@ -136,7 +144,7 @@ class Course extends CI_Controller{
 			$group = array(
 				"\$group" => array(
 					"_id" => array(
-						"verb" => "\$statement.verb.display.en-US"
+						"verb" => "\$statement.verb.display.en-us"
 					),
 					"count" => array("\$sum" => 1),
 				)
