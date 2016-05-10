@@ -131,7 +131,7 @@ class File extends CI_Controller{
 		$this->returnData['ok'] = $result['ok'];
 		$this->returnData['message'] = $result['message'];
 		$this->returnData['data'] = $result['data'];
-		//TO DO: merge data from two platforms
+		// TODO: merge data from two platforms
 		if(array_key_exists('edx', $result['data'])){
 
 		}
