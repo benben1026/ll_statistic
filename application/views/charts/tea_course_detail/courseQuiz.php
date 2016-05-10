@@ -2,18 +2,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-green">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Quiz                    
-                <form id="course-quiz-dateForm" class="form-inline" style="float: right; margin-top: -2px;">
-                    <div class="form-group" >
-                        <label for="course-quiz-datepicker-from">From</label>
-                        <input type="text" class="form-control" id="course-quiz-datepicker-from" value="2015/09/01" style="height: 23px;">
-                    </div>
-                    <div class="form-group">
-                        <label for="course-quiz-datepicker-to">To</label>
-                        <input type="text" class="form-control" id="course-quiz-datepicker-to" value="2015/10/31" style="height: 23px;">
-                    </div>
-                    <button type="submit" class="btn btn-xs btn-default">Update</button>
-                </form>
+                <i class="fa fa-bar-chart-o fa-fw"></i> Quiz
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body" style="height: 400px;">
@@ -26,21 +15,6 @@
 </div>
 
 <script type="text/javascript">
-    $( "#course-quiz-datepicker-from" ).datepicker({
-        dateFormat: "yy-mm-dd",
-        //defaultDate: +1
-    });
-    $( "#course-quiz-datepicker-to" ).datepicker({
-        dateFormat: "yy-mm-dd",
-        //defaultDate: new Date()
-    });
-    $( "#course-quiz-datepicker-from" ).datepicker("setDate", -90);
-    $( "#course-quiz-datepicker-to" ).datepicker("setDate", new Date());
-
-    $('#course-quiz-dateForm').submit(function(e){
-        e.preventDefault();
-    })
-
     function draw_quiz(){
         $('#courseQuiz_loading').hide();
         $('#courseQuiz').show();
@@ -69,6 +43,5 @@
           labels: ['Attempt', 'Complete'],
         });
     }
-
     setTimeout(draw_quiz, 2000);
 </script>

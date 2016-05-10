@@ -18,7 +18,7 @@ class Performance extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -29,7 +29,7 @@ class Performance extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 
@@ -57,14 +57,14 @@ class Performance extends CI_Controller{
 			if(!$output['ok']){
 				$this->returnData['ok'] = false;
 				$this->returnData['message'] = $output['message'];
-				$this->printJson();
+				printJson($this->returnData);
 				return;
 			}
 			$totalNumOfStudent = $output['ok'] && $output['data']['edx']['ok'] ? $output['data']['edx']['result'][0]['count'] : 0;
 			if($totalNumOfStudent == 0){
 				$this->returnData['ok'] = false;
 				$this->returnData['message'] = "There is no student in this course";
-				$this->printJson();
+				printJson($this->returnData);
 				return;
 			}
 
@@ -127,7 +127,7 @@ class Performance extends CI_Controller{
 			if(!$total['ok']){
 				$this->returnData['ok'] = false;
 				$this->returnData['message'] = $total['message'];
-				$this->printJson();
+				printJson($this->returnData);
 				return;
 			}
 
@@ -189,7 +189,7 @@ class Performance extends CI_Controller{
 			if(!$personal['ok']){
 				$this->returnData['ok'] = false;
 				$this->returnData['message'] = $personal['message'];
-				$this->printJson();
+				printJson($this->returnData);
 				return;
 			}
 			$averageData = array(0, 0, 0, 0, 0, 0, 0);
@@ -243,7 +243,7 @@ class Performance extends CI_Controller{
 			$this->returnData['ok'] = true;
 			$this->returnData['data'] = array("personal" => $personalData, "average" => $averageData);
 		}
-		$this->printJson();
+		printJson($this->returnData);
 	}
 
 	public function stuVitality(){
@@ -252,7 +252,7 @@ class Performance extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -263,7 +263,7 @@ class Performance extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 
@@ -336,7 +336,7 @@ class Performance extends CI_Controller{
 			if(!$output['ok']){
 				$this->returnData['ok'] = false;
 				$this->returnData['message'] = $output['message'];
-				$this->printJson();
+				printJson($this->returnData);
 				return;
 			}
 			$lastStu = "";
@@ -386,11 +386,6 @@ class Performance extends CI_Controller{
 			$this->returnData['ok'] = true;
 			$this->returnData['data'] = $dataProcess;
 		}
-		$this->printJson();
-	}
-
-	private function printJson(){
-		$this->output->set_content_type('application/json');
-		$this->output->set_output(json_encode($this->returnData));
+		printJson($this->returnData);
 	}
 }

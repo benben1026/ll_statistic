@@ -18,7 +18,7 @@ class Engagement extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -29,7 +29,7 @@ class Engagement extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		if($this->apimodel->getPlatform() == 'moodel'){
@@ -37,7 +37,7 @@ class Engagement extends CI_Controller{
 		}else if($this->apimodel->getPlatform() == 'edx'){
 			$this->getDataFromEdx();
 		}
-		$this->printJson();
+		printJson($this->returnData);
 	}
 
 	private function getDataFromEdx(){
@@ -238,10 +238,5 @@ class Engagement extends CI_Controller{
 
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = $result['data'];
-	}
-
-	private function printJson(){
-		$this->output->set_content_type('application/json');
-		$this->output->set_output(json_encode($this->returnData));
 	}
 }

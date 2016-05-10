@@ -18,7 +18,7 @@ class Assignment extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -29,7 +29,7 @@ class Assignment extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$match = array(
@@ -60,7 +60,7 @@ class Assignment extends CI_Controller{
 		$result = $this->datamodel->getData($pipeline);
 		$this->datamodel->getData($pipeline);
 		$this->returnData = $result;
-		$this->printJson();
+		printJson($this->returnData);
 	}
 
 	public function getAsgDis(){
@@ -70,7 +70,7 @@ class Assignment extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -81,14 +81,14 @@ class Assignment extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$asg_name = str_replace("%20", " ", $this->input->get('asg'));
 		if($asg_name == null){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = 'Please specify assignemnt name';
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 
@@ -121,7 +121,7 @@ class Assignment extends CI_Controller{
 		$result = $this->datamodel->getData($pipeline);
 		if(!$result['ok']){
 			$this->returnData = $result;
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 
@@ -138,11 +138,6 @@ class Assignment extends CI_Controller{
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = $newData;
 
-		$this->printJson();
-	}
-
-	private function printJson(){
-		$this->output->set_content_type('application/json');
-		$this->output->set_output(json_encode($this->returnData));
+		printJson($this->returnData);
 	}
 }

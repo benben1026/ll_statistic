@@ -26,6 +26,34 @@ class ApiModel extends CI_Model{
 			$this->accessGranted = true;
 		}
 
+		// MARK: Set fake course info for testing purpose
+		$this->courseInfo = array(
+			'ok' => true,
+			'message' => '',
+			'data' => array(
+				'moodle' => array(
+					'total_results' => "1",
+					'results' => array(
+						array(
+							'course_id' => '',
+							'course_name' => '',
+							'role_name' => ''
+						),
+					)
+				),
+				'edx' => array(
+					'total_results' => "1",
+					'results' => array(
+						array(
+							'course_id' => '',
+							'course_name' => '',
+							'role_name' => ''
+						),
+					)
+				)
+			)
+		);
+		/*
 		$this->load->model('courseinfomodel');
 		$preTime = $this->session->userdata('courseInfoSessExp');
 		$id = $this->session->userdata('courseInfoId');
@@ -49,6 +77,7 @@ class ApiModel extends CI_Model{
 		}else{
 			$this->courseInfo = $this->session->userdata('courseInfo');
 		}
+		*/
 	}
 
 	function setRole($role){

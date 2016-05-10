@@ -17,12 +17,12 @@ class Course extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = $this->apimodel->getCourseInfo()['data'];
-		$this->printJson();
+		printJson($this->returnData);
 	}
 
 
@@ -32,7 +32,7 @@ class Course extends CI_Controller{
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		$this->apimodel->setFromDate($this->input->get('from'));
@@ -43,7 +43,7 @@ class Course extends CI_Controller{
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
-			$this->printJson();
+			printJson($this->returnData);
 			return;
 		}
 		if($type == 'timeline'){
@@ -112,7 +112,7 @@ class Course extends CI_Controller{
 			}
 			$this->returnData['data'] = $dataProcess;
 		}
-		$this->printJson();
+		printJson($this->returnData);
 	}
 
 	private function addDropNum(){
@@ -146,12 +146,7 @@ class Course extends CI_Controller{
 			$this->returnData['ok'] = $result['ok'];
 			$this->returnData['message'] = $result['message'];
 			$this->returnData['data'] = $result['data'];
-			$this->printJson();
+			printJson($this->returnData);
 		}
-	}
-
-	private function printJson(){
-		$this->output->set_content_type('application/json');
-		$this->output->set_output(json_encode($this->returnData));
 	}
 }

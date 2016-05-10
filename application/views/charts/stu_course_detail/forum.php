@@ -73,7 +73,7 @@
 		datatableView.clear().draw();
 		$($('.courseForumTableContainer')[0]).show();
 		$('#forumTableName').html('Top Viewing Threads');
-		datatableView.ajax.url('../forum/detail/view?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val()).load();
+		datatableView.ajax.url('../forum/detail/view?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();
 	}
 
 	function getCourseForumReply(){
@@ -83,7 +83,7 @@
 		datatableReply.clear().draw();
 		$($('.courseForumTableContainer')[1]).show();
 		$('#forumTableName').html('Top Replying Threads');
-		datatableReply.ajax.url('../forum/detail/reply?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val()).load();
+		datatableReply.ajax.url('../forum/detail/reply?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();
 	}
 
 	function getCourseForumActive(){
@@ -94,27 +94,9 @@
 		$($('.courseForumTableContainer')[2]).show();
 
 		$('#forumTableName').html('Latest Active Threads');
-		datatableActive.ajax.url('../forum/detail/active?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val()).load();	}
-
-
-    // function getCourseForum(type){
-	   //  var title = type == 'view' ? 'Top Viewing Threads' : (type == 'reply' ? 'Top Replying Threads' : 'Latest Active Threads');
-	   //  var header = type == 'view' ? 'Num of View' : (type == 'reply' ? 'Num of Reply' : 'Date');
-    //     $('#forumTableName').html(title);
-    //     //$('#courseForumTable tr:eq(0) th:eq(2)').text(header);
-    //     if(type == 'view'){
-    //     	$('#forumTableName').html('Top Viewing Threads');
-    //     	$('#courseForumTable thead tr').html('<td>No.</td><td>Thread Name</td><td>Num of View</td>');
-    //     }else if(type == 'reply'){
-    //     	$('#forumTableName').html('Top Replying Threads');
-    //     	$('#courseForumTable thead tr').html('<td>No.</td><td>Thread Name</td><td>Num of Reply</td>');
-    //     }else if(type == 'active'){
-    //     	$('#forumTableName').html('Latest Active Threads');
-    //     	$('#courseForumTable thead tr').html('<td>No.</td><td>Thread Name</td><td>Date</td>');
-    //     }
-	   //  datatable.ajax.url('../learninglocker/getCourseForum?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=' + type).load();
-	   //  datatable.draw();
-    // }
+		datatableActive.ajax.url('../forum/detail/active?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();	
+	}
     getCourseForumView();
+    registerFunList.push(getCourseForumView);
 
 </script>
