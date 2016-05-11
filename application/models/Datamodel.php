@@ -135,7 +135,7 @@ class DataModel extends CI_Model{
 	// 	return $output;
 	// }
 
-
+	// not used for now
 	function getDataAccToEventname($name, $reg, $from, $to){
 		$match = array(
 			"\$match"=>array(
@@ -182,6 +182,7 @@ class DataModel extends CI_Model{
 		return $this->mongo_db->aggregate("statements", $op);
 	}
 
+	// not used for now
 	function getInfoAccToCourseId($courseId, $reg, $from, $to){
 		$match = array(
 			"\$match"=>array(

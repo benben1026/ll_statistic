@@ -15,7 +15,7 @@ class Course extends CI_Controller{
 	// Get the course list
 	public function courseList(){
 		$this->load->model('apimodel');
-		
+
 		// Auth checking
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
@@ -23,7 +23,7 @@ class Course extends CI_Controller{
 			printJson($this->returnData);
 			return;
 		}
-		
+
 		// Get and build the data
 		// Return in JSON format
 		$this->returnData['ok'] = true;
@@ -35,7 +35,7 @@ class Course extends CI_Controller{
 	public function addDrop($type){
 		$this->load->model('apimodel');
 		$this->load->model('datamodel');
-		
+
 		// Auth checking
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
@@ -64,7 +64,7 @@ class Course extends CI_Controller{
 	private function addDropTimeline(){
 		$platform = $this->apimodel->getPlatform();
 		$key = $this->getKey($platform);
-		
+
 		$edx_match = array(
 			"\$match" => array(
 				"statement.timestamp" => array(
@@ -119,14 +119,14 @@ class Course extends CI_Controller{
 			}
 		}
 		$this->returnData['data'] = $dataProcess;
-		
+
 		printJson($this->returnData);
 	}
 
 	private function addDropNum(){
 		$platform = $this->apimodel->getPlatform();
 		$key = $this->getKey($platform);
-		
+
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
@@ -156,13 +156,13 @@ class Course extends CI_Controller{
 		$this->returnData['data'] = $result['data'];
 		printJson($this->returnData);
 	}
-	
+
 	private function getKey($platform) {
 		switch ($platform) {
 	    case "edx":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";	        
+	        return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";
 	    case "moodle":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";    	    
+	        return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";
 		}
 	}
 }

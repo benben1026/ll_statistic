@@ -12,32 +12,51 @@ class Assignment extends CI_Controller{
 		parent::__contruct();
 	}
 
+	private function getKey($platform) {
+		switch ($platform) {
+			case "edx":
+					return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";
+			case "moodle":
+					return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";
+		}
+	}
+
+	// get assignment list of a particular platform
 	public function getAsgList(){
 		$this->load->model('apimodel');
 		$this->load->model('datamodel');
+
+		// Auth checking
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
 			printJson($this->returnData);
 			return;
 		}
+
+		// date range
 		$this->apimodel->setFromDate($this->input->get('from'));
 		$this->apimodel->setToDate($this->input->get('to'));
+
 		//!important: please set platform before courseId
 		$this->apimodel->setPlatform($this->input->get('platform'));
 		$this->apimodel->setCourseId($this->input->get('courseId'));
+
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
 			printJson($this->returnData);
 			return;
 		}
+
+		//get context key, right now, it's just moodle
+		$key = $this->getKey($this->apimodel->getPlatform());
 		$match = array(
 			"\$match" => array(
 				"statement.actor.name" => array("\$eq" => $this->apimodel->getKeepId()),
 				"statement.verb.id" => array("\$eq" => "http://adlnet.gov/expapi/verbs/completed"),
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.component" => array("\$eq" => "mod_assign"),
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->apimodel->getCourseId()),
+				"statement.context.extensions.".$key.".component" => array("\$eq" => "mod_assign"),
+				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
 			),
 		);
 
@@ -49,7 +68,8 @@ class Assignment extends CI_Controller{
 		$group = array(
 			"\$group" => array(
 				"_id" => array(
-					"asg_name" => "\$statement.object.definition.name.en-us"
+					// "asg_name" => "\$statement.object.definition.name.en-us"
+					"asg_name" => "\$statement.object.definition.description.en-us"
 				)
 			),
 		);
@@ -58,7 +78,6 @@ class Assignment extends CI_Controller{
 			"moodle" => array($match, $sort, $group),
 		);
 		$result = $this->datamodel->getData($pipeline);
-		$this->datamodel->getData($pipeline);
 		$this->returnData = $result;
 		printJson($this->returnData);
 	}
@@ -78,6 +97,7 @@ class Assignment extends CI_Controller{
 		//!important: please set platform before courseId
 		$this->apimodel->setPlatform($this->input->get('platform'));
 		$this->apimodel->setCourseId($this->input->get('courseId'));
+
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
@@ -92,14 +112,17 @@ class Assignment extends CI_Controller{
 			return;
 		}
 
+		//get context key, right now, it's just moodle
+		$key = $this->getKey($this->apimodel->getPlatform());
 		$match = array(
 			"\$match" => array(
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\core\\event\\user_graded"),
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->apimodel->getCourseId()),
+				"statement.context.extensions.".$key.".eventname" => array("\$eq" => "\\core\\event\\user_graded"),
+				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
 				"statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/evaluated"),
-				"statement.context.contextActivities.grouping" => array(
-					"\$elemMatch" => array("definition.name.en-us" => array("\$eq" => $asg_name))
-				),
+				"statement.object.definition.description.en-us" => array("\$eq" => $asg_name),
+				// "statement.context.contextActivities.grouping" => array(
+				// 	"\$elemMatch" => array("definition.description.en-us" => array("\$eq" => $asg_name))
+				// ),
 			)
 		);
 		$sort = array(
