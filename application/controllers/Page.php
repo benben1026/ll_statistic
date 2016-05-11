@@ -1,8 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include_once (dirname(__FILE__) . "/CourseInfo.php");
-
-class Page extends CourseInfo{
+class Page extends CI_Controller{
 	private $courseInfo;
 
 	function __construct(){
@@ -62,12 +60,17 @@ class Page extends CourseInfo{
 	}
 
 	public function courseDetail(){
-		$courseId = str_replace(" ", "+", $this->input->get('courseId'));
-		$platform = $this->input->get('platform');
-		//temporarily disable course accessable check --TO MODIFY
-		if(isset($this->courseInfo['data'][$platform])){
-			foreach($this->courseInfo['data'][$platform]['results'] as $course){
-				echo $this->courseInfo['data'][$platform]['results'][0]['course_id'];
+		$this->load->model('apimodel');
+		$this->apimodel->setPlatform($this->input->get('platform'));
+		$this->apimodel->setCourseId($this->input->get('courseId'));
+		if(!$this->apimodel->getValidParameter()){
+			printJson(array('ok' => false, 'message' => $this->apimodel->getMessage(), 'data' => null));
+			return;
+		}
+		$courseInfoData = $this->apimodel->getCourseInfo()['data'];
+		if(isset($courseInfoData[$this->apimode->getPlatform()])){
+			foreach($courseInfoData[$this->apimode->getPlatform()]['results'] as $course){
+				echo $courseInfoData[$this->apimode->getPlatform()]['results'][0]['course_id'];
 				if($course['course_id'] == $courseId){
 					$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 					if($course['role_name'] == 'student'){
@@ -80,10 +83,8 @@ class Page extends CourseInfo{
 				}
 			}
 		}
-		echo 'You Do Not Have the Access To This Course';
-		// $this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-		// $this->load->view('stu_course_detail', array('course_name' => 'NEWCOURSE3', ));
-		// $this->load->view('template/footer');
+		printJson(array('ok' => false, 'message' => 'You do not have access to this course', 'data' => null));
+		printJson($this->returnData);
 		return;
-	}
+}
 }
