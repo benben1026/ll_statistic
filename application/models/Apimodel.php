@@ -172,4 +172,17 @@ class ApiModel extends CI_Model{
 	function getMessage(){
 		return $this->message;
 	}
+	
+	function getCourseNameByCourseId($courseId, $platform) {
+
+		$courses = $this->courseInfo['data'][$platform];
+
+		if (intval($courses['total_results']) > 0 ) {
+			foreach ($courses['results'] as $course) {
+				if($course['course_id'] == $courseId) {
+					return $course['course_name'];
+				}
+			}// end foreach
+		}// end if
+	}
 }
