@@ -66,6 +66,23 @@ class Engagement extends CI_Controller{
 				"statement.timestamp" => -1,
 			)
 		);
+		
+		$group = array(
+			"\$group" => array(
+				"_id" => array(
+					"eventname" => array(
+						"\$concat" => array("\$statement.verb.display.en-us", " ", "\$statement.object.definition.name.en-us")
+					),
+					//"verb" => "\$statement.verb.display.en-US",
+					//"object" => "\$statement.object.definition.name.en-US",
+					"date" => array("\$substr"=>array(
+							"\$statement.timestamp", 0, 10,
+						),
+					),
+				),
+				"count" => array("\$sum" => 1)
+			),
+		);		
 
 		$sortEvent = array(
 			"\$sort" => array(
@@ -73,7 +90,7 @@ class Engagement extends CI_Controller{
 			)
 		);
 		$pipeline = array(
-			$platform => array($match, $sortEvent)
+			$platform => array($match, $group, $sortEvent)
 		); 
 		$output = $this->datamodel->getData($pipeline);
 
@@ -125,7 +142,7 @@ class Engagement extends CI_Controller{
 		$returnArray = array();
 		
 		foreach ($verbs as $verb) {
-			$returnArray[] = array("statement.verb.display.en-us" => verb);
+			$returnArray[] = array("statement.verb.display.en-us" => $verb);
 		}		
 		return $returnArray;
 	}
