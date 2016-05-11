@@ -17,14 +17,19 @@ class Saml2Controller extends Saml_Controller {
 		echo "click to login";
 		echo "<a href=\"/index.php/Saml2Controller/fake_login\"><button>Fake Login</button></a>";
 	}
-	
+
 	public function fake_login($role){
 		$login_data = array(
 			"id" => array("999"),
-			"login" => array("zhouwei1026@163.com"),
+			// "login" => array("zhouwei1026@163.com"),
+			"login" => array("demo@keep.edu.hk"),
+
 			//change keepid here
+			// keep demo
+			"keepid" => array("563a82e2-96ed-11e4-bf37-080027087aa9"),
+
 			//csci2100 student
-			"keepid" => array("fb4d945c-1964-4055-a833-8d843eea3c76"),
+			// "keepid" => array("fb4d945c-1964-4055-a833-8d843eea3c76"),
 
 			//city u student
 			//"keepid" => array("ffd66e3a-0e8d-4edf-9f40-40e023f82673"),
@@ -37,11 +42,11 @@ class Saml2Controller extends Saml_Controller {
 
 			//Moodle Student
 			//"keepid" => array("10ff02cb-628d-4f6f-b282-106c5bfef0ea"),
-			
+
 			"enckeepid" => array(""),
-			"fullname" => array("Benjamin Zhou"),
-			"firstname" => array("Benjamin"),
-			"lastname" => array("Zhou"),
+			"fullname" => array("Demo KEEP"),
+			"firstname" => array("Demo"),
+			"lastname" => array("KEEP"),
 			"password" => array(""),
 			"activated" => array("1"),
 			"policyagreed" => array("0"),

@@ -3,8 +3,13 @@
 class DataModel extends CI_Model{
 	private $pipeline_url = "http://lrs.keep.edu.hk/public/api/v1/statements/aggregate?pipeline=";
 	private $auth = array(
-		"moodle" => "ZGVmYTRiMjM5ODFhY2Q5YmRkNGU0OGM4N2I3NGU1NDhmYmNiNjEwYzplMzAwOWJkM2RiNTZiMTNmMjg5ZGQ2YTM2M2Y4MWQ3OGY4OTdkMzVm",
-		"edx" => "Y2M5ZTQ0YmUwMmE2NTg4MTRmNDJlMmZmNDI1ODBkYjE3ZGVmMjMyMDo3ZGQyMzk5MjhmNmZkMzIyNjFjODgzODM1MmI0YjA4ZDQ5NzQ1Mjk3",
+		// Production
+		// "moodle" => "ZGVmYTRiMjM5ODFhY2Q5YmRkNGU0OGM4N2I3NGU1NDhmYmNiNjEwYzplMzAwOWJkM2RiNTZiMTNmMjg5ZGQ2YTM2M2Y4MWQ3OGY4OTdkMzVm",
+		// "edx" => "Y2M5ZTQ0YmUwMmE2NTg4MTRmNDJlMmZmNDI1ODBkYjE3ZGVmMjMyMDo3ZGQyMzk5MjhmNmZkMzIyNjFjODgzODM1MmI0YjA4ZDQ5NzQ1Mjk3",
+
+		// Staging
+		"moodle" => "MGU3NmEyZGQxZjc4NmI5NzEzMjVkMmQ4YWUzY2FmMTI1NjczZDgyNTpjMTUxZDg2NWNlNGY1NjFiNWIyZDFlNTI5MmM3OTgyZDhiMDc3ZGVj",
+		"edx" => "ZmNlOWY0MWMwMWJmOTllOTg4YjFkNGZlYzhiZjlkNjYyZmFjODIzOTo1MzU5NzUxNzdlNTlhYWEzZmQ0MGIyNWFmMzI0YWZhNjAxMzdiNzcy",
 	);
 	private $output = array(
 		"ok" => false,
@@ -28,7 +33,7 @@ class DataModel extends CI_Model{
 	// 	);
 	// 	$context = stream_context_create($options);
 	// 	$result = file_get_contents($domain . $pipeline, false, $context);
-	// 	if ($result === FALSE) { 
+	// 	if ($result === FALSE) {
 	// 		return false;
 	// 	}
 	// 	return json_decode($result);
@@ -78,7 +83,8 @@ class DataModel extends CI_Model{
 	}
 
 	function sendRequest($key, $pipeline){
-		//$proxy = "192.168.1.149:8000";
+		// Staging Proxy
+		$proxy = "192.168.1.149:8000";
 
 		$header = array();
 		$header[] = 'Authorization: Basic ' . $key;
@@ -87,7 +93,8 @@ class DataModel extends CI_Model{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		//curl_setopt($ch, CURLOPT_PROXY, $proxy);
+		// Staging Proxy
+		curl_setopt($ch, CURLOPT_PROXY, $proxy);
 		curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
 		curl_setopt($ch, CURLOPT_URL, $this->pipeline_url . $pipeline);
 		$result = curl_exec($ch);

@@ -73,7 +73,7 @@ class File extends CI_Controller{
 			for($i = 0; $i < $this->apimodel->getCourseInfo()['data']['moodle']['total_results']; $i++){
 				$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->apimodel->getCourseInfo()['data']['moodle']['results'][$i]['course_id']));
 				array_push($moodleCourseId, $t);
-			}		
+			}
 			$moodle_match = array(
 				"\$match" => array(
 					"\$or" => $moodleCourseId,
@@ -86,7 +86,7 @@ class File extends CI_Controller{
 			$moodle_group = array(
 				"\$group" => array(
 					"_id" => array(
-						"name" => "\$statement.object.definition.name.en",
+						"name" => "\$statement.object.definition.name.en-us",
 						"courseid" => "\$statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid"
 					),
 					"count" => array("\$sum" => 1),
@@ -109,15 +109,15 @@ class File extends CI_Controller{
 					"statement.verb.id" => array(
 						"\$eq" => "http://id.tincanapi.com/verb/viewed"
 					),
-					"statement.object.definition.name.en-US" => array("\$eq" => "a courseware asset"),					
+					"statement.object.definition.name.en-us" => array("\$eq" => "a courseware asset"),
 				),
 			);
 			$edx_group = array(
 				"\$group" => array(
 					"_id" => array(
 						"file_id" => "\$statement.object.id",
-						"file_name" => "\$statement.object.definition.description.en-US",
-						"file_name2" => "\$statement.object.definition.name.en-US"
+						"file_name" => "\$statement.object.definition.description.en-us",
+						"file_name2" => "\$statement.object.definition.name.en-us"
 					),
 					"count" => array("\$sum" => 1),
 				),
@@ -141,18 +141,18 @@ class File extends CI_Controller{
 	}
 
 	//need one more parameter: filename
-	//if filename == null, then it will return the overall number of views based on all files 
+	//if filename == null, then it will return the overall number of views based on all files
 	private function overviewTimeline(){
 		$pipeline = array();
 		$filename = $this->input->get('filename') == null ? null : str_replace("%20", " ", $this->input->get('filename'));
 		if(isset($this->apimodel->getCourseInfo()['data']['moodle']['total_results'])){
-			//TO DO
+			// TODO
 		}
 		if(isset($this->apimodel->getCourseInfo()['data']['edx']['total_results'])){
 			if($filename != null){
 				$edx_match = array(
 					"\$match" => array(
-						"statement.object.definition.name.en" => array("\$eq" => $filename),
+						"statement.object.definition.name.en-us" => array("\$eq" => $filename),
 						"statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed"),
 						"statement.timestamp" =>array("\$gte" => $from, "\$lt" => $to),
 					),
@@ -212,21 +212,19 @@ class File extends CI_Controller{
 				"statement.verb.id" => array(
 					"\$eq" => "http://id.tincanapi.com/verb/viewed"
 				),
-				"\$or" => array(
-					array("statement.object.id" => array("\$regex" => "asset", "\$options" => "i")),
-				),
+				"statement.object.definition.name.en-us" => array("\$eq" => "a courseware asset"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
 					"\$lt" => $this->apimodel->getToDate(),
-				),				
+				),
 			),
 		);
 		$edx_group = array(
 			"\$group" => array(
 				"_id" => array(
 					"file_id" => "\$statement.object.id",
-					"file_name" => "\$statement.object.definition.description.en-US",
-					"file_name2" => "\$statement.object.definition.name.en-US"
+					"file_name" => "\$statement.object.definition.description.en-us",
+					"file_name2" => "\$statement.object.definition.name.en-us"
 				),
 				"count" => array("\$sum" => 1),
 			),

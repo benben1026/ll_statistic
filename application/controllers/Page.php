@@ -67,6 +67,7 @@ class Page extends CourseInfo{
 		//temporarily disable course accessable check --TO MODIFY
 		if(isset($this->courseInfo['data'][$platform])){
 			foreach($this->courseInfo['data'][$platform]['results'] as $course){
+				echo $this->courseInfo['data'][$platform]['results'][0]['course_id'];
 				if($course['course_id'] == $courseId){
 					$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 					if($course['role_name'] == 'student'){

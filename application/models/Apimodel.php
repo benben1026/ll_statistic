@@ -32,22 +32,32 @@ class ApiModel extends CI_Model{
 			'message' => '',
 			'data' => array(
 				'moodle' => array(
-					'total_results' => "1",
+					'total_results' => "2",
 					'results' => array(
 						array(
-							'course_id' => '',
-							'course_name' => '',
-							'role_name' => ''
+							'course_id' => '57',
+							'course_name' => 'Soft Skill Mentor - Module 1 - Career Planning',
+							'role_name' => 'student'
+						),
+						array(
+							'course_id' => '95',
+							'course_name' => 'NEWCOURSE3',
+							'role_name' => 'student'
 						),
 					)
 				),
 				'edx' => array(
-					'total_results' => "1",
+					'total_results' => "2",
 					'results' => array(
 						array(
-							'course_id' => '',
-							'course_name' => '',
-							'role_name' => ''
+							'course_id' => 'course-v1:keep+demo01+2015_1',
+							'course_name' => 'KEEP Open edX Demo Course A',
+							'role_name' => 'student'
+						),
+						array(
+							'course_id' => 'course-v1:keep+demo02+2016_1',
+							'course_name' => 'KEEP Open edX Demo Course B',
+							'role_name' => 'student'
 						),
 					)
 				)
@@ -124,7 +134,7 @@ class ApiModel extends CI_Model{
 			$this->fromDate = "2015-01-01T00:00";
 		}else{
 			$this->fromDate = $fromDate . "T00:00";
-		}		
+		}
 	}
 
 	function getFromDate(){
@@ -136,7 +146,7 @@ class ApiModel extends CI_Model{
 			$this->toDate = "2016-12-31T00:00";
 		}else{
 			$this->toDate = $toDate . "T00:00";
-		}		
+		}
 	}
 
 	function getToDate(){

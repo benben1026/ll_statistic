@@ -45,7 +45,7 @@ class CourseinfoModel extends CI_Model{
 	}
 
 	function sendRequest($lrs, $lrs_url){
-		//$proxy = "192.168.1.149:8000";
+		$proxy = "192.168.1.149:8000";
 
 		$header = array();
 		$header[] = 'Authorization: Basic ' . $this->config[$lrs]['key'];
@@ -53,7 +53,7 @@ class CourseinfoModel extends CI_Model{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		//curl_setopt($ch, CURLOPT_PROXY, $proxy);
+		curl_setopt($ch, CURLOPT_PROXY, $proxy);
 		curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
 		curl_setopt($ch, CURLOPT_URL, $this->config[$lrs]['domain'] . $lrs_url);
 		$result = curl_exec($ch);

@@ -49,7 +49,7 @@ class Assignment extends CI_Controller{
 		$group = array(
 			"\$group" => array(
 				"_id" => array(
-					"asg_name" => "\$statement.object.definition.name.en"
+					"asg_name" => "\$statement.object.definition.name.en-us"
 				)
 			),
 		);
@@ -98,7 +98,7 @@ class Assignment extends CI_Controller{
 				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->apimodel->getCourseId()),
 				"statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/evaluated"),
 				"statement.context.contextActivities.grouping" => array(
-					"\$elemMatch" => array("definition.name.en" => array("\$eq" => $asg_name))
+					"\$elemMatch" => array("definition.name.en-us" => array("\$eq" => $asg_name))
 				),
 			)
 		);

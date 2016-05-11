@@ -23,14 +23,14 @@ class CourseInfo extends CI_Controller{
 		$this->output->set_output(json_encode($result));
 	}
 
-	protected function getUserCourseList($lrs_para){		
-//KEEP ID 
+	protected function getUserCourseList($lrs_para){
+//KEEP ID
 		//this id should be return from the login information -- TO MODIFY
 		//demo account
 		//$keepId = "563a82e2-96ed-11e4-bf37-080027087aa9";
 		//teacher account
 		//$keepId = "fb9de522-167c-4444-98c3-d56742e53814";
-		
+
 		//production account (instructor of data structure on edx)
 		//$keepId = "e9fed8e0-cfcc-11e4-8b2a-080027087aa9";
 
@@ -54,6 +54,7 @@ class CourseInfo extends CI_Controller{
 				"moodle" => $url_para,
 				"edx" => $url_para
 			);
+			echo "keepid:" . $url_para . "\n";
 		}else{
 			$url_list = array(
 				$lrs => $url_para,
@@ -67,13 +68,13 @@ class CourseInfo extends CI_Controller{
 			);
 			$this->session->set_userdata($session_data);
 		}
-		
+
 		return $output;
 	}
 
 	private function checkCourseInfoSession(){
 		$preTime = $this->session->userdata('courseInfoSessExp');
-		if($preTime == null || time() - $preTime > 300){
+		if($preTime == null || time() - $preTime > 3){
 			return false;
 		}else{
 			return $this->session->userdata('courseInfo');

@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Performance extends CI_Controller{
 	private $returnData = array(
 		"ok" => false,
-		"message" => "",
+		"message" => "default",
 		"data" => null
 	);
 
@@ -34,7 +34,7 @@ class Performance extends CI_Controller{
 		}
 
 		if($this->apimodel->getPlatform() == 'moodle'){
-			//TO DO
+			// TODO
 		}else if($this->apimodel->getPlatform() == 'edx'){
 			//get total number of students
 			$match = array(
@@ -47,7 +47,7 @@ class Performance extends CI_Controller{
 			$group = array(
 				"\$group" => array(
 					"_id" => array(
-						"verb" => "\$statement.verb.display.en-US"
+						"verb" => "\$statement.verb.display.en-us"
 					),
 					"count" => array("\$sum" => 1),
 				)
@@ -60,7 +60,8 @@ class Performance extends CI_Controller{
 				printJson($this->returnData);
 				return;
 			}
-			$totalNumOfStudent = $output['ok'] && $output['data']['edx']['ok'] ? $output['data']['edx']['result'][0]['count'] : 0;
+			// $totalNumOfStudent = $output['ok'] && $output['data']['edx']['ok'] ? $output['data']['edx']['result'][0]['count'] : 0;
+			$totalNumOfStudent = 2;
 			if($totalNumOfStudent == 0){
 				$this->returnData['ok'] = false;
 				$this->returnData['message'] = "There is no student in this course";
@@ -77,35 +78,35 @@ class Performance extends CI_Controller{
 						//view a courseware
 						array("\$and" => array(
 											array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-											array("statement.object.definition.name.en-US" => array("\$eq" => "a courseware page"))
+											array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
 										)
 						),
 						//start playing a video
-						array("statement.verb.display.en-US" => array("\$eq" => "started playing")),
+						array("statement.verb.display.en-us" => array("\$eq" => "started playing")),
 						//view a thread
 						array("\$and" => array(
 											array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-											array("statement.object.definition.name.en-US" => array("\$eq" => "a discussion thread"))
+											array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
 										)
 						),
 						//create a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "created"),
+							"statement.verb.display.en-us" => array("\$eq" => "created"),
 						),
 						//reply a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "responded to"),
+							"statement.verb.display.en-us" => array("\$eq" => "responded to"),
 						),
 						//vote a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "up voted"),
+							"statement.verb.display.en-us" => array("\$eq" => "up voted"),
 						),
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "down voted"),
+							"statement.verb.display.en-us" => array("\$eq" => "down voted"),
 						),
 						//complete a problem
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "completed"),
+							"statement.verb.display.en-us" => array("\$eq" => "completed"),
 						),
 					)
 				),
@@ -113,8 +114,8 @@ class Performance extends CI_Controller{
 			$group = array(
 				"\$group" => array(
 					"_id" => array(
-						"verb" => "\$statement.verb.display.en-US",
-						"object" => "\$statement.object.definition.name.en-US"
+						"verb" => "\$statement.verb.display.en-us",
+						"object" => "\$statement.object.definition.name.en-us"
 					),
 					"count" => array("\$sum" => 1)
 				),
@@ -141,35 +142,35 @@ class Performance extends CI_Controller{
 						//view a courseware
 						array("\$and" => array(
 											array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-											array("statement.object.definition.name.en-US" => array("\$eq" => "a courseware page"))
+											array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
 										)
 						),
 						//start playing a video
-						array("statement.verb.display.en-US" => array("\$eq" => "started playing")),
+						array("statement.verb.display.en-us" => array("\$eq" => "started playing")),
 						//view a thread
 						array("\$and" => array(
 											array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-											array("statement.object.definition.name.en-US" => array("\$eq" => "a discussion thread"))
+											array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
 										)
 						),
 						//create a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "created"),
+							"statement.verb.display.en-us" => array("\$eq" => "created"),
 						),
 						//reply a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "responded to"),
+							"statement.verb.display.en-us" => array("\$eq" => "responded to"),
 						),
 						//vote a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "up voted"),
+							"statement.verb.display.en-us" => array("\$eq" => "up voted"),
 						),
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "down voted"),
+							"statement.verb.display.en-us" => array("\$eq" => "down voted"),
 						),
 						//complete a problem
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "completed"),
+							"statement.verb.display.en-us" => array("\$eq" => "completed"),
 						),
 					)
 				),
@@ -177,13 +178,13 @@ class Performance extends CI_Controller{
 			$group = array(
 				"\$group" => array(
 					"_id" => array(
-						"verb" => "\$statement.verb.display.en-US",
-						"object" => "\$statement.object.definition.name.en-US"
+						"verb" => "\$statement.verb.display.en-us",
+						"object" => "\$statement.object.definition.name.en-us"
 					),
 					"count" => array("\$sum" => 1)
 				),
 			);
-			
+
 			$pipeline['edx'] = array($match, $group, $sort);
 			$personal = $this->datamodel->getData($pipeline);
 			if(!$personal['ok']){
@@ -196,7 +197,7 @@ class Performance extends CI_Controller{
 			$personalData = array(0, 0, 0, 0, 0, 0, 0);
 
 			//find personal
-			for($i = 0; $i < count($personal['data']['edx']['result']); $i++){				
+			for($i = 0; $i < count($personal['data']['edx']['result']); $i++){
 				if($personal['data']['edx']['result'][$i]['_id']['verb'] == 'viewed' && $personal['data']['edx']['result'][$i]['_id']['object'] == 'a courseware page'){
 					$personalData[0] = $personal['data']['edx']['result'][$i]['count'];
 				}else if($personal['data']['edx']['result'][$i]['_id']['verb'] == 'started playing'){
@@ -232,7 +233,7 @@ class Performance extends CI_Controller{
 					}else{
 						$averageData[5] = ($averageData[5] * $totalNumOfStudent + $total['data']['edx']['result'][$i]['count']) / $totalNumOfStudent;
 					}
-					
+
 				}else if($total['data']['edx']['result'][$i]['_id']['verb'] == 'completed'){
 					$averageData[6] = number_format($total['data']['edx']['result'][$i]['count'] / $totalNumOfStudent, 3);
 				}
@@ -268,7 +269,7 @@ class Performance extends CI_Controller{
 		}
 
 		if($this->apimodel->getPlatform() == 'moodle'){
-			//TO DO
+			// TODO
 		}else if($this->apimodel->getPlatform() == 'edx'){
 			$match = array(
 				"\$match" => array(
@@ -282,35 +283,35 @@ class Performance extends CI_Controller{
 						//view a courseware
 						array("\$and" => array(
 											array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-											array("statement.object.definition.name.en-US" => array("\$eq" => "a courseware page"))
+											array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
 										)
 						),
 						//start playing a video
-						array("statement.verb.display.en-US" => array("\$eq" => "started playing")),
+						array("statement.verb.display.en-us" => array("\$eq" => "started playing")),
 						//view a thread
 						array("\$and" => array(
 											array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-											array("statement.object.definition.name.en-US" => array("\$eq" => "a discussion thread"))
+											array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
 										)
 						),
 						//create a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "created"),
+							"statement.verb.display.en-us" => array("\$eq" => "created"),
 						),
 						//reply a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "responded to"),
+							"statement.verb.display.en-us" => array("\$eq" => "responded to"),
 						),
 						//vote a thread
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "up voted"),
+							"statement.verb.display.en-us" => array("\$eq" => "up voted"),
 						),
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "down voted"),
+							"statement.verb.display.en-us" => array("\$eq" => "down voted"),
 						),
 						//complete a problem
 						array(
-							"statement.verb.display.en-US" => array("\$eq" => "completed"),
+							"statement.verb.display.en-us" => array("\$eq" => "completed"),
 						),
 					)
 				),
@@ -320,8 +321,8 @@ class Performance extends CI_Controller{
 					"_id" => array(
 						"id" => "\$statement.actor.name",
 						"name" => "\$statement.actor.account.name",
-						"verb" => "\$statement.verb.display.en-US",
-						"object" => "\$statement.object.definition.name.en-US"
+						"verb" => "\$statement.verb.display.en-us",
+						"object" => "\$statement.object.definition.name.en-us"
 					),
 					"count" => array("\$sum" => 1)
 				),
