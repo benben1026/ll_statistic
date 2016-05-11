@@ -32,6 +32,11 @@ class ApiModel extends CI_Model{
 			'message' => '',
 			'data' => array(
 				'moodle' => array(
+// 					error: 
+// 					{
+// 						code: "404",
+// 						message: "Not Found"
+// 					}
 					'total_results' => "1",
 					'results' => array(
 						array(
@@ -48,7 +53,7 @@ class ApiModel extends CI_Model{
 							'course_id' => '',
 							'course_name' => '',
 							'role_name' => ''
-						),
+						),						
 					)
 				)
 			)
@@ -161,5 +166,18 @@ class ApiModel extends CI_Model{
 
 	function getMessage(){
 		return $this->message;
+	}
+	
+	function getCourseNameByCourseId($courseId, $platform) {
+		
+		$courses = $this->courseInfo['data'][$platform];
+		
+		if (intval($courses['total_results']) > 0 ) {
+			foreach ($courses['results'] as $course) {
+				if($course['course_id'] == $courseId) {
+					return $course['course_name'];
+				}
+			}// end foreach
+		}// end if
 	}
 }

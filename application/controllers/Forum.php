@@ -36,28 +36,10 @@ class Forum extends CI_Controller{
 				$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->apimodel->getCourseInfo()['data']['moodle']['results'][$i]['course_id']));
 				array_push($moodleCourseId, $t);
 			}		
-			$moodle_match = array(
-				"\$match" => array(
-					"\$or" => $moodleCourseId,
-					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array(
-						"\$eq" => $type == "view" ? "\\mod_forum\\event\\discussion_viewed" : "\\mod_forum\\event\\post_created"
-					),
-					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.rolename" => array("\$eq" => "student"),
-					"statement.timestamp" =>array(
-						"\$gte" => $this->apimodel->getFromDate(),
-						"\$lt" => $this->apimodel->getToDate(),
-					),
-				),
-			);
-			$moodle_group = array(
-				"\$group" => array(
-					"_id" => array(
-						"forum_id" => "\$statement.object.id",
-						"forum_name" => "\$statement.object.definition.name.en"
-					),
-					"count" => array("\$sum" => 1),
-				)
-			);
+			$moodle_match = $this->getOverviewMatchArray($moodleCourseId);
+			
+			$moodle_group = getOverviewGroupArray("moodle");
+			
 			$moodle_sort = array(
 				"\$sort" => array("count" => -1)
 			);
@@ -69,30 +51,13 @@ class Forum extends CI_Controller{
 				$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.courseid" => array("\$eq" => $this->apimodel->getCourseInfo()['data']['edx']['results'][$i]['course_id']));
 				array_push($edxCourseId, $t);
 			}
-			$edx_match = array(
-				"\$match" => array(
-					"\$or" => $edxCourseId,
-					"statement.verb.id" => array("\$eq" => $type == "view" ? "http://id.tincanapi.com/verb/viewed" : "http://adlnet.gov/expapi/verbs/responded"),
-					"statement.object.id" => array("\$regex" => $type == "view" ? "/discussion/forum/course/threads/." : "/threads/", "\$options" => "i"),
-					"statement.timestamp" =>array(
-						"\$gte" => $this->apimodel->getFromDate(),
-						"\$lt" => $this->apimodel->getToDate(),
-					),
-				),
-			);
+			$edx_match = $this->getOverviewMatchArray($edxCourseId);
+			
+			
 			//TO DO:update the pipeline to group comments of the same post together
 			//object id: https://edx.keep.edu.hk/courses/course-v1:cuhk+csci2100a+2015_2/discussion/forum/course/threads/571361123d97140a7c0000cc#response_5713b3ee3d97140a7f0000e6
 			//how to ignore the response id after #
-			$edx_group = array(
-				"\$group" => array(
-					"_id" => array(
-						"forum_id" => "\$statement.object.id",
-						"forum_name" => "\$statement.object.definition.description.en-US",
-						"course_name" => "\$statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.coursename",
-					),
-					"count" => array("\$sum" => 1),
-				),
-			);
+			$edx_group = $this->getOverviewGroupArray('edx');
 			$edx_sort = array(
 				"\$sort" => array("count" => -1),
 			);
@@ -107,8 +72,8 @@ class Forum extends CI_Controller{
 				$forum_name = array_key_exists("forum_name", $result['data']['edx']['result'][$i]['_id']) ? $result['data']['edx']['result'][$i]['_id']['forum_name'] : "Forum";
 				$temp = array(
 					$i + 1,
-					"<a target=\"_blank\" href=\"" . $result['data']['edx']['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",
-					$result['data']['edx']['result'][$i]['_id']['course_name'],
+					"<a target=\"_blank\" href=\"" . $result['data']['edx']['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",										
+					$this->apimodel->getCourseNameByCourseId($result['data']['edx']['result'][$i]['_id']['course_id'], "edx"),
 					'KEEP edX',
 					$result['data']['edx']['result'][$i]['count'],
 				);
@@ -116,8 +81,19 @@ class Forum extends CI_Controller{
 			}
 		}
 		if(array_key_exists('moodle', $result['data'])){
-			//TO DO
+			for($i = 0; $i < count($result['data']['edx']['result']); $i++){
+				$forum_name = array_key_exists("forum_name", $result['data']['edx']['result'][$i]['_id']) ? $result['data']['edx']['result'][$i]['_id']['forum_name'] : "Forum";
+				$temp = array(
+					$i + 1,
+					"<a target=\"_blank\" href=\"" . $result['data']['edx']['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",										
+					$this->apimodel->getCourseNameByCourseId($result['data']['edx']['result'][$i]['_id']['course_id'], "moodle"),
+					'KEEP edX',
+					$result['data']['edx']['result'][$i]['count'],
+				);
+				array_push($data, $temp);
+			}
 		}
+		
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = $data;
 		printJson($this->returnData);
@@ -144,119 +120,113 @@ class Forum extends CI_Controller{
 			return;
 		}
 
-
-		if($this->apimodel->getPlatform() == 'moodle'){
-			if($type == 'view'){
-				$this->getViewFromMoodle();
-			}else if($type == 'reply'){
-				$this->getReplyFromMoodle();
-			}else if($type == 'active'){
-				$this->getActiveFromMoodle();
-			}
-		}else if($this->apimodel->getPlatform() == 'edx'){
-			$result;
-			if($type == 'view'){
-				$result = $this->getViewFromEdx();
-			}else if($type == 'reply'){
-				$result = $this->getReplyFromEdx();
-			}else if($type == 'active'){
-				$result = $this->getActiveFromEdx();
-			}
-			$data = array();
-			for($i = 0; $i < count($result['data'][$this->apimodel->getPlatform()]['result']); $i++){
-				$forum_name = array_key_exists("forum_name", $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']) ? $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']['forum_name'] : "Forum";
-				//$forum_name = "Forum";
-				$temp = array(
-					$i + 1,
-					"<a target=\"_blank\" href=\"" . $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",
-					$result['data'][$this->apimodel->getPlatform()]['result'][$i]['count'],
-				);
-				array_push($data, $temp);
-			}
-			$this->returnData['data'] = $data;
-			$this->returnData['ok'] = true;
+		$platform = $this->apimodel->getPlatform();
+		$result;
+		// TODO: Could be further shorten the code
+		switch ($type) {
+	    case "view":
+	        $result = $this->getView($platform);
+			break;	        
+	    case "reply":
+	        $result = $this->getReply($platform);
+			break;  	    
+		case "active":
+	        $result = $this->getActive($platform);
+			break;			
 		}
-		printJson($this->returnData);
+		$data = array();
+		
+		// format the return data
+		for($i = 0; $i < count($result['data'][$this->apimodel->getPlatform()]['result']); $i++){
+			$forum_name = array_key_exists("forum_name", $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']) ? $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']['forum_name'] : "Forum";
+			//$forum_name = "Forum";
+			$temp = array(
+				$i + 1,
+				"<a target=\"_blank\" href=\"" . $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",
+				$result['data'][$this->apimodel->getPlatform()]['result'][$i]['count'],
+			);
+			array_push($data, $temp);
+		}
+		$this->returnData['data'] = $data;
+		$this->returnData['ok'] = true;
+		
+		printJson($this->returnData);		
 	}
 
-	private function getViewFromMoodle(){
-		//TO DO
-	}
+	// - Private Function
 
-	private function getReplyFromMoodle(){
-		//TO DO
-	}
-
-	private function getActiveFromMoodle(){
-		//TO DO
-	}
-
-	private function getViewFromEdx(){
-		$edx_match = array(
+	private function getView($platform){
+		$key = $this->getKey($platform);
+		$match = array(
 			"\$match" => array(
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.courseid" => $this->apimodel->getCourseId(),
+				"statement.context.extensions.".$key.".courseid" => $this->apimodel->getCourseId(),
 				"statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed"),
-				"statement.object.id" => array("\$regex" => "/discussion/forum/course/threads/." , "\$options" => "i"),
+				"statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
 					"\$lt" => $this->apimodel->getToDate(),
 				),
 			),
 		);
-		$edx_group = array(
+		$group = array(
 			"\$group" => array(
 				"_id" => array(
 					"forum_id" => "\$statement.object.id",
-					"forum_name" => "\$statement.object.definition.description.en-US",
+					"forum_name" => "\$statement.object.definition.description.en-us",
 				),
 				"count" => array("\$sum" => 1),
 			),
 		);
-		$edx_sort = array(
+		$sort = array(
 			"\$sort" => array("count" => -1),
 		);
-		$pipeline['edx'] = array($edx_match, $edx_group, $edx_sort);
+		$pipeline[$platform] = array($match, $group, $sort);
 		return $this->datamodel->getData($pipeline);
 	}
 
-	private function getReplyFromEdx(){
-		$edx_match = array(
+	private function getReply($platform){
+		$key = $this->getKey($platform);
+		$match = array(
 			"\$match" => array(
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.courseid" => $this->apimodel->getCourseId(),
+				"statement.context.extensions.".$key.".courseid" => $this->apimodel->getCourseId(),
 				"statement.verb.id" => array("\$eq" => "http://adlnet.gov/expapi/verbs/responded"),
-				"statement.object.id" => array("\$regex" => "/discussion/", "\$options" => "i"),
+				"\$or" => array(
+					"statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"),
+					"statement.object.definition.name.en-us" => array("\$eq" => "a discussion response"),
+				),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
 					"\$lt" => $this->apimodel->getToDate(),
 				),
 			),
 		);
-		$edx_group = array(
+		$group = array(
 			"\$group" => array(
 				"_id" => array(
 					"forum_id" => "\$statement.object.id",
-					"forum_name" => "\$statement.object.definition.description.en-US",
+					"forum_name" => "\$statement.object.definition.description.en-us",
 				),
 				"count" => array("\$sum" => 1),
 			),
 		);
-		$edx_sort = array(
+		$sort = array(
 			"\$sort" => array("count" => -1),
 		);
-		$pipeline['edx'] = array($edx_match, $edx_group, $edx_sort);
+		$pipeline[$platform] = array($match, $group, $sort);
 		return $this->datamodel->getData($pipeline);
 	}
 
-	private function getActiveFromEdx(){
+	private function getActive($platform){
+		$key = $this->getKey($platform);
 		$edx_match = array(
 			"\$match" => array(
 				"\$or" => array(
-					array("statement.verb.display.en-US" => array("\$eq" => "created")),
-					array("statement.verb.display.en-US" => array("\$eq" => "responded to")),
-					array("statement.verb.display.en-US" => array("\$eq" => "updated")),
+					array("statement.verb.display.en-us" => array("\$eq" => "created")),
+					array("statement.verb.display.en-us" => array("\$eq" => "responded to")),
+					array("statement.verb.display.en-us" => array("\$eq" => "updated")),
 				),
-				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.courseid" => $this->apimodel->getCourseId(),
-				"statement.object.id" => array("\$regex" => "/discussion/", "\$options" => "i"),
+				"statement.context.extensions.".$key.".courseid" => $this->apimodel->getCourseId(),
+				"statement.object.definition.description.en-us" => array("\$eq" => "a discussion thread"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
 					"\$lt" => $this->apimodel->getToDate(),
@@ -267,7 +237,7 @@ class Forum extends CI_Controller{
 			"\$group" => array(
 				"_id" => array(
 					"forum_id" => "\$statement.object.id",
-					"forum_name" => "\$statement.object.definition.description.en-US",
+					"forum_name" => "\$statement.object.definition.description.en-us",
 				),
 				"count" => array(
 					"\$max" => array("\$substr"=>array("\$statement.timestamp", 0, 10))
@@ -280,8 +250,50 @@ class Forum extends CI_Controller{
 			)
 		);
 		
-		$pipeline['edx'] = array($edx_match, $edx_group, $edx_sort);
+		$pipeline[$platform] = array($match, $group, $sort);
 		return $this->datamodel->getData($pipeline);
+	}
+	
+	private function getOverviewGroupArray($platform) {
+		
+		$key = $this->getKey($platform);
+				
+		return array(
+			"\$group" => array(
+				"_id" => array(
+					"forum_id" => "\$statement.object.id",
+					"forum_name" => "\$statement.object.definition.description.en-us",
+					"course_id" => "\$statement.context.extensions.".$key.".courseid",
+				),
+				"count" => array("\$sum" => 1),
+			),
+		);
+	}
+	
+	private function getOverviewMatchArray($courseId) {
+		return array(
+				"\$match" => array(
+					"\$or" => $courseId,
+					"statement.verb.id" => array("\$eq" => $type == "view" ? "http://id.tincanapi.com/verb/viewed" : "http://adlnet.gov/expapi/verbs/responded"),
+					"\$or" => array(
+						"statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"),
+						"statement.object.definition.name.en-us" => array("\$eq" => "a discussion response"),
+					),					
+					"statement.timestamp" =>array(
+						"\$gte" => $this->apimodel->getFromDate(),
+						"\$lt" => $this->apimodel->getToDate(),
+					),
+				),
+			);
+	}
+	
+	private function getKey($platform) {
+		switch ($platform) {
+	    case "edx":
+	        return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";	        
+	    case "moodle":
+	        return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";    	    
+		}
 	}
 
 }
