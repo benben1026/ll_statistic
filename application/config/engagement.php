@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$active = 'default';
+$active_group = 'default';
 
-$stu_engage_classify['default'] = array(
+$config['stu_engage_classify'][$active_group] = array(
 	'View Courseware' => array(
 		array('viewed', 'a courseware page'),
 		array('viewed', 'a URL'),
