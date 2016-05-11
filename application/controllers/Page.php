@@ -74,10 +74,9 @@ class Page extends CI_Controller{
 			return;
 		}
 		$courseInfoData = $this->apimodel->getCourseInfo()['data'];
-		if(isset($courseInfoData[$this->apimode->getPlatform()])){
-			foreach($courseInfoData[$this->apimode->getPlatform()]['results'] as $course){
-				echo $courseInfoData[$this->apimode->getPlatform()]['results'][0]['course_id'];
-				if($course['course_id'] == $courseId){
+		if(isset($courseInfoData[$this->apimodel->getPlatform()])){
+			foreach($courseInfoData[$this->apimodel->getPlatform()]['results'] as $course){
+				if($course['course_id'] == $this->apimodel->getCourseId()){
 					$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 					if($course['role_name'] == 'student'){
 						$this->load->view('stu_course_detail', array('course_name' => $course['course_name'], ));
