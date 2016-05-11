@@ -12,15 +12,6 @@ class Performance extends CI_Controller{
 		parent::__contruct();
 	}
 
-	private function getKey($platform) {
-		switch ($platform) {
-			case "edx":
-					return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";
-			case "moodle":
-					return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";
-		}
-	}
-
 	public function stuPerformance(){
 		$this->load->model('apimodel');
 		$this->load->model('datamodel');
@@ -52,7 +43,7 @@ class Performance extends CI_Controller{
 	}
 
 	private function getDataFromPlatform($platform){
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 		//get total number of students
 		$match = array(
 			"\$match" => array(
@@ -294,7 +285,7 @@ class Performance extends CI_Controller{
 	}
 
 	private function getVitalityFromPlatform($platform){
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 		$match = array(
 			"\$match" => array(
 				"statement.timestamp" => array(

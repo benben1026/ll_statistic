@@ -63,22 +63,22 @@ class Course extends CI_Controller{
 
 	private function addDropTimeline(){
 		$platform = $this->apimodel->getPlatform();
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 
 		$edx_match = array(
 			"\$match" => array(
 				"statement.timestamp" => array(
 							"\$gte" => $this->apimodel->getFromDate(),
 							"\$lt" => $this->apimodel->getToDate(),
-						),
-					"\$or" => array(
-						array("statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan")),
-						array("statement.verb.id" => array("\$eq" => "http://activitystrea.ms/schema/1.0/leave")),
-					),
-					"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
-					"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
-				)
-			);
+				),
+				"\$or" => array(
+					array("statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan")),
+					array("statement.verb.id" => array("\$eq" => "http://activitystrea.ms/schema/1.0/leave")),
+				),
+				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
+				"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
+			)
+		);
 		$edx_group = array(
 				"\$group" => array(
 					"_id" => array(
@@ -125,7 +125,7 @@ class Course extends CI_Controller{
 
 	private function addDropNum(){
 		$platform = $this->apimodel->getPlatform();
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 
 		$match = array(
 			"\$match" => array(
@@ -155,14 +155,5 @@ class Course extends CI_Controller{
 		$this->returnData['message'] = $result['message'];
 		$this->returnData['data'] = $result['data'];
 		printJson($this->returnData);
-	}
-
-	private function getKey($platform) {
-		switch ($platform) {
-	    case "edx":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";
-	    case "moodle":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";
-		}
 	}
 }

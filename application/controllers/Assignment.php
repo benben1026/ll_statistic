@@ -12,15 +12,6 @@ class Assignment extends CI_Controller{
 		parent::__contruct();
 	}
 
-	private function getKey($platform) {
-		switch ($platform) {
-			case "edx":
-					return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";
-			case "moodle":
-					return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";
-		}
-	}
-
 	// get assignment list of a particular platform
 	public function getAsgList(){
 		$this->load->model('apimodel');
@@ -50,7 +41,7 @@ class Assignment extends CI_Controller{
 		}
 
 		//get context key, right now, it's just moodle
-		$key = $this->getKey($this->apimodel->getPlatform());
+		$key = getKey($this->apimodel->getPlatform());
 		$match = array(
 			"\$match" => array(
 				"statement.actor.name" => array("\$eq" => $this->apimodel->getKeepId()),
@@ -113,7 +104,7 @@ class Assignment extends CI_Controller{
 		}
 
 		//get context key, right now, it's just moodle
-		$key = $this->getKey($this->apimodel->getPlatform());
+		$key = getKey($this->apimodel->getPlatform());
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".eventname" => array("\$eq" => "\\core\\event\\user_graded"),

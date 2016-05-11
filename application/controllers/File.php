@@ -14,15 +14,6 @@ class File extends CI_Controller{
 		parent::__contruct();
 	}
 
-	private function getKey($platform) {
-		switch ($platform) {
-			case "edx":
-					return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";
-			case "moodle":
-					return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";
-		}
-	}
-
 	//type can be either 'num' or 'timeline'
 	public function overview($type = 'num'){
 		$this->load->model('apimodel');
@@ -57,7 +48,7 @@ class File extends CI_Controller{
 	private function overviewNum(){
 		$pipeline = array();
 		foreach ($this->$platforms as $platform) {
-			$key = $this->getKey($platform);
+			$key = getKey($platform);
 			if(isset($this->apimodel->getCourseInfo()['data'][$platform]['total_results'])){
 				$courseId = array();
 				for($i = 0; $i < $this->apimodel->getCourseInfo()['data'][$platform]['total_results']; $i++){
@@ -109,7 +100,7 @@ class File extends CI_Controller{
 		$pipeline = array();
 		$filename = $this->input->get('filename') == null ? null : str_replace("%20", " ", $this->input->get('filename'));
 		foreach ($this->$platforms as $platform) {
-			$key = $this->getKey($platform);
+			$key = getKey($platform);
 			if(isset($this->apimodel->getCourseInfo()['data'][$platform]['total_results'])){
 				if($filename != null){
 					$match = array(
@@ -191,7 +182,7 @@ class File extends CI_Controller{
 	}
 
 	private function getDataFromPlatform($platform){
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => array(

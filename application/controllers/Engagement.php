@@ -43,7 +43,7 @@ class Engagement extends CI_Controller{
 	
 	private function getData($platform) {
 		
-		$key = getKey($platform);
+		getKey($platform);
 
 		$match = array(
 			"\$match" => array(
@@ -145,15 +145,6 @@ class Engagement extends CI_Controller{
 			$returnArray[] = array("statement.verb.display.en-us" => $verb);
 		}		
 		return $returnArray;
-	}
-	
-	private function getKey($platform) {
-		switch ($platform) {
-	    case "edx":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";	        
-	    case "moodle":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";    	    
-		}
 	}
 
 	// private function getDataFromEdx(){

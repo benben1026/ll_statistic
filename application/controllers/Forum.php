@@ -156,7 +156,7 @@ class Forum extends CI_Controller{
 	// - Private Function
 
 	private function getView($platform){
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => $this->apimodel->getCourseId(),
@@ -185,7 +185,7 @@ class Forum extends CI_Controller{
 	}
 
 	private function getReply($platform){
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => $this->apimodel->getCourseId(),
@@ -217,7 +217,7 @@ class Forum extends CI_Controller{
 	}
 
 	private function getActive($platform){
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 		$edx_match = array(
 			"\$match" => array(
 				"\$or" => array(
@@ -256,7 +256,7 @@ class Forum extends CI_Controller{
 	
 	private function getOverviewGroupArray($platform) {
 		
-		$key = $this->getKey($platform);
+		$key = getKey($platform);
 				
 		return array(
 			"\$group" => array(
@@ -285,15 +285,6 @@ class Forum extends CI_Controller{
 					),
 				),
 			);
-	}
-	
-	private function getKey($platform) {
-		switch ($platform) {
-	    case "edx":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log";	        
-	    case "moodle":
-	        return "http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log";    	    
-		}
 	}
 
 }
