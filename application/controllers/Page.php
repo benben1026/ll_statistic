@@ -85,4 +85,9 @@ class Page extends CourseInfo{
 		// $this->load->view('template/footer');
 		return;
 	}
+
+	public function teaViewStu(){
+		$this->load->view('template/header_include');
+		$this->load->view('teastu_course_detail');
+	}
 }
