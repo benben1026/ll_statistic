@@ -38,7 +38,7 @@ class Forum extends CI_Controller{
 			}		
 			$moodle_match = $this->getOverviewMatchArray($moodleCourseId);
 			
-			$moodle_group = getOverviewGroupArray("moodle");
+			$moodle_group = $this->getOverviewGroupArray("moodle");
 			
 			$moodle_sort = array(
 				"\$sort" => array("count" => -1)

@@ -66,6 +66,7 @@ class Page extends CourseInfo{
 		$platform = $this->input->get('platform');
 		//temporarily disable course accessable check --TO MODIFY
 		if(isset($this->courseInfo['data'][$platform])){
+			//var_dump("");
 			foreach($this->courseInfo['data'][$platform]['results'] as $course){
 				echo $this->courseInfo['data'][$platform]['results'][0]['course_id'];
 				if($course['course_id'] == $courseId){
