@@ -1,17 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include_once (dirname(__FILE__) . "/CourseInfo.php");
-
-class Page extends CourseInfo{
-	private $courseInfo;
+class Page extends CI_Controller{
 
 	function __construct(){
 		parent::__construct();
-		$this->courseInfo = $this->getUserCourseList("all");
 	}
 
 	public function landing(){
-		if($this->session->userdata('samlUserData')['login'][0] != null){
+		$this->load->model('apimodel');
+		if($this->apimodel->getAccessGranted()){
 			redirect('/page/overview');
 			return;
 		}
@@ -21,17 +18,18 @@ class Page extends CourseInfo{
 	}
 
 	public function overview(){
-		if($this->session->userdata('samlUserData')['login'][0] == null){
+		$this->load->model('apimodel');
+		if(!$this->apimodel->getAccessGranted()){
 			redirect('/Saml2Controller/login');
 			return;
 		}
-		if(!$this->courseInfo['ok']){
-			echo 'Sever Temporarily Not Available';
+		if(!$this->apimodel->getCourseInfo()['ok']){
+			printJson(array('ok' => false, 'message' => $this->apimodel->getMessage(), 'data' => null));
 			return;
 		}
-		foreach($this->courseInfo['data'] as $lrs => $result){
-			for($i = 0; array_key_exists('total_results', $this->courseInfo['data'][$lrs]) && $i < (int)$this->courseInfo['data'][$lrs]['total_results']; $i++){
-				if($this->courseInfo['data'][$lrs]['results'][$i]['role_name'] != "student"){
+		foreach($this->apimodel->getCourseInfo()['data'] as $lrs => $result){
+			for($i = 0; array_key_exists('total_results', $this->apimodel->getCourseInfo()['data'][$lrs]) && $i < (int)$this->apimodel->getCourseInfo()['data'][$lrs]['total_results']; $i++){
+				if($this->apimodel->getCourseInfo()['data'][$lrs]['results'][$i]['role_name'] != "student"){
 					$this->overviewTea();
 					return;
 				}
@@ -42,7 +40,8 @@ class Page extends CourseInfo{
 	}
 
 	public function overviewTea(){
-		if($this->session->userdata('samlUserData')['login'][0] == null){
+		$this->load->model('apimodel');
+		if(!$this->apimodel->getAccessGranted()){
 			redirect('/Saml2Controller/login');
 			return;
 		}
@@ -52,7 +51,8 @@ class Page extends CourseInfo{
 	}
 
 	public function overviewStu(){
-		if($this->session->userdata('samlUserData')['login'][0] == null){
+		$this->load->model('apimodel');
+		if(!$this->apimodel->getAccessGranted()){
 			redirect('/Saml2Controller/login');
 			return;
 		}
@@ -62,14 +62,23 @@ class Page extends CourseInfo{
 	}
 
 	public function courseDetail(){
-		$courseId = str_replace(" ", "+", $this->input->get('courseId'));
-		$platform = $this->input->get('platform');
-		//temporarily disable course accessable check --TO MODIFY
-		if(isset($this->courseInfo['data'][$platform])){
-			//var_dump("");
-			foreach($this->courseInfo['data'][$platform]['results'] as $course){
-				echo $this->courseInfo['data'][$platform]['results'][0]['course_id'];
-				if($course['course_id'] == $courseId){
+
+		$this->load->model('apimodel');
+		if(!$this->apimodel->getAccessGranted()){
+			redirect('/Saml2Controller/login');
+			return;
+		}
+		$this->apimodel->setPlatform($this->input->get('platform'));
+		$this->apimodel->setCourseId($this->input->get('courseId'));
+		if(!$this->apimodel->getValidParameter()){
+			printJson(array('ok' => false, 'message' => $this->apimodel->getMessage(), 'data' => null));
+			return;
+		}
+		$courseInfoData = $this->apimodel->getCourseInfo()['data'];
+		if(isset($courseInfoData[$this->apimodel->getPlatform()])){
+			foreach($courseInfoData[$this->apimodel->getPlatform()]['results'] as $course){
+				if($course['course_id'] == $this->apimodel->getCourseId()){
+
 					$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 					if($course['role_name'] == 'student'){
 						$this->load->view('stu_course_detail', array('course_name' => $course['course_name'], ));
@@ -81,10 +90,7 @@ class Page extends CourseInfo{
 				}
 			}
 		}
-		echo 'You Do Not Have the Access To This Course';
-		// $this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-		// $this->load->view('stu_course_detail', array('course_name' => 'NEWCOURSE3', ));
-		// $this->load->view('template/footer');
+		printJson(array('ok' => false, 'message' => 'You do not have access to this course', 'data' => null));
 		return;
 	}
 }

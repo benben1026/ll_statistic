@@ -172,7 +172,7 @@ class ApiModel extends CI_Model{
 	function getMessage(){
 		return $this->message;
 	}
-	
+
 	function getCourseNameByCourseId($courseId, $platform) {
 
 		$courses = $this->courseInfo['data'][$platform];
