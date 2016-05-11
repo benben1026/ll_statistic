@@ -26,6 +26,11 @@ class Performance extends CI_Controller{
 		//!important: please set platform before courseId
 		$this->apimodel->setPlatform($this->input->get('platform'));
 		$this->apimodel->setCourseId($this->input->get('courseId'));
+		// This is loading student views for teacher.
+		// Teacher will fetch data as a student role.
+		if($this->input->get('keepId') != null){
+			$this->apimodel->setKeepId($this->input->get('keepId'));
+		}
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
@@ -345,7 +350,7 @@ class Performance extends CI_Controller{
 			for($i = 0; $i < count($output['data']['edx']['result']); $i++){
 				if($output['data']['edx']['result'][$i]['_id']['id'] != $lastStu){
 					array_push($dataProcess, array(
-						$output['data']['edx']['result'][$i]['_id']['name'],0,0,0,0,0,0,0,0,
+						'<a href="javascript:void(0);" onclick="openTeaStuView(\'' . $output['data']['edx']['result'][$i]['_id']['id'] . '\', \'' . $output['data']['edx']['result'][$i]['_id']['name'] . '\')">' . $output['data']['edx']['result'][$i]['_id']['name'] . '</a>',0,0,0,0,0,0,0,0,
 					));
 					$lastStu = $output['data']['edx']['result'][$i]['_id']['id'];
 					$currentIndex += 1;
