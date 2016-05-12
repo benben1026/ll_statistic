@@ -33,7 +33,7 @@ class ApiModel extends CI_Model{
 			'data' => array(
 				// for fake student studentone
 				'moodle' => array(
-					'total_results' => "2",
+					'total_results' => "3",
 					'results' => array(
 						array(
 							'course_id' => '128',
@@ -43,8 +43,13 @@ class ApiModel extends CI_Model{
 						array(
 							'course_id' => '95',
 							'course_name' => 'NEWCOURSE3',
-							'role_name' => 'student'
+							'role_name' => 'teacher'
 						),
+						array(
+							'course_id' => '128',
+							'course_name' => 'nc99',
+							'role_name' => 'teacher'
+						)
 					)
 				),
 				'edx' => array(
@@ -152,6 +157,32 @@ class ApiModel extends CI_Model{
 
 	function getToDate(){
 		return $this->toDate;
+	}
+
+	function setKeepId($keepId){
+		if($this->role != 'student'){
+			// Check if this student enrolled in this course
+			$stuCourseList = $this->courseinfomodel->getData(array($this->getPlatform() => '/user/'.$keepId));
+			if(!$stuCourseList['ok']){
+				$this->validParameter = false;
+				$this->message = "You do not have access to this student";
+				return;
+			}
+			if(array_key_exists('results', $stuCourseList['data'][$this->getPlatform()])){
+				foreach($stuCourseList['data'][$this->getPlatform()]['results'] as $course){
+					if($course['course_id'] == $this->getCourseId()){
+						$this->keepId = $keepId;
+						$this->setRole('student');
+						return;
+					}
+				}
+			}
+			$this->validParameter = false;
+			$this->message = "You do not have access to this student";
+		}else{
+			$this->validParameter = false;
+			$this->message = "Only teachers have the access to this view";
+		}
 	}
 
 	function getKeepId(){

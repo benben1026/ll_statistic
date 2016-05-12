@@ -1,3 +1,17 @@
+<div class="modal fade TeaStuView" tabindex="-1" role="dialog" aria-labelledby="TeaStuView">
+	<div class="modal-dialog modal-lg" style="width: 90%;">
+		<div class="modal-content" style="height: 700px">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="stuViewModalLabel">Student View</h4>
+			</div>
+			<div class="modal-body" style="height: 90%">
+				<iframe id="teaViewStuFrame" style="width: 100%; height: 100%" frameBorder="0"></iframe>
+			</div>
+		</div>
+	</div>
+</div>
+<button id="openModal" type="button" class="btn btn-primary" data-toggle="modal" data-target=".TeaStuView" style="display:none;">Large modal</button>
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-green">
@@ -33,4 +47,12 @@
 	}
 	registerFunList.push(getCourseStudentVitality);
 	getCourseStudentVitality();
+
+	function openTeaStuView(id, name){
+		var url = "https://" + window.location.hostname + "/index.php/page/teaViewStu?courseId=" + $('#courseId').val() + "&platform=" + $('#platform').val() + "&keepId=" + id;
+		$('#teaViewStuFrame').attr('src', url);
+		$('#stuViewModalLabel').html(name + ' (Student View)');
+		$('#openModal').click();
+
+	}
 </script>

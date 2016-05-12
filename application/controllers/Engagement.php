@@ -7,6 +7,8 @@ class Engagement extends CI_Controller{
 		"message" => "",
 		"data" => null
 	);
+	
+	private $engagementClassify;
 
 	function __contruct(){
 		parent::__contruct();
@@ -15,6 +17,8 @@ class Engagement extends CI_Controller{
 	public function detail(){
 		$this->load->model('apimodel');
 		$this->load->model('datamodel');
+		
+		$engagementClassify = load_engagement_list();
 		
 		// Auth check
 		if(!$this->apimodel->getAccessGranted()){
@@ -29,6 +33,11 @@ class Engagement extends CI_Controller{
 		//!important: please set platform before courseId
 		$this->apimodel->setPlatform($this->input->get('platform'));
 		$this->apimodel->setCourseId($this->input->get('courseId'));
+		// This is loading student views for teacher.
+		// Teacher will fetch data as a student role.
+		if($this->input->get('keepId') != null){
+			$this->apimodel->setKeepId($this->input->get('keepId'));
+		}
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
@@ -43,17 +52,17 @@ class Engagement extends CI_Controller{
 	
 	private function getData($platform) {
 		
-		getKey($platform);
+		$key = getKey($platform);
 
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
-				"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
+				//"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
 					"\$lte" => $this->apimodel->getToDate(),
 				),
-				"\$or" => $this->getOrArray()		
+				//"\$or" =>  array(array("statement.verb.display.en-us" => array("\$eq" => "viewed")))//$this->getOrArray()		
 				//"statement.verb.display.en-US" => array("\$not" => "/interacted/"),
 			),
 		);
@@ -91,52 +100,92 @@ class Engagement extends CI_Controller{
 				"statement.object.definition.name.en-us" => 1,
 				"statement.timestamp" => 1,
 			)
-		);		
-
-		$sortEvent = array(
-			"\$sort" => array(
-				"_id.event" => 1
+		);
+		
+		$sort = array(
+			"\$sort" => array(				
+				"statement.timestamp" => -1,				
 			)
 		);
+
 		$pipeline = array(
-			$platform => array($match, $group, $sortEvent)
+			$platform => array($match, $group, /*$project,*/ $sort)
 		); 
+		
+		var_dump(print_r($pipeline));
 		$output = $this->datamodel->getData($pipeline);
 
 		$ykeys = array();
-		$dataProcess = array();
-		$preDate = "";
-		$preEventname = "";
-		for($i = 0; $i < count($output['data'][$platform]['result']); $i++){
-			if($output['data'][$platform]['result'][$i]['_id']['date'] != $preDate){
-				$preDate = $output['data'][$platform]['result'][$i]['_id']['date'];
-				$dataProcess[$output['data'][$platform]['result'][$i]['_id']['date']] = array();
-			}
-			$dataProcess[$output['data'][$platform]['result'][$i]['_id']['date']][$output['data'][$platform]['result'][$i]['_id']['eventname']] = $output['data'][$platform]['result'][$i]['count'];
-
-			//generate ykeys
-			$flag = false;
-			for($j = 0; $j < count($ykeys); $j++){
-				if($ykeys[$j] == $output['data'][$platform]['result'][$i]['_id']['eventname']){
-					$flag = true;
-					break;
-				}
-			}
-			if(!$flag){
-				array_push($ykeys, $output['data'][$platform]['result'][$i]['_id']['eventname']);
-			}
-		}
+			// 		foreach ($engagementClassify as $category => $verbStateArray) {
+			// 	$ykeys[] = $category;
+			// }
+			
 		$newData = array();
-		foreach($dataProcess as $date => $event){
-			$t = array('date' => $date);
-			foreach($ykeys as $y){
-				$t[$y] = 0;
+		var_dump("break line ====================");
+		var_dump($output);
+		if (count($output['data'][$platform]['result']) > 0) {
+					
+			// init for first block
+			$lastDate = $output['data'][$platform]['result'][0]['timestamp'];
+			$newData[] = $this->createDataBlock($currentDate);
+			
+			// loop and do matching
+			for($i = 0; $i < count($output['data'][$platform]['result']); $i++){
+				
+				$currentResult = $output['data'][$platform]['result'][$i];
+				$currentVerb = $currentResult['verb']['display']['en-us'];
+				$currentName = $currentResult['object']['definition']['name']['en-us'];
+				$currentDate = $currentResult['timestamp'];
+				
+				if ($currentDate != $lastDate) {
+					// create new block
+					$newData[] = $this->createDataBlock($currentDate);
+					$lastDate = $currentDate;
+				}
+				
+				// get the last block to update
+				end($newData);
+				$lastDataBlk = &$array[key($array)];
+				
+				// update last block
+				$lastDataBlk[$this->checkCategory($currentVerb, $currentName)] += 1;		
 			}
-			foreach($event as $name => $num){
-				$t[$name] = $num;
-			}
-			array_push($newData, $t);
 		}
+		
+		// $ykeys = array();
+		// $dataProcess = array();
+		// $preDate = "";
+		// $preEventname = "";
+		// for($i = 0; $i < count($output['data'][$platform]['result']); $i++){
+		// 	if($output['data'][$platform]['result'][$i]['_id']['date'] != $preDate){
+		// 		$preDate = $output['data'][$platform]['result'][$i]['_id']['date'];
+		// 		$dataProcess[$output['data'][$platform]['result'][$i]['_id']['date']] = array();
+		// 	}
+		// 	$dataProcess[$output['data'][$platform]['result'][$i]['_id']['date']][$output['data'][$platform]['result'][$i]['_id']['eventname']] = $output['data'][$platform]['result'][$i]['count'];
+
+		// 	//generate ykeys
+		// 	$flag = false;
+		// 	for($j = 0; $j < count($ykeys); $j++){
+		// 		if($ykeys[$j] == $output['data'][$platform]['result'][$i]['_id']['eventname']){
+		// 			$flag = true;
+		// 			break;
+		// 		}
+		// 	}
+		// 	if(!$flag){
+		// 		array_push($ykeys, $output['data'][$platform]['result'][$i]['_id']['eventname']);
+		// 	}
+		// }
+		// $newData = array();
+		// foreach($dataProcess as $date => $event){
+		// 	$t = array('date' => $date);
+		// 	foreach($ykeys as $y){
+		// 		$t[$y] = 0;
+		// 	}
+		// 	foreach($event as $name => $num){
+		// 		$t[$name] = $num;
+		// 	}
+		// 	array_push($newData, $t);
+		// }
 
 		$output['data']['data'] = $newData;
 		$output['data']['ykeys'] = $ykeys;
@@ -146,13 +195,41 @@ class Engagement extends CI_Controller{
 	}
 	
 	private function getOrArray() {
-		$verbs = get_engagement_verbs();
 		
+		$verbs = get_engagement_verbs();
+		// var_dump($verbs);
 		$returnArray = array();
 		
 		foreach ($verbs as $verb) {
-			$returnArray[] = array("statement.verb.display.en-us" => $verb);
+			$returnArray[] = array("statement.verb.display.en-us" => array("\$eq" => $verb));
 		}		
+		
+		var_dump(print_r($returnArray, true));
+		return $returnArray;
+	}
+	
+	private function checkCategory($inVerb, $inStatement) {
+		
+		foreach ($engagementClassify as $category => $verbStateArray) {
+			foreach($verbState as $verbState) {
+				$verb = $verbState[0];
+				$statement = $verbState[1];
+				
+				if ($verb == $inVerb && $statement == $inStatement) {
+					return $category;
+				}
+			}
+		}		
+	}
+	
+	private function createDataBlock($inDate) {
+		
+		$returnArray = array("date" => $inDate);
+		
+		foreach ($engagementClassify as $key => $value) {
+			$returnArray[$key] = 0;
+		}
+		
 		return $returnArray;
 	}
 
