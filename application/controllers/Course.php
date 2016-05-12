@@ -69,7 +69,7 @@ class Course extends CI_Controller{
 			"\$match" => array(
 				"statement.timestamp" => array(
 							"\$gte" => $this->apimodel->getFromDate(),
-							"\$lt" => $this->apimodel->getToDate(),
+							"\$lte" => $this->apimodel->getToDate(),
 				),
 				"\$or" => array(
 					array("statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan")),
@@ -137,7 +137,7 @@ class Course extends CI_Controller{
 				),
 				"statement.timestamp" => array(
 					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lt" => $this->apimodel->getToDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 			)
 		);

@@ -107,14 +107,14 @@ class File extends CI_Controller{
 						"\$match" => array(
 							"statement.object.definition.description.en-us" => array("\$eq" => $filename),
 							"statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed"),
-							"statement.timestamp" =>array("\$gte" => $from, "\$lt" => $to),
+							"statement.timestamp" =>array("\$gte" => $from, "\$lte" => $to),
 						),
 					);
 				}else{
 					$match = array(
 						"\$match" => array(
 							"statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed"),
-							"statement.timestamp" =>array("\$gte" => $from, "\$lt" => $to),
+							"statement.timestamp" =>array("\$gte" => $from, "\$lte" => $to),
 						),
 					);
 				}
@@ -194,7 +194,7 @@ class File extends CI_Controller{
 				"statement.object.definition.name.en-us" => array("\$eq" => "a courseware asset"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lt" => $this->apimodel->getToDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 			),
 		);

@@ -317,7 +317,7 @@ class Learninglocker extends CourseInfo {
 					),
 					"statement.timestamp" =>array(
 						"\$gte" => $from,
-						"\$lt" => $to,
+						"\$lte" => $to,
 					),
 				),
 			);
@@ -523,7 +523,7 @@ class Learninglocker extends CourseInfo {
 					
 					"statement.timestamp" =>array(
 						"\$gte" => $from,
-						"\$lt" => $to,
+						"\$lte" => $to,
 					),
 				),
 			);
@@ -587,7 +587,7 @@ class Learninglocker extends CourseInfo {
 					"statement.actor.name" => array("\$eq" => $keepId),
 					"statement.timestamp" =>array(
 						"\$gte" => $from,
-						"\$lt" => $to,
+						"\$lte" => $to,
 					),
 					"\$nor" => array(
 						array("statement.verb.display.en-US" => "interacted with"),
@@ -853,7 +853,7 @@ class Learninglocker extends CourseInfo {
 					
 					"statement.timestamp" =>array(
 						"\$gte" => $from,
-						"\$lt" => $to,
+						"\$lte" => $to,
 					),
 				),
 			);
@@ -917,7 +917,7 @@ class Learninglocker extends CourseInfo {
 					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.role" => array("\$eq" => "student"),
 					"statement.timestamp" =>array(
 						"\$gte" => $from,
-						"\$lt" => $to,
+						"\$lte" => $to,
 					),
 					"\$nor" => array(
 						array("statement.verb.display.en-US" => "interacted with"),
@@ -1018,7 +1018,7 @@ class Learninglocker extends CourseInfo {
 				"\$match" => array(
 					"statement.timestamp" => array(
 							"\$gte" => $from,
-							"\$lt" => $to,
+							"\$lte" => $to,
 						),
 					"\$or" => array(
 						array("statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan")),
@@ -1084,7 +1084,7 @@ class Learninglocker extends CourseInfo {
 				"\$match" => array(
 					"statement.timestamp" => array(
 						"\$gte" => $from,
-						"\$lt" => $to,
+						"\$lte" => $to,
 					),
 					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.courseid" => array("\$eq" => $courseId),
 					"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.role" => array("\$eq" => "student"),
@@ -1220,7 +1220,7 @@ class Learninglocker extends CourseInfo {
 					),
 					"statement.timestamp" => array(
 						"\$gte" => $from,
-						"\$lt" => $to,
+						"\$lte" => $to,
 					),
 				)
 			);

@@ -290,7 +290,7 @@ class Performance extends CI_Controller{
 			"\$match" => array(
 				"statement.timestamp" => array(
 					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lt" => $this->apimodel->getToDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
 				"statement.context.extensions.".$key.".rolename" => array("\$eq" => "student"),

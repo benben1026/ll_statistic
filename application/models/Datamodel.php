@@ -151,7 +151,7 @@ class DataModel extends CI_Model{
 					array(
 						"timestamp"=>array(
 							"\$gte"=>new MongoDate(strtotime($from)),
-							"\$lt"=>new MongoDate(strtotime($to)),
+							"\$lte"=>new MongoDate(strtotime($to)),
 							//"\$gte"=>new MongoDate(strtotime("2015-10-24 00:00:00")),
 							//"\$lt"=>new MongoDate(strtotime("2015-11-27 00:00:00")),
 							//"\$gte"=>new MongoDate(strtotime("10/24/15")),
@@ -198,7 +198,7 @@ class DataModel extends CI_Model{
 					array(
 						"timestamp"=>array(
 							"\$gte"=>new MongoDate(strtotime($from)),
-							"\$lt"=>new MongoDate(strtotime($to))
+							"\$lte"=>new MongoDate(strtotime($to))
 						),
 					),
 				),

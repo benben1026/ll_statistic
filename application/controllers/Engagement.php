@@ -51,7 +51,7 @@ class Engagement extends CI_Controller{
 				"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lt" => $this->apimodel->getToDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 				"\$or" => $this->getOrArray()		
 				//"statement.verb.display.en-US" => array("\$not" => "/interacted/"),
@@ -82,6 +82,15 @@ class Engagement extends CI_Controller{
 				),
 				"count" => array("\$sum" => 1)
 			),
+		);
+		
+		$project = array(
+			"\$project" => array(
+				"_id" => 0,
+				"statement.verb.display.en-us" => 1,
+				"statement.object.definition.name.en-us" => 1,
+				"statement.timestamp" => 1,
+			)
 		);		
 
 		$sortEvent = array(
