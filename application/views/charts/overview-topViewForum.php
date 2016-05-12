@@ -27,9 +27,15 @@
 				{ "width": "30%" },
 				{ "width": "15%" },
 				{ "width": "15%" },
-			]
+			],
+			"order": [[ 4, 'des' ]]
 		} );
 		datatable.ajax.url('../forum/overview/view').load();
+		datatable.on( 'order.dt search.dt', function () {
+	        datatable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+	            cell.innerHTML = i+1;
+	        } );
+	    } ).draw();
 		// $.ajax({
 		// 	url: '../learninglocker/getForumViewingStu',
 		// 	type: 'GET',
