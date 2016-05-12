@@ -59,17 +59,18 @@ class Course extends CI_Controller{
 		}else if ($type == 'num'){
 			$this->addDropNum();
 		}
+		printJson($this->returnData);
 	}
 
 	private function addDropTimeline(){
 		$platform = $this->apimodel->getPlatform();
 		$key = getKey($platform);
 
-		$edx_match = array(
+		$match = array(
 			"\$match" => array(
 				"statement.timestamp" => array(
-							"\$gte" => $this->apimodel->getFromDate(),
-							"\$lte" => $this->apimodel->getToDate(),
+					"\$gte" => $this->apimodel->getFromDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 				"\$or" => array(
 					array("statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan")),
@@ -79,7 +80,7 @@ class Course extends CI_Controller{
 				"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
 			)
 		);
-		$edx_group = array(
+		$group = array(
 				"\$group" => array(
 					"_id" => array(
 						"event" => "\$statement.verb.display.en-us",
@@ -93,7 +94,7 @@ class Course extends CI_Controller{
 					"_id.date" => 1
 				)
 			);
-		$pipeline[$platform] = array($edx_match, $edx_group, $sortDate);
+		$pipeline[$platform] = array($match, $group, $sortDate);
 		$result = $this->datamodel->getData($pipeline);
 		$this->returnData['ok'] = $result['ok'];
 		$this->returnData['message'] = $result['message'];
@@ -119,8 +120,6 @@ class Course extends CI_Controller{
 			}
 		}
 		$this->returnData['data'] = $dataProcess;
-
-		printJson($this->returnData);
 	}
 
 	private function addDropNum(){
@@ -154,6 +153,5 @@ class Course extends CI_Controller{
 		$this->returnData['ok'] = $result['ok'];
 		$this->returnData['message'] = $result['message'];
 		$this->returnData['data'] = $result['data'];
-		printJson($this->returnData);
 	}
 }
