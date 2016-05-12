@@ -19,11 +19,11 @@ $config['stu_engage_classify'][$active_group] = array(
 	),
 	'Quiz' => array(
 		array('viewed', 'a quiz'),
-		array('started', 'a quiz\'s attempt number'),
+		array('started', 'a quiz'),
 		array('attempted', 'a problem'),
 		array('completed', 'a problem'),
-		array('reviewed', 'a quiz\'s attempt number'),
-		array('deleted', 'a quiz\'s attempt number'),
+		array('reviewed', 'a quiz'),
+		array('deleted', 'a quiz'),
 	),
 	'Video' => array(
 		array('loaded', 'a video'),
