@@ -164,7 +164,7 @@ class Forum extends CI_Controller{
 				"statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lt" => $this->apimodel->getToDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 			),
 		);
@@ -196,7 +196,7 @@ class Forum extends CI_Controller{
 				),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lt" => $this->apimodel->getToDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 			),
 		);
@@ -229,7 +229,7 @@ class Forum extends CI_Controller{
 				"statement.object.definition.description.en-us" => array("\$eq" => "a discussion thread"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lt" => $this->apimodel->getToDate(),
+					"\$lte" => $this->apimodel->getToDate(),
 				),
 			),
 		);
@@ -281,7 +281,7 @@ class Forum extends CI_Controller{
 					),					
 					"statement.timestamp" =>array(
 						"\$gte" => $this->apimodel->getFromDate(),
-						"\$lt" => $this->apimodel->getToDate(),
+						"\$lte" => $this->apimodel->getToDate(),
 					),
 				),
 			);
