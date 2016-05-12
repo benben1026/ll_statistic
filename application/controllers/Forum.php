@@ -36,7 +36,7 @@ class Forum extends CI_Controller{
 				$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->apimodel->getCourseInfo()['data']['moodle']['results'][$i]['course_id']));
 				array_push($moodleCourseId, $t);
 			}		
-			$moodle_match = $this->getOverviewMatchArray($moodleCourseId);
+			$moodle_match = $this->getOverviewMatchArray($moodleCourseId, $type);
 			
 			$moodle_group = $this->getOverviewGroupArray("moodle");
 			
@@ -51,10 +51,10 @@ class Forum extends CI_Controller{
 				$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/open_edx_tracking_log.courseid" => array("\$eq" => $this->apimodel->getCourseInfo()['data']['edx']['results'][$i]['course_id']));
 				array_push($edxCourseId, $t);
 			}
-			$edx_match = $this->getOverviewMatchArray($edxCourseId);
+			$edx_match = $this->getOverviewMatchArray($edxCourseId, $type);
 			
 			
-			//TO DO:update the pipeline to group comments of the same post together
+			// TODO: update the pipeline to group comments of the same post together
 			//object id: https://edx.keep.edu.hk/courses/course-v1:cuhk+csci2100a+2015_2/discussion/forum/course/threads/571361123d97140a7c0000cc#response_5713b3ee3d97140a7f0000e6
 			//how to ignore the response id after #
 			$edx_group = $this->getOverviewGroupArray('edx');
@@ -64,8 +64,9 @@ class Forum extends CI_Controller{
 			$pipeline['edx'] = array($edx_match, $edx_group, $edx_sort);
 		}
 		$result = $this->datamodel->getData($pipeline);
-//echo json_encode($pipeline);
+
 		//merge data from moodle and edx
+		// TODO: Merge data from moodle and edx according to number of view/reply instead of simply concatenating both of them.
 		$data = array();
 		if(array_key_exists('edx', $result['data'])){
 			for($i = 0; $i < count($result['data']['edx']['result']); $i++){
@@ -138,8 +139,8 @@ class Forum extends CI_Controller{
 		
 		// format the return data
 		for($i = 0; $i < count($result['data'][$this->apimodel->getPlatform()]['result']); $i++){
+			// MARK: For some of the statement that does not contain forum_name, we use Forum instead.
 			$forum_name = array_key_exists("forum_name", $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']) ? $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']['forum_name'] : "Forum";
-			//$forum_name = "Forum";
 			$temp = array(
 				$i + 1,
 				"<a target=\"_blank\" href=\"" . $result['data'][$this->apimodel->getPlatform()]['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",
@@ -218,7 +219,7 @@ class Forum extends CI_Controller{
 
 	private function getActive($platform){
 		$key = getKey($platform);
-		$edx_match = array(
+		$match = array(
 			"\$match" => array(
 				"\$or" => array(
 					array("statement.verb.display.en-us" => array("\$eq" => "created")),
@@ -233,7 +234,7 @@ class Forum extends CI_Controller{
 				),
 			),
 		);
-		$edx_group = array(
+		$group = array(
 			"\$group" => array(
 				"_id" => array(
 					"forum_id" => "\$statement.object.id",
@@ -244,7 +245,7 @@ class Forum extends CI_Controller{
 				)
 			)
 		);
-		$edx_sort = array(
+		$sort = array(
 			"\$sort" => array(
 				"count" => -1,
 			)
@@ -270,7 +271,7 @@ class Forum extends CI_Controller{
 		);
 	}
 	
-	private function getOverviewMatchArray($courseId) {
+	private function getOverviewMatchArray($courseId, $type) {
 		return array(
 				"\$match" => array(
 					"\$or" => $courseId,

@@ -67,8 +67,8 @@ class File extends CI_Controller{
 				$group = array(
 					"\$group" => array(
 						"_id" => array(
-							"name" => "\$statement.object.definition.name.en-us",
-							"courseid" => "\$statement.context.extensions.".$key.".courseid"
+							//"name" => "\$statement.object.definition.name.en-us",
+							"courseid" => "\$statement.context.extensions.".$key.".courseid",
 							"file_id" => "\$statement.object.id",
 							"file_name" => "\$statement.object.definition.description.en-us",
 						),

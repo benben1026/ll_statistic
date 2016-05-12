@@ -86,17 +86,17 @@ class Performance extends CI_Controller{
 				"\$or" => array(
 					//view a courseware
 					array("\$and" => array(
-										array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-										array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
-									)
+							array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
+							array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
+						)
 					),
 					//start playing a video
 					array("statement.verb.display.en-us" => array("\$eq" => "started playing")),
 					//view a thread
 					array("\$and" => array(
-										array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-										array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
-									)
+							array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
+							array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
+						)
 					),
 					//create a thread
 					array(
@@ -150,17 +150,17 @@ class Performance extends CI_Controller{
 				"\$or" => array(
 					//view a courseware
 					array("\$and" => array(
-										array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-										array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
-									)
+							array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
+							array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
+						)
 					),
 					//start playing a video
 					array("statement.verb.display.en-us" => array("\$eq" => "started playing")),
 					//view a thread
 					array("\$and" => array(
-										array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-										array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
-									)
+							array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
+							array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
+						)
 					),
 					//create a thread
 					array(
@@ -297,17 +297,17 @@ class Performance extends CI_Controller{
 				"\$or" => array(
 					//view a courseware
 					array("\$and" => array(
-										array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-										array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
-									)
+							array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
+							array("statement.object.definition.name.en-us" => array("\$eq" => "a courseware page"))
+						)
 					),
 					//start playing a video
 					array("statement.verb.display.en-us" => array("\$eq" => "started playing")),
 					//view a thread
 					array("\$and" => array(
-										array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
-										array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
-									)
+							array("statement.verb.id" => array("\$eq" => "http://id.tincanapi.com/verb/viewed")),
+							array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread"))
+						)
 					),
 					//create a thread
 					array(
