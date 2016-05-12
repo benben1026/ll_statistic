@@ -77,7 +77,7 @@ class Course extends CI_Controller{
 					array("statement.verb.id" => array("\$eq" => "http://activitystrea.ms/schema/1.0/leave")),
 				),
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
-				"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
+				"statement.context.extensions.".$key.".rolename" => array("\$eq" => "student"),
 			)
 		);
 		$group = array(
@@ -129,7 +129,7 @@ class Course extends CI_Controller{
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
-				"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
+				"statement.context.extensions.".$key.".rolename" => array("\$eq" => "student"),
 				"\$or" => array(
 					array("statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan")),
 					array("statement.verb.id" => array("\$eq" => "http://activitystrea.ms/schema/1.0/leave")),
