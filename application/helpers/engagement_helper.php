@@ -3,8 +3,9 @@
 if(!function_exists('load_engagement_list'))
 {
 	function load_engagement_list($profile = 'default'){
-		$this->config->load('engagement');
-		return $this->config->item($profile, 'stu_engage_classify');
+      	$CI =& get_instance();        
+		$CI->config->load('engagement');
+		return $CI->config->item($profile, 'stu_engage_classify');
 	}
 }
 
