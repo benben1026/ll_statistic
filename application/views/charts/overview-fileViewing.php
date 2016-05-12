@@ -31,12 +31,10 @@
 				$('#totalFileView_loading').hide();
 				$('#total-file-view').show();
 				var dataArray = [];
-				//TO DO
-				//only handle edx platform
-				for(var i = 0; i < 7 && i < data['data']['edx']['result'].length; i++){
-					var tempFileName = data['data']['edx']['result'][i]['_id']['file_name'].length > 18 ? data['data']['edx']['result'][i]['_id']['file_name'].substring(0, 10) + '...' + data['data']['edx']['result'][i]['_id']['file_name'].substring(data['data']['edx']['result'][i]['_id']['file_name'].length - 4) : data['data']['edx']['result'][i]['_id']['file_name'];
-					dataArray.push({'filename': tempFileName, 'number': data['data']['edx']['result'][i]['count']});
-					linkList.push(data['data']['edx']['result'][i]['_id']['file_id']);
+				for(var i = 0; i < 7 && i < data['data'].length; i++){
+					var tempFileName = data['data'][i]['_id']['file_name'].length > 18 ? data['data'][i]['_id']['file_name'].substring(0, 10) + '...' + data['data'][i]['_id']['file_name'].substring(data['data'][i]['_id']['file_name'].length - 4) : data['data'][i]['_id']['file_name'];
+					dataArray.push({'filename': tempFileName, 'platform': data['data'][i]['_id']['platform'], 'number': data['data'][i]['count']});
+					linkList.push(data['data'][i]['_id']['file_id']);
 				}
 				drawFileViewing(dataArray);
 			}
@@ -54,7 +52,7 @@
 			xLabelAngle: 15,
 			hoverCallback: function (index, options, content, row) {
 				linkListIndex = index;
-				return dataArray[index]['filename'] + ": " + dataArray[index]['number'];
+				return dataArray[index]['filename'] + ": " + dataArray[index]['number'] + "<br>" + dataArray[index]['platform'];
 			}
 		});
 		$('#total-file-view rect').click(function(){
