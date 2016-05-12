@@ -50,5 +50,4 @@
 	include_once "charts/stu_course_detail/engagement.php";
 	include_once "charts/stu_course_detail/forum.php";
 ?>
-
 </div>

@@ -52,6 +52,7 @@ class Performance extends CI_Controller{
 				"statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan")
 			)
 		);
+
 		$group = array(
 			"\$group" => array(
 				"_id" => array(
@@ -69,8 +70,10 @@ class Performance extends CI_Controller{
 			printJson($this->returnData);
 			return;
 		}
-		$totalNumOfStudent = $output['ok'] && $output['data'][$platform]['ok'] ? $output['data'][$platform]['result'][0]['count'] : 0;
-		// $totalNumOfStudent = 2;
+		$totalNumOfStudent = 0;
+		if(isset($output['data'][$platform]['result'][0])){
+			$totalNumOfStudent = $output['ok'] && $output['data'][$platform]['ok']? $output['data'][$platform]['result'][0]['count'] : 0;
+		}
 		if($totalNumOfStudent == 0){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = "There is no student in this course";

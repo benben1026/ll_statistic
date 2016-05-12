@@ -24,8 +24,10 @@
 </div>
 
 <script type="text/javascript">
-	var platform = "moodle";
-	var courseId = "95";
+	// var platform = "moodle";
+	var platform = "<?php echo $_GET['platform']; ?>";
+	// var courseId = "128";
+	var courseId = "<?php echo $_GET['courseId']; ?>";
 	$.ajax({
 		url: '../assignment/getAsgList?courseId=' + courseId + '&platform=' + platform,
 		type: 'get',
