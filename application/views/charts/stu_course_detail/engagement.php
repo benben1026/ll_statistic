@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-green">
-            <div class="panel-heading" style="height: 50px;">
+            <div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i> Engagement                
             </div>
             <!-- /.panel-heading -->
@@ -26,14 +26,18 @@
 	var raw_data;
 	function sendEngagementAjax(){
 		startLoading();
+		var url = '../engagement/detail?from=' + $('#date-from').val() + '&to=' + $('#date-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val();
+		if($('#keepId').val() != undefined){
+            url += '&keepId=' + $('#keepId').val();
+        }
 		$.ajax({
-			url: '../engagement/detail?from=' + $('#date-from').val() + '&to=' + $('#date-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val(),
+			url: url,
 			type: 'get',
 			dataType: 'json',
 			success: function(data){
 				endLoading();
 				if(!data['ok']){
-					console.log('fail to get engagement');
+					console.log(data['message']);
 					return;
 				}
 				raw_data = data['data'];

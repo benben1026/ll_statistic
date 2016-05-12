@@ -31,32 +31,38 @@ class ApiModel extends CI_Model{
 			'ok' => true,
 			'message' => '',
 			'data' => array(
+				// for fake student studentone
 				'moodle' => array(
-					'total_results' => "2",
+					'total_results' => "3",
 					'results' => array(
 						array(
-							'course_id' => '57',
-							'course_name' => 'Soft Skill Mentor - Module 1 - Career Planning',
-							'role_name' => 'student'
+							'course_id' => '128',
+							'course_name' => 'New Course 99',
+							'role_name' => 'teacher'
 						),
 						array(
 							'course_id' => '95',
 							'course_name' => 'NEWCOURSE3',
-							'role_name' => 'student'
+							'role_name' => 'teacher'
 						),
+						array(
+							'course_id' => '128',
+							'course_name' => 'nc99',
+							'role_name' => 'teacher'
+						)
 					)
 				),
 				'edx' => array(
 					'total_results' => "2",
 					'results' => array(
 						array(
-							'course_id' => 'course-v1:keep+demo01+2015_1',
-							'course_name' => 'KEEP Open edX Demo Course A',
+							'course_id' => 'course-v1:cuhk+cuhkmit001+cuhkmitjoint',
+							'course_name' => 'CUHK-MIT Joint Workshop on E-Learning and Big Data',
 							'role_name' => 'student'
 						),
 						array(
-							'course_id' => 'course-v1:keep+demo02+2016_1',
-							'course_name' => 'KEEP Open edX Demo Course B',
+							'course_id' => 'course-v1:keep+eval11+2016_1',
+							'course_name' => ' 2016 TEST COURSE #11',
 							'role_name' => 'student'
 						),
 					)
@@ -151,6 +157,32 @@ class ApiModel extends CI_Model{
 
 	function getToDate(){
 		return $this->toDate;
+	}
+
+	function setKeepId($keepId){
+		if($this->role != 'student'){
+			// Check if this student enrolled in this course
+			$stuCourseList = $this->courseinfomodel->getData(array($this->getPlatform() => '/user/'.$keepId));
+			if(!$stuCourseList['ok']){
+				$this->validParameter = false;
+				$this->message = "You do not have access to this student";
+				return;
+			}
+			if(array_key_exists('results', $stuCourseList['data'][$this->getPlatform()])){
+				foreach($stuCourseList['data'][$this->getPlatform()]['results'] as $course){
+					if($course['course_id'] == $this->getCourseId()){
+						$this->keepId = $keepId;
+						$this->setRole('student');
+						return;
+					}
+				}
+			}
+			$this->validParameter = false;
+			$this->message = "You do not have access to this student";
+		}else{
+			$this->validParameter = false;
+			$this->message = "Only teachers have the access to this view";
+		}
 	}
 
 	function getKeepId(){
