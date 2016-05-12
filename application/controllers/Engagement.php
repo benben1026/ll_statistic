@@ -115,6 +115,7 @@ class Engagement extends CI_Controller{
 
 		$ykeys = array();
 		$newData = array();
+		var_dump(print_r($output['data'][$platform]['result'], true));
 		if (count($output['data'][$platform]['result']) > 0) {
 					
 			// init for first block
