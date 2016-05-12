@@ -29,7 +29,10 @@ class Saml2Controller extends Saml_Controller {
 			"keepid" => array("563a82e2-96ed-11e4-bf37-080027087aa9"),
 
 			//csci2100 student
-			// "keepid" => array("fb4d945c-1964-4055-a833-8d843eea3c76"),
+
+			//"keepid" => array("fb4d945c-1964-4055-a833-8d843eea3c76"),
+			"keepid" => array("1f337349-0fe4-4fd0-8d2f-e80b0c97ec22"),
+
 
 			//city u student
 			//"keepid" => array("ffd66e3a-0e8d-4edf-9f40-40e023f82673"),

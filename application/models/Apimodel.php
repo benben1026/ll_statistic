@@ -153,6 +153,32 @@ class ApiModel extends CI_Model{
 		return $this->toDate;
 	}
 
+	function setKeepId($keepId){
+		if($this->role != 'student'){
+			// Check if this student enrolled in this course
+			$stuCourseList = $this->courseinfomodel->getData(array($this->getPlatform() => '/user/'.$keepId));
+			if(!$stuCourseList['ok']){
+				$this->validParameter = false;
+				$this->message = "You do not have access to this student";
+				return;
+			}
+			if(array_key_exists('results', $stuCourseList['data'][$this->getPlatform()])){
+				foreach($stuCourseList['data'][$this->getPlatform()]['results'] as $course){
+					if($course['course_id'] == $this->getCourseId()){
+						$this->keepId = $keepId;
+						$this->setRole('student');
+						return;
+					}
+				}
+			}
+			$this->validParameter = false;
+			$this->message = "You do not have access to this student";
+		}else{
+			$this->validParameter = false;
+			$this->message = "Only teachers have the access to this view";
+		}
+	}
+
 	function getKeepId(){
 		return $this->keepId;
 	}

@@ -93,4 +93,15 @@ class Page extends CI_Controller{
 		printJson(array('ok' => false, 'message' => 'You do not have access to this course', 'data' => null));
 		return;
 	}
+
+	public function teaViewStu(){
+		$this->load->model('apimodel');
+		if(!$this->apimodel->getAccessGranted()){
+			redirect('/Saml2Controller/login');
+			return;
+		}
+		$this->load->view('template/header_include');
+		$this->load->view('teastu_course_detail');
+	}
+
 }

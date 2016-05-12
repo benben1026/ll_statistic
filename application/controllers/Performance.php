@@ -31,7 +31,11 @@ class Performance extends CI_Controller{
 		//!important: please set platform before courseId
 		$this->apimodel->setPlatform($this->input->get('platform'));
 		$this->apimodel->setCourseId($this->input->get('courseId'));
-
+		// This is loading student views for teacher.
+		// Teacher will fetch data as a student role.
+		if($this->input->get('keepId') != null){
+			$this->apimodel->setKeepId($this->input->get('keepId'));
+		}
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
@@ -366,6 +370,7 @@ class Performance extends CI_Controller{
 				$lastStu = $output['data'][$platform]['result'][$i]['_id']['id'];
 				$currentIndex += 1;
 			}
+<<<<<<< HEAD
 			$coefficient = 0;
 			if($output['data'][$platform]['result'][$i]['_id']['verb'] == 'viewed' && $output['data'][$platform]['result'][$i]['_id']['object'] == 'a courseware page'){
 				//$dataProcess[$currentIndex]['Viewed a Courseware'] = $output['data'][$platform]['result'][$i]['count'];
@@ -395,6 +400,51 @@ class Performance extends CI_Controller{
 				//$dataProcess[$currentIndex]['Completed a Problem'] = $output['data'][$platform]['result'][$i]['count'];
 				$dataProcess[$currentIndex][7] = $output['data'][$platform]['result'][$i]['count'];
 				$coefficient = 5;
+=======
+			$lastStu = "";
+			$currentIndex = -1;
+			$dataProcess = array();
+			for($i = 0; $i < count($output['data']['edx']['result']); $i++){
+				if($output['data']['edx']['result'][$i]['_id']['id'] != $lastStu){
+					array_push($dataProcess, array(
+						'<a href="javascript:void(0);" onclick="openTeaStuView(\'' . $output['data']['edx']['result'][$i]['_id']['id'] . '\', \'' . $output['data']['edx']['result'][$i]['_id']['name'] . '\')">' . $output['data']['edx']['result'][$i]['_id']['name'] . '</a>',0,0,0,0,0,0,0,0,
+					));
+					$lastStu = $output['data']['edx']['result'][$i]['_id']['id'];
+					$currentIndex += 1;
+				}
+				$coefficient = 0;
+				if($output['data']['edx']['result'][$i]['_id']['verb'] == 'viewed' && $output['data']['edx']['result'][$i]['_id']['object'] == 'a courseware page'){
+					//$dataProcess[$currentIndex]['Viewed a Courseware'] = $output['data']['edx']['result'][$i]['count'];
+					$dataProcess[$currentIndex][1] = $output['data']['edx']['result'][$i]['count'];
+					$coefficient = 1;
+				}else if($output['data']['edx']['result'][$i]['_id']['verb'] == 'started playing'){
+					//$dataProcess[$currentIndex]['Watched a Video'] = $output['data']['edx']['result'][$i]['count'];
+					$dataProcess[$currentIndex][2] = $output['data']['edx']['result'][$i]['count'];
+					$coefficient = 1;
+				}else if($output['data']['edx']['result'][$i]['_id']['verb'] == 'viewed' && $output['data']['edx']['result'][$i]['_id']['object'] == 'a discussion thread'){
+					//$dataProcess[$currentIndex]['Viewed a Thread'] = $output['data']['edx']['result'][$i]['count'];
+					$dataProcess[$currentIndex][3] = $output['data']['edx']['result'][$i]['count'];
+					$coefficient = 1;
+				}else if($output['data']['edx']['result'][$i]['_id']['verb'] == 'created'){
+					//$dataProcess[$currentIndex]['Created a Thread'] = $output['data']['edx']['result'][$i]['count'];
+					$dataProcess[$currentIndex][4] = $output['data']['edx']['result'][$i]['count'];
+					$coefficient = 10;
+				}else if($output['data']['edx']['result'][$i]['_id']['verb'] == 'responded to'){
+					//$dataProcess[$currentIndex]['Replied to a Thread'] = $output['data']['edx']['result'][$i]['count'];
+					$dataProcess[$currentIndex][5] = $output['data']['edx']['result'][$i]['count'];
+					$coefficient = 8;
+				}else if($output['data']['edx']['result'][$i]['_id']['verb'] == 'up voted' || $output['data']['edx']['result'][$i]['_id']['verb'] == 'down voted'){
+					//$dataProcess[$currentIndex]['Voted a Thread'] += $output['data']['edx']['result'][$i]['count'];
+					$dataProcess[$currentIndex][6] += $output['data']['edx']['result'][$i]['count'];
+					$coefficient = 5;
+				}else if($output['data']['edx']['result'][$i]['_id']['verb'] == 'completed'){
+					//$dataProcess[$currentIndex]['Completed a Problem'] = $output['data']['edx']['result'][$i]['count'];
+					$dataProcess[$currentIndex][7] = $output['data']['edx']['result'][$i]['count'];
+					$coefficient = 5;
+				}
+				//$dataProcess[$currentIndex]['Total Score'] += $coefficient * $output['data']['edx']['result'][$i]['count'];
+				$dataProcess[$currentIndex][8] += $coefficient * $output['data']['edx']['result'][$i]['count'];
+>>>>>>> b7bd59bfc667228ad12df7379c2ab0d0485b4c7e
 			}
 			//$dataProcess[$currentIndex]['Total Score'] += $coefficient * $output['data'][$platform]['result'][$i]['count'];
 			$dataProcess[$currentIndex][8] += $coefficient * $output['data'][$platform]['result'][$i]['count'];
