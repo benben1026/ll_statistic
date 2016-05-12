@@ -32,18 +32,23 @@ class ApiModel extends CI_Model{
 			'message' => '',
 			'data' => array(
 				'moodle' => array(
-					'total_results' => "2",
+					'total_results' => "3",
 					'results' => array(
 						array(
 							'course_id' => '57',
 							'course_name' => 'Soft Skill Mentor - Module 1 - Career Planning',
-							'role_name' => 'student'
+							'role_name' => 'teacher'
 						),
 						array(
 							'course_id' => '95',
 							'course_name' => 'NEWCOURSE3',
-							'role_name' => 'student'
+							'role_name' => 'teacher'
 						),
+						array(
+							'course_id' => '128',
+							'course_name' => 'nc99',
+							'role_name' => 'teacher'
+						)
 					)
 				),
 				'edx' => array(

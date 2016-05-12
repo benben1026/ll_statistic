@@ -52,17 +52,17 @@ class Engagement extends CI_Controller{
 	
 	private function getData($platform) {
 		
-		getKey($platform);
+		$key = getKey($platform);
 
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
-				"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
+				//"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
 					"\$lte" => $this->apimodel->getToDate(),
 				),
-				"\$or" => $this->getOrArray()		
+				//"\$or" =>  array(array("statement.verb.display.en-us" => array("\$eq" => "viewed")))//$this->getOrArray()		
 				//"statement.verb.display.en-US" => array("\$not" => "/interacted/"),
 			),
 		);
@@ -109,13 +109,20 @@ class Engagement extends CI_Controller{
 		);
 
 		$pipeline = array(
-			$platform => array($match, $group, $project, $sort)
+			$platform => array($match, $group, /*$project,*/ $sort)
 		); 
+		
+		var_dump(print_r($pipeline));
 		$output = $this->datamodel->getData($pipeline);
 
 		$ykeys = array();
+			// 		foreach ($engagementClassify as $category => $verbStateArray) {
+			// 	$ykeys[] = $category;
+			// }
+			
 		$newData = array();
-		var_dump(print_r($output['data'][$platform]['result'], true));
+		var_dump("break line ====================");
+		var_dump($output);
 		if (count($output['data'][$platform]['result']) > 0) {
 					
 			// init for first block
@@ -142,11 +149,6 @@ class Engagement extends CI_Controller{
 				
 				// update last block
 				$lastDataBlk[$this->checkCategory($currentVerb, $currentName)] += 1;		
-			}
-			
-
-			foreach ($engagementClassify as $category => $verbStateArray) {
-				$ykeys[] = $category;
 			}
 		}
 		
@@ -193,13 +195,16 @@ class Engagement extends CI_Controller{
 	}
 	
 	private function getOrArray() {
-		$verbs = get_engagement_verbs();
 		
+		$verbs = get_engagement_verbs();
+		// var_dump($verbs);
 		$returnArray = array();
 		
 		foreach ($verbs as $verb) {
-			$returnArray[] = array("statement.verb.display.en-us" => $verb);
+			$returnArray[] = array("statement.verb.display.en-us" => array("\$eq" => $verb));
 		}		
+		
+		var_dump(print_r($returnArray, true));
 		return $returnArray;
 	}
 	
