@@ -107,7 +107,7 @@ class Engagement extends CI_Controller{
 		if (count($output['data'][$platform]['result']) > 0) {
 					
 			// init for first block
-			$lastDate = $output['data'][$platform]['result'][0]['statement']['timestamp'];
+			$lastDate = $this->removeTimeFromDate($output['data'][$platform]['result'][0]['statement']['timestamp']);
 			$newData[] = $this->createDataBlock($lastDate);
 			
 			// loop and do matching
@@ -116,7 +116,7 @@ class Engagement extends CI_Controller{
 				$currentResult = $output['data'][$platform]['result'][$i]['statement'];				
 				$currentVerb = $currentResult['verb']['display']['en-us'];
 				$currentName = $currentResult['object']['definition']['name']['en-us'];
-				$currentDate = $currentResult['timestamp'];
+				$currentDate = $this->removeTimeFromDate($currentResult['timestamp']);
 				
 				if ($currentDate != $lastDate) {
 					// create new block
@@ -134,7 +134,8 @@ class Engagement extends CI_Controller{
 		$output['data']['ykeys'] = $ykeys;
 
 		$this->returnData['ok'] = true;
-		$this->returnData['data'] = $output['data'];
+		//$this->returnData['data'] = $output['data'];
+		$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);
 	}
 	
 	private function getOrArray() {
@@ -173,7 +174,7 @@ class Engagement extends CI_Controller{
 	}
 	
 	private function createDataBlock($inDate) {
-		
+
 		$returnArray = array("date" => $inDate);
 		
 		foreach ($this->engagementClassify as $key => $value) {
@@ -181,6 +182,10 @@ class Engagement extends CI_Controller{
 		}
 		
 		return $returnArray;
+	}
+
+	private function removeTimeFromDate($inDate) {
+		return substr($inDate, 0, 10);
 	}
 
 	// private function getDataFromEdx(){
