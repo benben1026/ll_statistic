@@ -20,7 +20,7 @@
 		$('#courseEngagement_loading').show();
     	$('.courseEngagement_content').hide();
 		$.ajax({
-			url: '../engagement/detail?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to'),
+			url: '../engagement/detail?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to').val(),
 			type: 'get',
 			dataType: 'json',
 			success: function(data){
