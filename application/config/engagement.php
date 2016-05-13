@@ -10,8 +10,8 @@ $config['stu_engage_classify'][$active_group] = array(
 		array('viewed', 'a courseware asset'),
 	),
 	'Assignment' => array(
-		array('viewed', 'an assignmnet'),
-		array('submitted', 'an assignmnet'),
+		array('viewed', 'an assignment'),
+		array('submitted', 'an assignment'),
 	),
 	'Assessment' => array(
 		array('submitted', 'a peer assessment'),
@@ -51,16 +51,16 @@ $config['stu_engage_classify'][$active_group] = array(
 		array('responded to', 'a discussion thread'),
 		array('responded to', 'a discussion response'),
 	),
-	'Vote Post' => array(
-		array('up voted', 'a discussion thread'),
-		array('down voted', 'a discussion thread'),
-		array('up voted', 'a discussion response'),
-		array('down voted', 'a discussion response'),
-	),
+	// 'Vote Post' => array(
+	// 	array('up voted', 'a discussion thread'),
+	// 	array('down voted', 'a discussion thread'),
+	// 	array('up voted', 'a discussion response'),
+	// 	array('down voted', 'a discussion response'),
+	// ),
 	'Other interaction with Forum' => array(
-		array('updated', 'a discussion thread'),
-		array('updated', 'a discussion response'),
-		array('deleted', 'a discussion response'),
+		// array('updated', 'a discussion thread'),
+		// array('updated', 'a discussion response'),
+		// array('deleted', 'a discussion response'),
 		array('deleted', 'a discussion thread'),
 		array('followed', 'a discussion thread'),
 		array('stopped following', 'a discussion thread'),

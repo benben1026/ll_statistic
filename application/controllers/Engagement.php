@@ -18,7 +18,7 @@ class Engagement extends CI_Controller{
 		$this->load->model('apimodel');
 		$this->load->model('datamodel');
 		
-		$engagementClassify = load_engagement_list();
+		$this->engagementClassify = load_engagement_list();
 		
 		// Auth check
 		if(!$this->apimodel->getAccessGranted()){
@@ -57,13 +57,12 @@ class Engagement extends CI_Controller{
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
-				//"statement.context.extensions.".$key.".role" => array("\$eq" => "student"),
+				"statement.context.extensions.".$key.".rolename" => array("\$eq" => "student"),
 				"statement.timestamp" =>array(
 					"\$gte" => $this->apimodel->getFromDate(),
 					"\$lte" => $this->apimodel->getToDate(),
 				),
-				//"\$or" =>  array(array("statement.verb.display.en-us" => array("\$eq" => "viewed")))//$this->getOrArray()		
-				//"statement.verb.display.en-US" => array("\$not" => "/interacted/"),
+				"\$or" => $this->getOrArray()
 			),
 		);
 		if($this->apimodel->getRole() == 'student'){
@@ -74,23 +73,6 @@ class Engagement extends CI_Controller{
 			"\$sort" => array(
 				"statement.timestamp" => -1,
 			)
-		);
-		
-		$group = array(
-			"\$group" => array(
-				"_id" => array(
-					"eventname" => array(
-						"\$concat" => array("\$statement.verb.display.en-us", " ", "\$statement.object.definition.name.en-us")
-					),
-					//"verb" => "\$statement.verb.display.en-US",
-					//"object" => "\$statement.object.definition.name.en-US",
-					"date" => array("\$substr"=>array(
-							"\$statement.timestamp", 0, 10,
-						),
-					),
-				),
-				"count" => array("\$sum" => 1)
-			),
 		);
 		
 		$project = array(
@@ -107,85 +89,46 @@ class Engagement extends CI_Controller{
 				"statement.timestamp" => -1,				
 			)
 		);
-
-		$pipeline = array(
-			$platform => array($match, $group, /*$project,*/ $sort)
-		); 
 		
-		var_dump(print_r($pipeline));
+		$pipeline = array(
+			$platform => array($match, $project, $sort)
+		);
+		
 		$output = $this->datamodel->getData($pipeline);
-
+ 
+		// Build the Y-coordinate keys
 		$ykeys = array();
-			// 		foreach ($engagementClassify as $category => $verbStateArray) {
-			// 	$ykeys[] = $category;
-			// }
+		foreach ($this->engagementClassify as $category => $verbStateArray) {
+			$ykeys[] = $category;
+		}
 			
 		$newData = array();
-		var_dump("break line ====================");
-		var_dump($output);
+
 		if (count($output['data'][$platform]['result']) > 0) {
 					
 			// init for first block
-			$lastDate = $output['data'][$platform]['result'][0]['timestamp'];
-			$newData[] = $this->createDataBlock($currentDate);
+			$lastDate = $output['data'][$platform]['result'][0]['statement']['timestamp'];
+			$newData[] = $this->createDataBlock($lastDate);
 			
 			// loop and do matching
 			for($i = 0; $i < count($output['data'][$platform]['result']); $i++){
 				
-				$currentResult = $output['data'][$platform]['result'][$i];
+				$currentResult = $output['data'][$platform]['result'][$i]['statement'];				
 				$currentVerb = $currentResult['verb']['display']['en-us'];
 				$currentName = $currentResult['object']['definition']['name']['en-us'];
 				$currentDate = $currentResult['timestamp'];
 				
 				if ($currentDate != $lastDate) {
 					// create new block
-					$newData[] = $this->createDataBlock($currentDate);
+					$newData[] = $this->createDataBlock($currentDate);				
 					$lastDate = $currentDate;
 				}
 				
-				// get the last block to update
-				end($newData);
-				$lastDataBlk = &$array[key($array)];
-				
 				// update last block
-				$lastDataBlk[$this->checkCategory($currentVerb, $currentName)] += 1;		
+				$len = count($newData);	
+				$newData[$len-1][$this->checkCategory($currentVerb, $currentName)] += 1;		
 			}
 		}
-		
-		// $ykeys = array();
-		// $dataProcess = array();
-		// $preDate = "";
-		// $preEventname = "";
-		// for($i = 0; $i < count($output['data'][$platform]['result']); $i++){
-		// 	if($output['data'][$platform]['result'][$i]['_id']['date'] != $preDate){
-		// 		$preDate = $output['data'][$platform]['result'][$i]['_id']['date'];
-		// 		$dataProcess[$output['data'][$platform]['result'][$i]['_id']['date']] = array();
-		// 	}
-		// 	$dataProcess[$output['data'][$platform]['result'][$i]['_id']['date']][$output['data'][$platform]['result'][$i]['_id']['eventname']] = $output['data'][$platform]['result'][$i]['count'];
-
-		// 	//generate ykeys
-		// 	$flag = false;
-		// 	for($j = 0; $j < count($ykeys); $j++){
-		// 		if($ykeys[$j] == $output['data'][$platform]['result'][$i]['_id']['eventname']){
-		// 			$flag = true;
-		// 			break;
-		// 		}
-		// 	}
-		// 	if(!$flag){
-		// 		array_push($ykeys, $output['data'][$platform]['result'][$i]['_id']['eventname']);
-		// 	}
-		// }
-		// $newData = array();
-		// foreach($dataProcess as $date => $event){
-		// 	$t = array('date' => $date);
-		// 	foreach($ykeys as $y){
-		// 		$t[$y] = 0;
-		// 	}
-		// 	foreach($event as $name => $num){
-		// 		$t[$name] = $num;
-		// 	}
-		// 	array_push($newData, $t);
-		// }
 
 		$output['data']['data'] = $newData;
 		$output['data']['ykeys'] = $ykeys;
@@ -195,27 +138,34 @@ class Engagement extends CI_Controller{
 	}
 	
 	private function getOrArray() {
-		
-		$verbs = get_engagement_verbs();
-		// var_dump($verbs);
+				
 		$returnArray = array();
 		
-		foreach ($verbs as $verb) {
-			$returnArray[] = array("statement.verb.display.en-us" => array("\$eq" => $verb));
+		foreach ($this->engagementClassify as $category => $verbStateArray) {
+			foreach($verbStateArray as $verbState) {
+				$verb = $verbState[0];
+				$name = $verbState[1];
+				
+				$returnArray[] = array(
+					"\$and" => array(
+						array("statement.verb.display.en-us" => array("\$eq" => $verb)),
+						array("statement.object.definition.name.en-us" => array("\$eq" => $name)),
+					)	
+				);
+			}			
 		}		
 		
-		var_dump(print_r($returnArray, true));
 		return $returnArray;
 	}
 	
 	private function checkCategory($inVerb, $inStatement) {
 		
-		foreach ($engagementClassify as $category => $verbStateArray) {
-			foreach($verbState as $verbState) {
+		foreach ($this->engagementClassify as $category => $verbStateArray) {
+			foreach($verbStateArray as $verbState) {
 				$verb = $verbState[0];
 				$statement = $verbState[1];
-				
-				if ($verb == $inVerb && $statement == $inStatement) {
+
+				if ($verb === $inVerb && $statement === $inStatement) {
 					return $category;
 				}
 			}
@@ -226,7 +176,7 @@ class Engagement extends CI_Controller{
 		
 		$returnArray = array("date" => $inDate);
 		
-		foreach ($engagementClassify as $key => $value) {
+		foreach ($this->engagementClassify as $key => $value) {
 			$returnArray[$key] = 0;
 		}
 		
