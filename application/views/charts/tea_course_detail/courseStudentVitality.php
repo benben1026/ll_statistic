@@ -27,7 +27,7 @@
 	                	</tr>
                 	</thead>
                 	<tbody>
-                		
+
                 	</tbody>
                 </table>
             </div>
@@ -36,11 +36,11 @@
 	</div>
 </div>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	var datatableStudentVitality = $('#courseStudentVitality').DataTable({
 		"order": [[ 8, "desc" ]],
 	});
-	
+
 	function getCourseStudentVitality(){
 		datatableStudentVitality.clear().draw();
 		datatableStudentVitality.ajax.url('../performance/stuVitality?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=view&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();
@@ -49,7 +49,7 @@
 	getCourseStudentVitality();
 
 	function openTeaStuView(id, name){
-		var url = "https://" + window.location.hostname + "/index.php/page/teaViewStu?courseId=" + $('#courseId').val() + "&platform=" + $('#platform').val() + "&keepId=" + id;
+		var url = "/index.php/page/teaViewStu?courseId=" + $('#courseId').val() + "&platform=" + $('#platform').val() + "&keepId=" + id;
 		$('#teaViewStuFrame').attr('src', url);
 		$('#stuViewModalLabel').html(name + ' (Student View)');
 		$('#openModal').click();
