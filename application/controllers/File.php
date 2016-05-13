@@ -47,11 +47,14 @@ class File extends CI_Controller{
 
 	private function overviewNum(){
 		$pipeline = array();
-		foreach ($this->$platforms as $platform) {
+		foreach ($this->platforms as $platform) {
 			$key = getKey($platform);
 			if(isset($this->apimodel->getCourseInfo()['data'][$platform]['total_results'])){
 				$courseId = array();
 				for($i = 0; $i < $this->apimodel->getCourseInfo()['data'][$platform]['total_results']; $i++){
+					if($this->apimodel->getCourseInfo()['data'][$platform]['results'][$i]['role_name'] == 'student'){
+						continue;
+					}
 					$t = array("statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseInfo()['data'][$platform]['results'][$i]['course_id']));
 					array_push($courseId, $t);
 				}
@@ -71,6 +74,7 @@ class File extends CI_Controller{
 							"courseid" => "\$statement.context.extensions.".$key.".courseid",
 							"file_id" => "\$statement.object.id",
 							"file_name" => "\$statement.object.definition.description.en-us",
+							"platform" => $platform
 						),
 						"count" => array("\$sum" => 1),
 					),
@@ -82,16 +86,52 @@ class File extends CI_Controller{
 			}
 		}
 		$result = $this->datamodel->getData($pipeline);
-		$this->returnData['ok'] = $result['ok'];
-		$this->returnData['message'] = $result['message'];
-		$this->returnData['data'] = $result['data'];
-		// TODO: merge data from two platforms
-		// if(array_key_exists('edx', $result['data'])){
-		//
-		// }
-		// if(array_key_exists('moodle', $result['data'])){
-		//
-		// }
+		if(!$result['ok']){
+			$this->returnData['ok'] = false;
+			$this->returnData['message'] = 'No data';
+			return;
+		}else{
+			$this->returnData['ok'] = true;
+		}
+		$data = array();
+		$edx_flag = false;
+		$moodle_flag = false;
+		if(array_key_exists('edx', $result['data']) && array_key_exists('result', $result['data']['edx'])){
+			$edx_flag = true;
+		}
+		if(array_key_exists('moodle', $result['data']) && array_key_exists('result', $result['data']['moodle'])){
+			$moodle_flag = true;
+		}
+		if($edx_flag && $moodle_flag){
+			for($i = 0, $j = 0; $i < count($result['data']['moodle']['result']) || $j < count($result['data']['edx']['result']); ){
+				if($i == count($result['data']['moodle']['result'])){
+					array_push($data, $result['data']['edx']['result'][$j]);
+					$j ++;
+					continue;
+				}
+				if($j == count($result['data']['edx']['result'])){
+					array_push($data, $result['data']['moodle']['result'][$i]);
+					$i ++;
+					continue;
+				}
+				if($result['data']['moodle']['result'][$i]['count'] < $result['data']['edx']['result'][$j]['count']){
+					array_push($data, $result['data']['edx']['result'][$j]);
+					$j ++;
+				}else{
+					array_push($data, $result['data']['moodle']['result'][$i]);
+					$i ++;
+				}
+			}
+		}else if($edx_flag){
+			$data = $result['data']['edx']['result'];
+		}else if($moodle_flag){
+			$data = $result['data']['moodle']['result'];
+		}else{
+			$this->returnData['ok'] = false;
+			$this->returnData['message'] = 'No data';
+			return;
+		}
+		$this->returnData['data'] = $data;
 	}
 
 	//need one more parameter: filename

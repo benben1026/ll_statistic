@@ -31,12 +31,13 @@ class ApiModel extends CI_Model{
 			'ok' => true,
 			'message' => '',
 			'data' => array(
+				// for fake student studentone
 				'moodle' => array(
 					'total_results' => "3",
 					'results' => array(
 						array(
-							'course_id' => '57',
-							'course_name' => 'Soft Skill Mentor - Module 1 - Career Planning',
+							'course_id' => '128',
+							'course_name' => 'New Course 99',
 							'role_name' => 'teacher'
 						),
 						array(
@@ -55,13 +56,13 @@ class ApiModel extends CI_Model{
 					'total_results' => "2",
 					'results' => array(
 						array(
-							'course_id' => 'course-v1:keep+demo01+2015_1',
-							'course_name' => 'KEEP Open edX Demo Course A',
+							'course_id' => 'course-v1:cuhk+cuhkmit001+cuhkmitjoint',
+							'course_name' => 'CUHK-MIT Joint Workshop on E-Learning and Big Data',
 							'role_name' => 'student'
 						),
 						array(
-							'course_id' => 'course-v1:keep+demo02+2016_1',
-							'course_name' => 'KEEP Open edX Demo Course B',
+							'course_id' => 'course-v1:keep+eval11+2016_1',
+							'course_name' => ' 2016 TEST COURSE #11',
 							'role_name' => 'student'
 						),
 					)

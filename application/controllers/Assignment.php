@@ -110,10 +110,10 @@ class Assignment extends CI_Controller{
 				"statement.context.extensions.".$key.".eventname" => array("\$eq" => "\\core\\event\\user_graded"),
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
 				"statement.verb.id" => array("\$eq" => "http://www.tincanapi.co.uk/verbs/evaluated"),
-				"statement.object.definition.description.en-us" => array("\$eq" => $asg_name),
-				// "statement.context.contextActivities.grouping" => array(
-				// 	"\$elemMatch" => array("definition.description.en-us" => array("\$eq" => $asg_name))
-				// ),
+				// "statement.object.definition.description.en-us" => array("\$eq" => $asg_name),
+				"statement.context.contextActivities.grouping" => array(
+					"\$elemMatch" => array("definition.description.en-us" => array("\$eq" => $asg_name))
+				),
 			)
 		);
 		$sort = array(
