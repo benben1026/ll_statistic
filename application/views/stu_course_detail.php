@@ -42,7 +42,9 @@
 	    })
     </script>
 <?php
-	include_once "charts/stu_course_detail/personalPerformance.php";
+  // if($_GET['platform'] == 'edx'){
+    include_once "charts/stu_course_detail/personalPerformance.php";
+  // }
 	if($_GET['platform'] == 'moodle'){
 		include_once "charts/stu_course_detail/asg_dis.php";
 	}

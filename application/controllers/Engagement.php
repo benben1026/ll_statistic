@@ -95,7 +95,7 @@ class Engagement extends CI_Controller{
 		);
 		
 		$output = $this->datamodel->getData($pipeline);
- 
+ //echo json_encode($pipeline);
 		// Build the Y-coordinate keys
 		$ykeys = array();
 		foreach ($this->engagementClassify as $category => $verbStateArray) {

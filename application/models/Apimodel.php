@@ -33,22 +33,17 @@ class ApiModel extends CI_Model{
 			'data' => array(
 				// for fake student studentone
 				'moodle' => array(
-					'total_results' => "3",
+					'total_results' => "2",
 					'results' => array(
 						array(
 							'course_id' => '128',
 							'course_name' => 'New Course 99',
-							'role_name' => 'teacher'
+							'role_name' => 'student'
 						),
 						array(
 							'course_id' => '95',
 							'course_name' => 'NEWCOURSE3',
-							'role_name' => 'teacher'
-						),
-						array(
-							'course_id' => '128',
-							'course_name' => 'nc99',
-							'role_name' => 'teacher'
+							'role_name' => 'student'
 						)
 					)
 				),
@@ -58,7 +53,7 @@ class ApiModel extends CI_Model{
 						array(
 							'course_id' => 'course-v1:cuhk+cuhkmit001+cuhkmitjoint',
 							'course_name' => 'CUHK-MIT Joint Workshop on E-Learning and Big Data',
-							'role_name' => 'student'
+							'role_name' => 'teacher'
 						),
 						array(
 							'course_id' => 'course-v1:keep+eval11+2016_1',
@@ -137,7 +132,7 @@ class ApiModel extends CI_Model{
 
 	function setFromDate($fromDate){
 		if($fromDate == null){
-			$this->fromDate = "2015-01-01T00:00";
+			$this->fromDate = "2016-05-09T00:00";
 		}else{
 			$this->fromDate = $fromDate . "T00:00";
 		}
