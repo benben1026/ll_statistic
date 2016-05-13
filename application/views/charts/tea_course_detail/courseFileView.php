@@ -20,7 +20,7 @@
 		$('#courseFileView_loading').show();
 		$('#tea-file-view').hide();
 		$.ajax({
-			url: '../file/detail?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to'),
+			url: '../file/detail?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to').val(),
 			type: 'get',
 			dataType: 'json',
 			success: function(data){

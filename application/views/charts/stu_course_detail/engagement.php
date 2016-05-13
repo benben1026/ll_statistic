@@ -23,7 +23,7 @@
     	$('#engagement_loading').hide();
     	$('.engagement_content').show();
     }
-	var raw_data;
+	var raw_data = {};
 	function sendEngagementAjax(){
 		startLoading();
 		var url = '../engagement/detail?from=' + $('#date-from').val() + '&to=' + $('#date-to').val() + '&courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val();
@@ -40,7 +40,16 @@
 					console.log(data['message']);
 					return;
 				}
-				raw_data = data['data'];
+				if(data['data']['data'].length == 0){
+					raw_data['data'] = [{'date': $('#date-from').val()}, {'date': $('#date-to').val()}];
+					for(var i = 0; i < data['data']['ykeys'].length; i++){
+						raw_data['data'][0][data['data']['ykeys'][i]] = 0;
+						raw_data['data'][1][data['data']['ykeys'][i]] = 0;
+					}
+					raw_data['ykeys'] = data['data']['ykeys'];
+				}else{
+					raw_data = data['data'];
+				}
 				draw_legend(data['data']['ykeys']);
 				//draw_engagement(data['data']);
 			}
