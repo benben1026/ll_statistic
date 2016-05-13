@@ -73,7 +73,7 @@
 		datatableView.clear().draw();
 		$($('.courseForumTableContainer')[0]).show();
 		$('#forumTableName').html('Top Viewing Threads');
-		datatableView.ajax.url('../forum/detail/view?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();
+		datatableView.ajax.url('../forum/detail/view?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to').val()).load();
 	}
 
 	function getCourseForumReply(){
@@ -83,7 +83,7 @@
 		datatableReply.clear().draw();
 		$($('.courseForumTableContainer')[1]).show();
 		$('#forumTableName').html('Top Replying Threads');
-		datatableReply.ajax.url('../forum/detail/reply?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();
+		datatableReply.ajax.url('../forum/detail/reply?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to').val()).load();
 	}
 
 	function getCourseForumActive(){
@@ -94,7 +94,7 @@
 		$($('.courseForumTableContainer')[2]).show();
 
 		$('#forumTableName').html('Latest Active Threads');
-		datatableActive.ajax.url('../forum/detail/active?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();	
+		datatableActive.ajax.url('../forum/detail/active?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to').val()).load();	
 	}
     getCourseForumView();
     registerFunList.push(getCourseForumView);

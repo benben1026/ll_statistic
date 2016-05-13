@@ -38,7 +38,7 @@ class ApiModel extends CI_Model{
 						array(
 							'course_id' => '128',
 							'course_name' => 'New Course 99',
-							'role_name' => 'student'
+							'role_name' => 'teacher'
 						),
 						array(
 							'course_id' => '95',
@@ -144,9 +144,9 @@ class ApiModel extends CI_Model{
 
 	function setToDate($toDate){
 		if($toDate == null){
-			$this->toDate = "2016-12-31T00:00";
+			$this->toDate = "2016-12-31T23:59";
 		}else{
-			$this->toDate = $toDate . "T00:00";
+			$this->toDate = $toDate . "T23:59:00";
 		}
 	}
 

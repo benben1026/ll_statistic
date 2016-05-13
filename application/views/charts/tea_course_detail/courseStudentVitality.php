@@ -43,7 +43,7 @@
 
 	function getCourseStudentVitality(){
 		datatableStudentVitality.clear().draw();
-		datatableStudentVitality.ajax.url('../performance/stuVitality?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=view&from=' + $('#date-from').val() + '&to=' + $('#date-to')).load();
+		datatableStudentVitality.ajax.url('../performance/stuVitality?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&type=view&from=' + $('#date-from').val() + '&to=' + $('#date-to').val()).load();
 	}
 	registerFunList.push(getCourseStudentVitality);
 	getCourseStudentVitality();
