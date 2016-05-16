@@ -1,4 +1,0 @@
-#Ignore the configure file
-application/config/database.php
-application/config/saml.php
-application/controllers/Saml2Controller.php
