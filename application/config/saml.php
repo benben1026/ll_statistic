@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 //Your website location or in saml term your service provider location
-$sp_host = 'http://dash.keep.edu.hk/index.php';
+$sp_host = 'https://dash.keep.edu.hk/index.php';
 
 //KEEP's identity provider location
 $idp_host = 'https://account.keep.edu.hk/idp';
