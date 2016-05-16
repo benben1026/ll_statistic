@@ -27,7 +27,7 @@
                 $('#courseEnrolldrop_loading').hide();
                 $('.courseEnrolldrop_content').show();
                 if(!data['ok']){
-                    console.log('fail to get engagement');
+                  $('#courseEnrolldrop').html(data['message']);
                     return;
                 }
                 if(data['data'].length == 0){

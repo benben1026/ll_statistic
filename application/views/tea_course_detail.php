@@ -45,8 +45,8 @@
 	include_once "charts/tea_course_detail/courseBasic.php";
 	include_once "charts/tea_course_detail/courseStudentVitality.php";
 	include_once "charts/tea_course_detail/courseEngagement.php";
-	include_once "charts/tea_course_detail/courseQuiz.php";
-	include_once "charts/tea_course_detail/fake_asg_dis.php";
+	//include_once "charts/tea_course_detail/courseQuiz.php";
+	//include_once "charts/tea_course_detail/fake_asg_dis.php";
 	include_once "charts/tea_course_detail/courseFileView.php";
 	include_once "charts/stu_course_detail/forum.php";
 	include_once "charts/tea_course_detail/courseEnrollDrop.php";

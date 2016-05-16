@@ -25,7 +25,7 @@
 					$('#courseFileView_loading').hide();					
 					$('#total-file-view').html('Fail to get data');
 					$('#total-file-view').show();
-					console.log('Fail to get data');
+					$('#total-file-view').html(data['message']);
 					return;
 				}
 				$('#totalFileView_loading').hide();

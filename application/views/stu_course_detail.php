@@ -48,7 +48,7 @@
 	if($_GET['platform'] == 'moodle'){
 		include_once "charts/stu_course_detail/asg_dis.php";
 	}
-	include_once "charts/stu_course_detail/fake_asg_dis.php";
+	//include_once "charts/stu_course_detail/fake_asg_dis.php";
 	include_once "charts/stu_course_detail/engagement.php";
 	include_once "charts/stu_course_detail/forum.php";
 ?>

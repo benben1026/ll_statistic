@@ -37,7 +37,7 @@
 			success: function(data){
 				endLoading();
 				if(!data['ok']){
-					console.log(data['message']);
+					$('#engagement').html(data['message']);
 					return;
 				}
 				if(data['data']['data'].length == 0){

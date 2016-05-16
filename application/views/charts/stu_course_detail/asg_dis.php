@@ -34,7 +34,7 @@
 		dataType: 'json',
 		success: function(data){
 			if(!data['ok']){
-				console.log('fail to get asg distribution information');
+				$('#stu-asg-dis').html(data['message']);
 				return;
 			}
 			for(var i = 0; i < data['data'][platform]['result'].length; i++){
@@ -46,14 +46,18 @@
 		}
 	});
 
-	function getAsgDis(asg){
+	function getAsgDis(asg){		
+		var url = '../assignment/getAsgDis?courseId=' + courseId + '&platform=' + platform + '&asg=' + asg;
+		if($('#keepId').val() != undefined){
+	        url += '&keepId=' + $('#keepId').val();
+	    }
 		$.ajax({
-			url: '../assignment/getAsgDis?courseId=' + courseId + '&platform=' + platform + '&asg=' + asg,
+			url: url,
 			type: 'get',
 			dataType: 'json',
 			success: function(data){
 				if(!data['ok']){
-					console.log('fail to get asg distribution information');
+					$('#stu-asg-dis').html(data['message']);
 					return;
 				}
 				var temp = [0, 0, 0, 0, 0];

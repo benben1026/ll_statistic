@@ -28,7 +28,7 @@
 					$('#courseFileView_loading').hide();					
 					$('#tea-file-view').html('Fail to get data');
 					$('#tea-file-view').show();
-					console.log(data['message']);
+					$('#tea-file-view').html(data['message']);
 					return;
 				}
 				$('#courseFileView_loading').hide();

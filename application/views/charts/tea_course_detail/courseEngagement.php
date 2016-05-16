@@ -27,7 +27,7 @@
 				$('#courseEngagement_loading').hide();
     			$('.courseEngagement_content').show();
 				if(!data['ok']){
-					console.log(data['message']);
+					$('#courseEngagement').html(data['message']);
 					return;
 				}
 				if(data['data']['data'].length == 0){

@@ -32,8 +32,9 @@
             dataType: 'json',
             success: function(data){
                 if(!data['ok']){
-                    console.log(data['message']);
                     $('#personalPerformance_loading').hide();
+                    $('#stu-performance').html(data['message']);
+                    $('#stu-performance').show();
                     return;
                 }
                 $('#personalPerformance_loading').hide();
