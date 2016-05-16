@@ -88,7 +88,11 @@ class Assignment extends CI_Controller{
 		//!important: please set platform before courseId
 		$this->apimodel->setPlatform($this->input->get('platform'));
 		$this->apimodel->setCourseId($this->input->get('courseId'));
-
+		// This is loading student views for teacher.
+		// Teacher will fetch data as a student role.
+		if($this->input->get('keepId') != null){
+			$this->apimodel->setKeepId($this->input->get('keepId'));
+		}
 		if(!$this->apimodel->getValidParameter()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
