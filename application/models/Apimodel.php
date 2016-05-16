@@ -27,44 +27,44 @@ class ApiModel extends CI_Model{
 		}
 
 		// MARK: Set fake course info for testing purpose
-		$this->courseInfo = array(
-			'ok' => true,
-			'message' => '',
-			'data' => array(
-				// for fake student studentone
-				'moodle' => array(
-					'total_results' => "2",
-					'results' => array(
-						array(
-							'course_id' => '128',
-							'course_name' => 'New Course 99',
-							'role_name' => 'teacher'
-						),
-						array(
-							'course_id' => '95',
-							'course_name' => 'NEWCOURSE3',
-							'role_name' => 'student'
-						)
-					)
-				),
-				'edx' => array(
-					'total_results' => "2",
-					'results' => array(
-						array(
-							'course_id' => 'course-v1:cuhk+cuhkmit001+cuhkmitjoint',
-							'course_name' => 'CUHK-MIT Joint Workshop on E-Learning and Big Data',
-							'role_name' => 'teacher'
-						),
-						array(
-							'course_id' => 'course-v1:keep+eval11+2016_1',
-							'course_name' => ' 2016 TEST COURSE #11',
-							'role_name' => 'student'
-						),
-					)
-				)
-			)
-		);
-		/*
+		// $this->courseInfo = array(
+		// 	'ok' => true,
+		// 	'message' => '',
+		// 	'data' => array(
+		// 		// for fake student studentone
+		// 		'moodle' => array(
+		// 			'total_results' => "2",
+		// 			'results' => array(
+		// 				array(
+		// 					'course_id' => '128',
+		// 					'course_name' => 'New Course 99',
+		// 					'role_name' => 'teacher'
+		// 				),
+		// 				array(
+		// 					'course_id' => '95',
+		// 					'course_name' => 'NEWCOURSE3',
+		// 					'role_name' => 'student'
+		// 				)
+		// 			)
+		// 		),
+		// 		'edx' => array(
+		// 			'total_results' => "2",
+		// 			'results' => array(
+		// 				array(
+		// 					'course_id' => 'course-v1:cuhk+cuhkmit001+cuhkmitjoint',
+		// 					'course_name' => 'CUHK-MIT Joint Workshop on E-Learning and Big Data',
+		// 					'role_name' => 'teacher'
+		// 				),
+		// 				array(
+		// 					'course_id' => 'course-v1:keep+eval11+2016_1',
+		// 					'course_name' => ' 2016 TEST COURSE #11',
+		// 					'role_name' => 'student'
+		// 				),
+		// 			)
+		// 		)
+		// 	)
+		// );
+		
 		$this->load->model('courseinfomodel');
 		$preTime = $this->session->userdata('courseInfoSessExp');
 		$id = $this->session->userdata('courseInfoId');
@@ -88,7 +88,7 @@ class ApiModel extends CI_Model{
 		}else{
 			$this->courseInfo = $this->session->userdata('courseInfo');
 		}
-		*/
+		
 	}
 
 	function setRole($role){
@@ -106,7 +106,6 @@ class ApiModel extends CI_Model{
 			return;
 		}
 		$this->courseId = str_replace(" ", "+", $courseId);
-//echo json_encode($this->courseInfo);
 		foreach($this->courseInfo['data'][$this->platform]['results'] as $course){
 			if($course['course_id'] == $this->courseId){
 				$this->setRole($course['role_name']);
