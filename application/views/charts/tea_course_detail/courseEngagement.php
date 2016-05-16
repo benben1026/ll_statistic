@@ -15,7 +15,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-	var raw_data;
+	var raw_data = [];
 	function sendEngagementAjax(){
 		$('#courseEngagement_loading').show();
     	$('.courseEngagement_content').hide();

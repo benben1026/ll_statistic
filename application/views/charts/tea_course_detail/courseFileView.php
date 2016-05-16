@@ -26,13 +26,16 @@
 			success: function(data){
 				if(!data['ok']){
 					$('#courseFileView_loading').hide();					
-					$('#tea-file-view').html('Fail to get data');
 					$('#tea-file-view').show();
 					$('#tea-file-view').html(data['message']);
 					return;
 				}
 				$('#courseFileView_loading').hide();
 				$('#tea-file-view').show();
+				if(data['data'][$('#platform').val()]['result'].length == 0){
+					$('#tea-file-view').html('No Data Available');
+					return;
+				}
 				var dataArray = [];
 				for(var i = 0; i < 8 && i < data['data'][$('#platform').val()]['result'].length; i++){
 					//xAxis.push('<a target="_blank" href="' + data['data'][$('#platform').val()]['result'][i]['_id']['file_id'] + '">' + data['data'][$('#platform').val()]['result'][i]['_id']['file_name'] + '</a>');
