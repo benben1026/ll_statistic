@@ -15,7 +15,6 @@ class Performance extends CI_Controller
     public function __contruct()
     {
         parent::__contruct();
-        
     }
 
     public function stuPerformance()
@@ -201,18 +200,18 @@ class Performance extends CI_Controller
     }
 
     private function getOrArray(){
-        $returnArray = array();        
+        $returnArray = array();
         foreach ($this->engagementList as $category => $verbStateArray) {
             foreach($verbStateArray as $verbState) {
                 $verb = $verbState[0];
-                $name = $verbState[1];                
+                $name = $verbState[1];
                 $returnArray[] = array(
                     "\$and" => array(
                         array("statement.verb.display.en-us" => array("\$eq" => $verb)),
                         array("statement.object.definition.name.en-us" => array("\$eq" => $name)),
-                    )   
+                    )
                 );
-            }           
+            }
         }
         return $returnArray;
     }
