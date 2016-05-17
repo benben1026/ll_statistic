@@ -7,6 +7,70 @@ class Saml2Controller extends Saml_Controller {
 		parent::__construct();
 	}
 
+
+	//-----------------------------------TEST-----------------------------------
+ 	public function fake_landing(){
+ 		if(ENVIRONMENT == 'production'){
+ 			echo 'This page is for development only';
+ 			return;
+ 		}
+ 		echo "click to login";
+ 		echo "<a href=\"/index.php/Saml2Controller/fake_login\"><button>Fake Login</button></a>";
+ 	}
+ 
+ 	public function fake_login($role){
+ 		if(ENVIRONMENT == 'production'){
+ 			echo 'This page is for development only';
+ 			return;
+ 		}
+ 		$login_data = array(
+ 			"id" => array("999"),
+ 			// "login" => array("zhouwei1026@163.com"),
+ 			"login" => array("demo@keep.edu.hk"),
+ 
+ 			//change keepid here
+ 			// keep demo
+ 			"keepid" => array("563a82e2-96ed-11e4-bf37-080027087aa9"),
+ 
+ 			//csci2100 student
+ 
+ 			//"keepid" => array("fb4d945c-1964-4055-a833-8d843eea3c76"),
+ 			//"keepid" => array("1f337349-0fe4-4fd0-8d2f-e80b0c97ec22"),
+ 
+ 
+ 			//city u student
+ 			//"keepid" => array("ffd66e3a-0e8d-4edf-9f40-40e023f82673"),
+ 
+ 			//instructor
+ 			//"keepid" => array("8417532a-d290-44d8-9592-9c77b18cfb85"),
+ 
+ 			//prof King
+ 			//"keepid" => array("ff42109d-5c1b-11e5-93e8-5254004c24f3"),
+ 
+ 			//Moodle Student
+ 			//"keepid" => array("10ff02cb-628d-4f6f-b282-106c5bfef0ea"),
+ 
+ 			"enckeepid" => array(""),
+ 			"fullname" => array("Demo KEEP"),
+ 			"firstname" => array("Demo"),
+ 			"lastname" => array("KEEP"),
+ 			"password" => array(""),
+ 			"activated" => array("1"),
+ 			"policyagreed" => array("0"),
+ 			"deleted" => array("0"),
+ 			"facebook" => array(""),
+ 			"twitter" => array(""),
+ 			"google" => array(""),
+ 		);
+ 		$data = array(
+     		'samlUserData' => $login_data
+     	);
+     	$this->session->set_userdata($data);
+     	redirect('/page/overview');
+ 	}
+ 
+ 	//---------------------------------END TEST----------------------------------
+
 	//Route: http://benjamin-zhou.com/ll_statistic/index.php/saml2Controller/login
 	//       http://benjamin-zhou.com/ll_statistic/index.php/saml2Controller/login?returnTo=url-for-redirection
 	//This function will be invoked when user wants to perform login at your site
