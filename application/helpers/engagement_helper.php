@@ -33,3 +33,31 @@ if (!function_exists('get_engagement_verbs')) {
 		return $verbs;
 	}
 }
+
+if (!function_exists('get_engagement_statement'))
+{
+	function get_engagement_statement($profile = 'default'){
+		$list = load_engagement_list($profile);
+		$returnArray = array();        
+        foreach ($list as $category => $verbStateArray) {
+            foreach($verbStateArray as $verbState) {
+                $verb = $verbState[0];
+                $name = $verbState[1];                
+                $returnArray[$verb . " " . $name] = array('category' => $category, 'count' => 0);
+            }           
+        }
+        return $returnArray;
+	}
+}
+
+if (!function_exists('get_engagement_category'))
+{
+	function get_engagement_category($profile = 'default'){
+		$list = load_engagement_list($profile);
+		$returnArray = array();
+		foreach ($list as $key => $value) {
+			$returnArray[$key] = 0;
+		}
+		return $returnArray;
+	}
+}
