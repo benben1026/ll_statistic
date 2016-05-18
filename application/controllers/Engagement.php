@@ -53,6 +53,8 @@ class Engagement extends CI_Controller{
 	public function getTodayData() {
 		//
 		$platform = $this->apimodel->getPlatform();
+		$fromDate = $this->apimodel->getFromDate(); 
+		$toDate = $this->apimodel->getToDate();
 		$pipeline = $this->getPipeline($platform, $fromDate, $toDate);	
 		
 		$output = $this->datamodel->getData($pipeline);	
