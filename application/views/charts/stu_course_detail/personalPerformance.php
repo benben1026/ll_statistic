@@ -40,12 +40,12 @@
                 $('#personalPerformance_loading').hide();
                 $('#stu-performance').show();
                 $('#stu-performance2').show();
-                drawPersonalPerformance(data['data']['personal'], data['data']['average']);
+                drawPersonalPerformance(data['data']['indicator'], data['data']['personal'], data['data']['average']);
             }
         });
     }
 
-    function drawPersonalPerformance(personal, average){
+    function drawPersonalPerformance(indicator, personal, average){
         var personalPerformanceChart = echarts.init(document.getElementById("stu-performance"));
         option = {
             title: {
@@ -58,15 +58,7 @@
             color: ['#3eaddb', '#e54273', '#948d8b', '#f69b00'],
             radar: {
                 // shape: 'circle',
-                indicator: [
-                   { name: 'View Courseware', max: Math.max(personal[0], average[0]) == 0 ? 1 : (Math.max(personal[0], average[0]) * 1.2).toFixed(4)},
-                   { name: 'Watch Video', max: Math.max(personal[1], average[1]) == 0 ? 1 : (Math.max(personal[1], average[1]) * 1.2).toFixed(4)},
-                   { name: 'View Discussion', max: Math.max(personal[2], average[2]) == 0 ? 1 : (Math.max(personal[2], average[2]) * 1.2).toFixed(4)},
-                   { name: 'Create Discussion', max: Math.max(personal[3], average[3]) == 0 ? 1 : (Math.max(personal[3], average[3]) * 1.2).toFixed(4)},
-                   { name: 'Response to Discussion', max: Math.max(personal[4], average[4]) == 0 ? 1 : (Math.max(personal[4], average[4]) * 1.2).toFixed(4)},
-                   { name: 'Vote Discussion', max: Math.max(personal[5], average[5]) == 0 ? 1 : (Math.max(personal[5], average[5]) * 1.2).toFixed(4)},
-                   { name: 'Complete Quiz', max: Math.max(personal[6], average[6]) == 0 ? 1 : (Math.max(personal[6], average[6]) * 1.2).toFixed(4)}
-                ]
+                indicator: indicator,
             },
             series: [{
                 name: 'Personal vs Average',

@@ -10,6 +10,7 @@ class Performance extends CI_Controller
         'data' => null,
         // "debug" => "debug"
     );
+    private $engagementList;
 
     public function __contruct()
     {
@@ -18,6 +19,7 @@ class Performance extends CI_Controller
 
     public function stuPerformance()
     {
+        $this->engagementList = load_engagement_list();
         $this->load->model('apimodel');
         $this->load->model('datamodel');
 
@@ -84,6 +86,7 @@ class Performance extends CI_Controller
             return;
         }
         $totalNumOfStudent = 0;
+//$totalNumOfStudent = 10;
         if (isset($output['data'][$platform]['result'][0])) {
             $totalNumOfStudent = $output['ok'] && $output['data'][$platform]['ok'] ? $output['data'][$platform]['result'][0]['count'] : 0;
         }
@@ -100,41 +103,7 @@ class Performance extends CI_Controller
             '$match' => array(
                 'statement.context.extensions.'.$key.'.courseid' => array('$eq' => $this->apimodel->getCourseId()),
                 'statement.context.extensions.'.$key.'.rolename' => array('$eq' => 'student'),
-                '$or' => array(
-                    //view a courseware
-                    array('$and' => array(
-                            array('statement.verb.id' => array('$eq' => 'http://id.tincanapi.com/verb/viewed')),
-                            array('statement.object.definition.name.en-us' => array('$eq' => 'a courseware page')),
-                        ),
-                    ),
-                    //start playing a video
-                    array('statement.verb.display.en-us' => array('$eq' => 'started playing')),
-                    //view a thread
-                    array('$and' => array(
-                            array('statement.verb.id' => array('$eq' => 'http://id.tincanapi.com/verb/viewed')),
-                            array('statement.object.definition.name.en-us' => array('$eq' => 'a discussion thread')),
-                        ),
-                    ),
-                    //create a thread
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'created'),
-                    ),
-                    //reply a thread
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'responded to'),
-                    ),
-                    //vote a thread
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'up voted'),
-                    ),
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'down voted'),
-                    ),
-                    //complete a problem
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'completed'),
-                    ),
-                ),
+                '$or' => $this->getOrArray(),
             ),
         );
         $group = array(
@@ -155,7 +124,6 @@ class Performance extends CI_Controller
             $this->returnData['ok'] = false;
             $this->returnData['message'] = $total['message'];
             printJson($this->returnData);
-
             return;
         }
 
@@ -165,41 +133,7 @@ class Performance extends CI_Controller
                 'statement.actor.name' => array('$eq' => $this->apimodel->getKeepId()),
                 'statement.context.extensions.'.$key.'.courseid' => array('$eq' => $this->apimodel->getCourseId()),
                 'statement.context.extensions.'.$key.'.rolename' => array('$eq' => 'student'),
-                '$or' => array(
-                    //view a courseware
-                    array('$and' => array(
-                            array('statement.verb.id' => array('$eq' => 'http://id.tincanapi.com/verb/viewed')),
-                            array('statement.object.definition.name.en-us' => array('$eq' => 'a courseware page')),
-                        ),
-                    ),
-                    //start playing a video
-                    array('statement.verb.display.en-us' => array('$eq' => 'started playing')),
-                    //view a thread
-                    array('$and' => array(
-                            array('statement.verb.id' => array('$eq' => 'http://id.tincanapi.com/verb/viewed')),
-                            array('statement.object.definition.name.en-us' => array('$eq' => 'a discussion thread')),
-                        ),
-                    ),
-                    //create a thread
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'created'),
-                    ),
-                    //reply a thread
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'responded to'),
-                    ),
-                    //vote a thread
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'up voted'),
-                    ),
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'down voted'),
-                    ),
-                    //complete a problem
-                    array(
-                        'statement.verb.display.en-us' => array('$eq' => 'completed'),
-                    ),
-                ),
+                '$or' => $this->getOrArray(),
             ),
         );
         $group = array(
@@ -218,58 +152,68 @@ class Performance extends CI_Controller
             $this->returnData['ok'] = false;
             $this->returnData['message'] = $personal['message'];
             printJson($this->returnData);
-
             return;
         }
-        $averageData = array(0, 0, 0, 0, 0, 0, 0);
-        $personalData = array(0, 0, 0, 0, 0, 0, 0);
-
-        //find personal
-        for ($i = 0; $i < count($personal['data'][$platform]['result']); ++$i) {
-            if ($personal['data'][$platform]['result'][$i]['_id']['verb'] == 'viewed' && $personal['data'][$platform]['result'][$i]['_id']['object'] == 'a courseware page') {
-                $personalData[0] = $personal['data'][$platform]['result'][$i]['count'];
-            } elseif ($personal['data'][$platform]['result'][$i]['_id']['verb'] == 'started playing') {
-                $personalData[1] = $personal['data'][$platform]['result'][$i]['count'];
-            } elseif ($personal['data'][$platform]['result'][$i]['_id']['verb'] == 'viewed' && $personal['data'][$platform]['result'][$i]['_id']['object'] == 'a discussion thread') {
-                $personalData[2] = $personal['data'][$platform]['result'][$i]['count'];
-            } elseif ($personal['data'][$platform]['result'][$i]['_id']['verb'] == 'created') {
-                $personalData[3] = $personal['data'][$platform]['result'][$i]['count'];
-            } elseif ($personal['data'][$platform]['result'][$i]['_id']['verb'] == 'responded to') {
-                $personalData[4] = $personal['data'][$platform]['result'][$i]['count'];
-            } elseif ($personal['data'][$platform]['result'][$i]['_id']['verb'] == 'up voted' || $output['data'][$platform]['result'][$i]['_id']['verb'] == 'down voted') {
-                $personalData[5] += $personal['data'][$platform]['result'][$i]['count'];
-            } elseif ($personal['data'][$platform]['result'][$i]['_id']['verb'] == 'completed') {
-                $personalData[6] = $personal['data'][$platform]['result'][$i]['count'];
-            }
-        }
-
-        //find average
-        for ($i = 0; $i < count($total['data'][$platform]['result']); ++$i) {
-            if ($total['data'][$platform]['result'][$i]['_id']['verb'] == 'viewed' && $total['data'][$platform]['result'][$i]['_id']['object'] == 'a courseware page') {
-                $averageData[0] = number_format($total['data'][$platform]['result'][$i]['count'] / $totalNumOfStudent, 3);
-            } elseif ($total['data'][$platform]['result'][$i]['_id']['verb'] == 'started playing') {
-                $averageData[1] = number_format($total['data'][$platform]['result'][$i]['count'] / $totalNumOfStudent, 3);
-            } elseif ($total['data'][$platform]['result'][$i]['_id']['verb'] == 'viewed' && $total['data'][$platform]['result'][$i]['_id']['object'] == 'a discussion thread') {
-                $averageData[2] = number_format($total['data'][$platform]['result'][$i]['count'] / $totalNumOfStudent, 3);
-            } elseif ($total['data'][$platform]['result'][$i]['_id']['verb'] == 'created') {
-                $averageData[3] = number_format($total['data'][$platform]['result'][$i]['count'] / $totalNumOfStudent, 3);
-            } elseif ($total['data'][$platform]['result'][$i]['_id']['verb'] == 'responded to') {
-                $averageData[4] = number_format($total['data'][$platform]['result'][$i]['count'] / $totalNumOfStudent, 3);
-            } elseif ($total['data'][$platform]['result'][$i]['_id']['verb'] == 'up voted' || $total['data'][$platform]['result'][$i]['_id']['verb'] == 'down voted') {
-                if ($averageData[5] == 0) {
-                    $averageData[5] = $total['data'][$platform]['result'][$i]['count'] / $totalNumOfStudent;
-                } else {
-                    $averageData[5] = ($averageData[5] * $totalNumOfStudent + $total['data'][$platform]['result'][$i]['count']) / $totalNumOfStudent;
+        $averageDataTemp = get_engagement_statement();
+        $personalDataTemp = get_engagement_statement();
+        foreach($total['data'][$platform]['result'] as $statement){
+            foreach($averageDataTemp as $key => $count){
+                if($key == $statement['_id']['verb'] . " " . $statement['_id']['object']){
+                    $averageDataTemp[$key]['count'] = $statement['count'];
+                    break;
                 }
-            } elseif ($total['data'][$platform]['result'][$i]['_id']['verb'] == 'completed') {
-                $averageData[6] = number_format($total['data'][$platform]['result'][$i]['count'] / $totalNumOfStudent, 3);
             }
         }
-        $averageData[5] = number_format($averageData[5], 3);
+        foreach($personal['data'][$platform]['result'] as $statement){
+            foreach($personalDataTemp as $key => $count){
+                if($key == $statement['_id']['verb'] . " " . $statement['_id']['object']){
+                    $personalDataTemp[$key]['count'] = $statement['count'];
+                    break;
+                }
+            }
+        }
+        $averageData = get_engagement_category();
+        $personalData = get_engagement_category();
+        foreach($personalDataTemp as $record){
+            $personalData[$record['category']] += $record['count'];
+        }
+        foreach($averageDataTemp as $record){
+            $averageData[$record['category']] += $record['count'];
+        }
+        foreach($averageData as $key => $count){
+            $averageData[$key] = number_format($count / $totalNumOfStudent, 3);
+        }
         $averageData = array_map('floatval', $averageData);
 
+        $indicator = array();
+        $outputAverageData = array();
+        $outputPersonalData = array();
+        foreach ($averageData as $key => $value) {
+            $max = (float)(number_format(max($averageData[$key], $personalData[$key]) * 1.2, 4));
+            array_push($indicator, array('name' => $key, 'max' => $max == 0 ? 1 : $max));
+            array_push($outputAverageData, $averageData[$key]);
+            array_push($outputPersonalData, $personalData[$key]);
+        }
+
         $this->returnData['ok'] = true;
-        $this->returnData['data'] = array('personal' => $personalData, 'average' => $averageData);
+        $this->returnData['data'] = array('indicator' => $indicator, 'personal' => $outputPersonalData, 'average' => $outputAverageData);
+    }
+
+    private function getOrArray(){
+        $returnArray = array();
+        foreach ($this->engagementList as $category => $verbStateArray) {
+            foreach($verbStateArray as $verbState) {
+                $verb = $verbState[0];
+                $name = $verbState[1];
+                $returnArray[] = array(
+                    "\$and" => array(
+                        array("statement.verb.display.en-us" => array("\$eq" => $verb)),
+                        array("statement.object.definition.name.en-us" => array("\$eq" => $name)),
+                    )
+                );
+            }
+        }
+        return $returnArray;
     }
 
     public function stuVitality()
