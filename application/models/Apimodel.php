@@ -145,7 +145,7 @@ class ApiModel extends CI_Model{
 		if($toDate == null){
 			$this->toDate = "2016-12-31T23:59";
 		}else{
-			$this->toDate = $toDate . "T23:59:00";
+			$this->toDate = $toDate . "T23:59";
 		}
 	}
 

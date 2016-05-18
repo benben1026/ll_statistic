@@ -50,60 +50,63 @@ class Engagement extends CI_Controller{
 		printJson($this->returnData);
 	}
 	
-	private function getData($platform) {
+	public function getTodayData() {
+		//
+		$platform = $this->apimodel->getPlatform();
+		$pipeline = $this->getPipeline($platform, $fromDate, $toDate);	
 		
-		$key = getKey($platform);
-
-		$match = array(
-			"\$match" => array(
-				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
-				"statement.context.extensions.".$key.".rolename" => array("\$eq" => "student"),
-				"statement.timestamp" =>array(
-					"\$gte" => $this->apimodel->getFromDate(),
-					"\$lte" => $this->apimodel->getToDate(),
-				),
-				"\$or" => $this->getOrArray()
-			),
-		);
-		if($this->apimodel->getRole() == 'student'){
-			$match['$match']['statement.actor.name'] = array("\$eq" => $this->apimodel->getKeepId());
-		}
+		$output = $this->datamodel->getData($pipeline);	
+		$newData = array();
 		
-		$sortDate = array(
-			"\$sort" => array(
-				"statement.timestamp" => -1,
-			)
-		);
+		$this->processOutputData($platform, $output, $newData);
 		
-		$project = array(
-			"\$project" => array(
-				"_id" => 0,
-				"statement.verb.display.en-us" => 1,
-				"statement.object.definition.name.en-us" => 1,
-				"statement.timestamp" => 1,
-			)
-		);
+		// TODO: save $newData through Albert new model
+	}
+	
+	private function getData($platform) {		
 		
-		$sort = array(
-			"\$sort" => array(				
-				"statement.timestamp" => -1,				
-			)
-		);
+		// TODO: Fix the method name
+		$lastUpdate = $AlbertModel->getLastUpdate();
+		$fromDate =  $lastUpdate; // TODO: + 1 day?		
+		$toDate = $this->apimodel->getToDate();
 		
-		$pipeline = array(
-			$platform => array($match, $project, $sort)
-		);
-		
-		$output = $this->datamodel->getData($pipeline);
- //echo json_encode($output);
 		// Build the Y-coordinate keys
 		$ykeys = array();
 		foreach ($this->engagementClassify as $category => $verbStateArray) {
 			$ykeys[] = $category;
 		}
+		
+		// Data is already calculated
+		if ($toDate <= $lastUpdate) {
+			// TODO: Get from old data
 			
-		$newData = array();
+			// and return the old data;
+			
+			$this->returnData['ok'] = true;
+			//$this->returnData['data'] = $output['data'];
+			$this->returnData['data'] = array('data' => $GET_FROM_OLD_DATA, 'ykeys' => $ykeys);			
+		} else {
+		// Need to get Data from server
+			$pipeline = $this->getPipeline($platform, $fromDate, $toDate);		
+			$output = $this->datamodel->getData($pipeline);		
+				
+			$newData = array();
+			
+			// TODO: Append old data first
+			$oldData = $AlbertModel->getOldData($this->apimodel->getFromDate);
+			
+			array_merge($newData, $oldData);		
 
+			// new data pass by reference and update
+			$this->processOutputData($platform, $output, $newData);
+			
+			$this->returnData['ok'] = true;		
+			$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);
+		}
+	}
+	
+	private function processOutputData($platform, $output, &$newData) {
+		
 		if (count($output['data'][$platform]['result']) > 0) {
 					
 			// init for first block
@@ -128,14 +131,46 @@ class Engagement extends CI_Controller{
 				$len = count($newData);	
 				$newData[$len-1][$this->checkCategory($currentVerb, $currentName)] += 1;		
 			}
+		}		
+	}
+	
+	private function getPipeline($platform, $fromDate, $toDate) {
+		
+		$key = getKey($platform);
+		
+		$match = array(
+			"\$match" => array(
+				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
+				"statement.context.extensions.".$key.".rolename" => array("\$eq" => "student"),
+				"statement.timestamp" =>array(
+					"\$gte" => $fromDate,
+					"\$lte" => $toDate,
+				),
+				"\$or" => $this->getOrArray()
+			),
+		);
+		if($this->apimodel->getRole() == 'student'){
+			$match['$match']['statement.actor.name'] = array("\$eq" => $this->apimodel->getKeepId());
 		}
-
-		$output['data']['data'] = $newData;
-		$output['data']['ykeys'] = $ykeys;
-
-		$this->returnData['ok'] = true;
-		//$this->returnData['data'] = $output['data'];
-		$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);
+		
+		$project = array(
+			"\$project" => array(
+				"_id" => 0,
+				"statement.verb.display.en-us" => 1,
+				"statement.object.definition.name.en-us" => 1,
+				"statement.timestamp" => 1,
+			)
+		);
+		
+		$sort = array(
+			"\$sort" => array(				
+				"statement.timestamp" => -1,				
+			)
+		);
+		
+		return array(
+			$platform => array($match, $project, $sort)
+		);		
 	}
 	
 	private function getOrArray() {
