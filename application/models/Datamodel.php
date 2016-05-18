@@ -2,15 +2,16 @@
 
 class DataModel extends CI_Model{
 	private $pipeline_url = "https://lrs.keep.edu.hk/api/v1/statements/aggregate?pipeline=";
-	private $auth = array(
+	private $auth;/* = array(
+		
 		// Production
-		// "moodle" => "ZGVmYTRiMjM5ODFhY2Q5YmRkNGU0OGM4N2I3NGU1NDhmYmNiNjEwYzplMzAwOWJkM2RiNTZiMTNmMjg5ZGQ2YTM2M2Y4MWQ3OGY4OTdkMzVm",
+		//"moodle" => "ZGVmYTRiMjM5ODFhY2Q5YmRkNGU0OGM4N2I3NGU1NDhmYmNiNjEwYzplMzAwOWJkM2RiNTZiMTNmMjg5ZGQ2YTM2M2Y4MWQ3OGY4OTdkMzVm",
 		// "edx" => "Y2M5ZTQ0YmUwMmE2NTg4MTRmNDJlMmZmNDI1ODBkYjE3ZGVmMjMyMDo3ZGQyMzk5MjhmNmZkMzIyNjFjODgzODM1MmI0YjA4ZDQ5NzQ1Mjk3",
 
 		// Staging
 		"moodle" => "MGU3NmEyZGQxZjc4NmI5NzEzMjVkMmQ4YWUzY2FmMTI1NjczZDgyNTpjMTUxZDg2NWNlNGY1NjFiNWIyZDFlNTI5MmM3OTgyZDhiMDc3ZGVj",
 		"edx" => "ZmNlOWY0MWMwMWJmOTllOTg4YjFkNGZlYzhiZjlkNjYyZmFjODIzOTo1MzU5NzUxNzdlNTlhYWEzZmQ0MGIyNWFmMzI0YWZhNjAxMzdiNzcy",
-	);
+	);*/
 	private $output = array(
 		"ok" => false,
 		"message" => "",
@@ -19,6 +20,10 @@ class DataModel extends CI_Model{
 
 	function __construct(){
 		parent::__construct();
+		$ci = get_instance(); // CI_Loader instance
+		$ci->load->config('auth');
+		$this->auth = $ci->config->item('lrs_key');		
+		var_dump($this->auth);
 	}
 
 
