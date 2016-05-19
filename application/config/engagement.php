@@ -3,6 +3,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $active_group = 'default';
 
+/**
+ * CAUTION: This config MUST be consistent with LRS.
+ **/
 $config['stu_engage_classify'][$active_group] = array(
 	'View Courseware' => array(
 		array('viewed', 'a courseware page'),
@@ -11,7 +14,7 @@ $config['stu_engage_classify'][$active_group] = array(
 	),
 	'Assignment' => array(
 		array('viewed', 'an assignment'),
-		array('submitted', 'an assignment'),
+		array('completed', 'an assignment'),
 	),
 	'Assessment' => array(
 		array('submitted', 'a peer assessment'),
@@ -20,6 +23,7 @@ $config['stu_engage_classify'][$active_group] = array(
 	'Quiz' => array(
 		array('viewed', 'a quiz'),
 		array('started', 'a quiz'),
+		array('submitted', 'a quiz'),
 		array('attempted', 'a problem'),
 		array('completed', 'a problem'),
 		array('reviewed', 'a quiz'),
