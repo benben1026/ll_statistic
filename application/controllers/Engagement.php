@@ -17,6 +17,8 @@ class Engagement extends CI_Controller{
 	public function detail(){
 		$this->load->model('apimodel');
 		$this->load->model('datamodel');
+		$this->load->model('engagementdatamodel');
+		$this->load->model('cachemodel');
 		
 		$this->engagementClassify = load_engagement_list();
 		
@@ -43,34 +45,56 @@ class Engagement extends CI_Controller{
 			$this->returnData['message'] = $this->apimodel->getMessage();
 			printJson($this->returnData);
 			return;
-		}
+		}							
 		
-		$platform = $this->apimodel->getPlatform();
-		$this->getData($platform);
+		$this->getData();
 		printJson($this->returnData);
 	}
 	
 	public function getTodayData() {
-		//
-		$platform = $this->apimodel->getPlatform();
-		$fromDate = $this->apimodel->getFromDate(); 
-		$toDate = $this->apimodel->getToDate();
-		$pipeline = $this->getPipeline($platform, $fromDate, $toDate);	
+				
+		// dash.keep.edu.hk/index.php/engagement/detail?platform=moodle&fromdate=2015-5-22T00:00&Todate=2015-5-22T00:00
+		// dash.keep.edu.hk/index.php/engagement/detail?platform=edx&fromdate=2015-5-22T00:00&Todate=2015-5-22T00:00
 		
-		$output = $this->datamodel->getData($pipeline);	
-		$newData = array();
-		
-		$this->processOutputData($platform, $output, $newData);
-		
+		/*
+	$platform = $this->apimodel->getPlatform();
+	$fromDate = $this->apimodel->getFromDate(); 
+	$toDate = $this->apimodel->getToDate();
+	$pipeline = $this->getPipeline($platform, $fromDate, $toDate);	
+	
+	$output = $this->datamodel->getData($pipeline);	
+	$newData = array();
+	
+	$this->processOutputData($platform, $output, $newData);
+		*/
 		// TODO: save $newData through Albert new model
 	}
 	
-	private function getData($platform) {		
+	private function getData() {		
 		
-		// TODO: Fix the method name
-		$lastUpdate = $AlbertModel->getLastUpdate();
-		$fromDate =  $lastUpdate; // TODO: + 1 day?		
-		$toDate = $this->apimodel->getToDate();
+		// Get platform
+		$platform = $this->apimodel->getPlatform();
+		
+		// Get course ID
+		$courseId = $this->apimodel->getCourseId();
+		
+		// Get from Date
+		$fromDate = $this->apimodel->getFromDate();
+		
+		// Get To date
+		$toDate = $this->apimodel->getToDate();		
+		
+		
+		/*------ Cache mechanism ------- */
+		
+		// Get the lastUpdateDate
+		$lastUpdateDate = $this->cachemodel->GET_LAST_UPDATE();
+		
+		// If the ToDate < lastUpdateDate
+		$format = "yyyy-mm-dd";
+		$fromDateCompare = DateTime::createFromFormat($format, $fromDate);
+		$toDateCompare  = DateTime::createFromFormat($format, $toDate);
+		$lastUpdateDateCompare  = DateTime::createFromFormat($format, $lastUpdateDate);
 		
 		// Build the Y-coordinate keys
 		$ykeys = array();
@@ -78,33 +102,42 @@ class Engagement extends CI_Controller{
 			$ykeys[] = $category;
 		}
 		
-		// Data is already calculated
-		if ($toDate <= $lastUpdate) {
-			// TODO: Get from old data
+		$oldData = array();
+		$newData = array();
+		
+		if ($toDateCompare < $lastUpdateDateCompare) {
+			// Get data from Cache only
+			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
+			$oldData = $cacheOutputData['data'];			
+						
+		} else if ($fromDateCompare < $lastUpdateDateCompare) {
+			// Else if fromDate < lastUpdate
+			// Get cache data fromDate - lastUpdate
+			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($fromDate, $toDate);
 			
-			// and return the old data;
-			
-			$this->returnData['ok'] = true;
-			//$this->returnData['data'] = $output['data'];
-			$this->returnData['data'] = array('data' => $GET_FROM_OLD_DATA, 'ykeys' => $ykeys);			
+			// Get LRS data from (lastUpdate + 1) - toDate
+			$lastUpdateDate->modify('+ 1 day');
+									 
+			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $lastUpdateDate, $toDate);
+		
+			// Process the data for display
+			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		} else {
-		// Need to get Data from server
-			$pipeline = $this->getPipeline($platform, $fromDate, $toDate);		
-			$output = $this->datamodel->getData($pipeline);		
-				
-			$newData = array();
+			// else just get the data from LRS
 			
-			// TODO: Append old data first
-			$oldData = $AlbertModel->getOldData($this->apimodel->getFromDate);
+			// Get LRS data from (lastUpdate + 1) - toDate			 
+			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate, $toDate);
+		
+			// Process the data for display
+			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 			
-			array_merge($newData, $oldData);		
-
-			// new data pass by reference and update
-			$this->processOutputData($platform, $output, $newData);
-			
-			$this->returnData['ok'] = true;		
-			$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);
 		}
+				
+		array_merge($newData, $oldData);	
+
+		$this->returnData['ok'] = true;
+		$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);		
+		
 	}
 	
 	private function processOutputData($platform, $output, &$newData) {
