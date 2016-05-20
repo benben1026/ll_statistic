@@ -1,4 +1,8 @@
 # Group is reserved word in mysql, i changed to category
+DROP TABLE dash_engage;
+DROP TABLE dash_statement;
+
+
 CREATE TABLE dash_statement
 (
 `statement_id` int NOT NULL AUTO_INCREMENT,

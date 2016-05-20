@@ -23,7 +23,6 @@ class DataModel extends CI_Model{
 		$ci = get_instance(); // CI_Loader instance
 		$ci->load->config('auth');
 		$this->auth = $ci->config->item('lrs_key');		
-		var_dump($this->auth);
 	}
 
 

@@ -51,23 +51,10 @@ class Engagement extends CI_Controller{
 		printJson($this->returnData);
 	}
 	
-	public function getTodayData() {
-				
-		// dash.keep.edu.hk/index.php/engagement/detail?platform=moodle&fromdate=2015-5-22T00:00&Todate=2015-5-22T00:00
-		// dash.keep.edu.hk/index.php/engagement/detail?platform=edx&fromdate=2015-5-22T00:00&Todate=2015-5-22T00:00
-		
-		/*
-	$platform = $this->apimodel->getPlatform();
-	$fromDate = $this->apimodel->getFromDate(); 
-	$toDate = $this->apimodel->getToDate();
-	$pipeline = $this->getPipeline($platform, $fromDate, $toDate);	
-	
-	$output = $this->datamodel->getData($pipeline);	
-	$newData = array();
-	
-	$this->processOutputData($platform, $output, $newData);
-		*/
-		// TODO: save $newData through Albert new model
+	public function cron_job() {
+		var_dump("Date: ".$this->input->get('date'));
+		$this->load->model('cachemodel');				
+		$this->cachemodel->createStatisticRecords($this->input->get('date'));
 	}
 	
 	private function getData() {		
@@ -88,7 +75,7 @@ class Engagement extends CI_Controller{
 		/*------ Cache mechanism ------- */
 		
 		// Get the lastUpdateDate
-		$lastUpdateDate = $this->cachemodel->GET_LAST_UPDATE();
+		$lastUpdateDate = $this->cachemodel->getLastUpdateDate();
 		
 		// If the ToDate < lastUpdateDate
 		$format = "yyyy-mm-dd";
