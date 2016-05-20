@@ -109,13 +109,14 @@ class CacheModel extends CI_Model
    * @param daterange determined by start and end date, e.g.'2016-01-01'
    * @return output data
    */
-  public function readCacheStatisticRecord($from_date, $to_date)
+  public function readCacheStatisticRecord($platform, $course_id, $from_date, $to_date)
   {
     $this->db->trans_start();
     $this->db->select('category,statistic_date');
     $this->db->select_sum('statement_count');
     $this->db->from($this->engage_table);
     $this->db->join($this->statement_table,"{$this->statement_table}.statement_id = {$this->engage_table}.statement_id");
+    $this->db->where(array('platform' => $platform, 'course_id' => $course_id));
     $this->db->where(array('statistic_date >=' => $from_date, 'statistic_date <=' => $to_date));
     $this->db->group_by(array('statistic_date','category'));
     // $sql = $this->db->get_compiled_select();
@@ -146,6 +147,8 @@ class CacheModel extends CI_Model
     }
 
     $this->output['ok'] = TRUE;
+    $this->output['platform'] = $platform;
+    $this->output['course_id'] = $course_id;
     $this->output['message'] = 'success';
     $this->output['data'] = $output_data;
     return $this->output;
