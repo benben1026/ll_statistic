@@ -58,13 +58,17 @@
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.theme.min.css">
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.structure.min.css">
 	    <script type="text/javascript" src="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+		
+		<!-- Custom CSS -->
+		<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="<?= css_url() ?>keeper.css">
 
 	</head>
 	<body style="background-color: #ffffff; min-height:100%">
 		<input type="hidden" id="firstname" value="<?php echo isset($firstname) ? $firstname : ""; ?>" />
 
 
-	<div id="wrapper">
+	<div id="wrapper" style="background-color: #ebebeb">
 	<!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
         	<nav id="keepmenu"></nav>
@@ -84,7 +88,7 @@
 		    	//keepmenu('KEEP', null, name, loginURL, logoutURL);
 			});
 		</script>
-        	<div class="navbar-default sidebar" role="navigation" style="margin-top: 0px !important">
+        	<div class="navbar-default sidebar" role="navigation" style="background-color: #ebebeb;margin-top: 0px !important">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li class="sidebar-search">

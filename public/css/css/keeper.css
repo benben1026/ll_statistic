@@ -1,0 +1,13 @@
+body {
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    
+}
+
+h1 {
+    font-weight: bold;
+}
+		
+.sidebar ul li {
+    border-bottom: 1px solid #dddddd;
+}
+		
