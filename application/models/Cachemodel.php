@@ -315,20 +315,15 @@ class CacheModel extends CI_Model
           'statement.context.extensions.'.$key.'.courseid' => array('$eq' => $courseId),
           'statement.context.extensions.'.$key.'.rolename' => array('$eq' => 'student'),
           '$or' => $this->getOrArray(),
-          'statement.timestamp' => array (
-              '$gte' => $date.'T00:00',
-              '$lte' => $date.'T23:59',
-          )
         ),
       );
 
-      // if ($date != null) {
-      //   var_dump($date);
-      //   $match['$match']['statement.timestamp'] = array(
-      //     '$gte' => $date.'T00:00',
-      //     '$lte' => $date.'T23:59',
-      //   );
-      // }
+      if ($date != null) {
+        $match['$match']['statement.timestamp'] = array(
+          '$gte' => $date.'T00:00',
+          '$lte' => $date.'T23:59',
+        );
+      }
       $sortDate = array(
         '$sort' => array(
           'statement.timestamp' => -1,
@@ -343,14 +338,14 @@ class CacheModel extends CI_Model
           'count' => array('$sum' => 1),
         ),
       );
-      $project = array(
-        '$project' => array(
-          '_id' => 0,
-          'statement.verb.display.en-us' => 1,
-          'statement.object.definition.name.en-us' => 1,
-          'statement.timestamp' => 1,
-        ),
-      );
+      // $project = array(
+      //   '$project' => array(
+      //     '_id' => 0,
+      //     'statement.verb.display.en-us' => 1,
+      //     'statement.object.definition.name.en-us' => 1,
+      //     'statement.timestamp' => 1,
+      //   ),
+      // );
       $pipeline[$platform] = array($match, $sortDate, $group);
       $output = $this->datamodel->getData($pipeline);
       return $output;

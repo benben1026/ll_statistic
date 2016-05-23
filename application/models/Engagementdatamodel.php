@@ -144,4 +144,34 @@ class EngagementDataModel extends DataModel{
 		
 		return $returnArray;
 	}
+    
+	private function checkCategory($inVerb, $inStatement) {
+		
+		foreach ($this->engagementClassify as $category => $verbStateArray) {
+			foreach($verbStateArray as $verbState) {
+				$verb = $verbState[0];
+				$statement = $verbState[1];
+
+				if ($verb === $inVerb && $statement === $inStatement) {
+					return $category;
+				}
+			}
+		}		
+	}    
+    
+	private function createDataBlock($inDate) {
+
+		$returnArray = array("date" => $inDate);
+		
+		foreach ($this->engagementClassify as $key => $value) {
+			$returnArray[$key] = 0;
+		}
+		
+		return $returnArray;
+	}    
+    
+  	private function removeTimeFromDate($inDate) {
+		return substr($inDate, 0, 10);
+	}
+
 }

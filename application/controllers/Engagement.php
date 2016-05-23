@@ -75,13 +75,13 @@ class Engagement extends CI_Controller{
 		/*------ Cache mechanism ------- */
 		
 		// Get the lastUpdateDate
-		$lastUpdateDate = $this->cachemodel->getLastUpdateDate();
+		$lastUpdateDate = $this->cachemodel->getLastUpdateDate()['data'];
 		
 		// If the ToDate < lastUpdateDate
-		$format = "yyyy-mm-dd";
-		$fromDateCompare = DateTime::createFromFormat($format, $fromDate);
-		$toDateCompare  = DateTime::createFromFormat($format, $toDate);
-		$lastUpdateDateCompare  = DateTime::createFromFormat($format, $lastUpdateDate);
+		$format = "Y-m-d";
+		$fromDateCompare = new DateTime($fromDate); // date($format, strtotime($fromDate)); // DateTime::createFromFormat($format, $fromDate); 2016-05-16
+		$toDateCompare  = new DateTime($toDate); // date($format, strtotime($toDate)); //DateTime::createFromFormat($format, $toDate);
+		$lastUpdateDateCompare  = new DateTime($lastUpdateDate); // date($format, strtotime($lastUpdateDate));//DateTime::createFromFormat($format, $lastUpdateDate."T23:59");
 		
 		// Build the Y-coordinate keys
 		$ykeys = array();
@@ -93,28 +93,32 @@ class Engagement extends CI_Controller{
 		$newData = array();
 		
 		if ($toDateCompare < $lastUpdateDateCompare) {
+			//var_dump("1st case");
 			// Get data from Cache only
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
 			$oldData = $cacheOutputData['data'];			
 						
 		} else if ($fromDateCompare < $lastUpdateDateCompare) {
+			
+			//var_dump("second case");
 			// Else if fromDate < lastUpdate
 			// Get cache data fromDate - lastUpdate
-			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($fromDate, $toDate);
+			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
 			
-			// Get LRS data from (lastUpdate + 1) - toDate
-			$lastUpdateDate->modify('+ 1 day');
+			// Get LRS data from (lastUpdate + 1) - toDate			
+			$fromDate = $lastUpdateDateCompare->modify('+1 day');			
 									 
-			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $lastUpdateDate, $toDate);
+			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate->format($format), $toDate);
 		
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		} else {
+			//var_dump("3rd case");
 			// else just get the data from LRS
 			
 			// Get LRS data from (lastUpdate + 1) - toDate			 
 			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate, $toDate);
-		
+			var_dump($rawData);
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 			
