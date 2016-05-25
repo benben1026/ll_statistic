@@ -13,10 +13,10 @@ class Video extends CI_Controller{
 	}
 
 	public function overview(){
-		//TO DO
+		// TODO:
 	}
 
 	public function detail(){
-		//TO DO
+		// TODO:
 	}
 }
