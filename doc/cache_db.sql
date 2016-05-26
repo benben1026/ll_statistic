@@ -1,6 +1,6 @@
 # Group is reserved word in mysql, i changed to category
-DROP TABLE dash_engage;
-DROP TABLE dash_statement;
+DROP TABLE IF EXISTS `dash_engage`;
+DROP TABLE IF EXISTS `dash_statement`;
 
 
 CREATE TABLE dash_statement

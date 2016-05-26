@@ -7,7 +7,7 @@ class Engagement extends CI_Controller{
 		"message" => "",
 		"data" => null
 	);
-	
+
 	private $engagementClassify;
 
 	function __contruct(){
@@ -19,17 +19,17 @@ class Engagement extends CI_Controller{
 		$this->load->model('datamodel');
 		$this->load->model('engagementdatamodel');
 		$this->load->model('cachemodel');
-		
+
 		$this->engagementClassify = load_engagement_list();
-		
+
 		// Auth check
 		if(!$this->apimodel->getAccessGranted()){
 			$this->returnData['ok'] = false;
 			$this->returnData['message'] = $this->apimodel->getMessage();
 			printJson($this->returnData);
 			return;
-		}		
-		
+		}
+
 		$this->apimodel->setFromDate($this->input->get('from'));
 		$this->apimodel->setToDate($this->input->get('to'));
 		//!important: please set platform before courseId
@@ -45,125 +45,126 @@ class Engagement extends CI_Controller{
 			$this->returnData['message'] = $this->apimodel->getMessage();
 			printJson($this->returnData);
 			return;
-		}							
-		
+		}
+
 		$this->getData();
 		printJson($this->returnData);
 	}
-	
+
 	public function cron_job() {
 		var_dump("Date: ".$this->input->get('date'));
-		$this->load->model('cachemodel');				
-		$this->cachemodel->createStatisticRecords($this->input->get('date'));
+		$this->load->model('cachemodel');
+		$response = $this->cachemodel->createStatisticRecords($this->input->get('date'));
+		printJson($response);
 	}
-	
-	private function getData() {		
-		
+
+	private function getData() {
+
 		// Get platform
 		$platform = $this->apimodel->getPlatform();
-		
+
 		// Get course ID
 		$courseId = $this->apimodel->getCourseId();
-		
+
 		// Get from Date
 		$fromDate = $this->apimodel->getFromDate();
-		
+
 		// Get To date
-		$toDate = $this->apimodel->getToDate();		
-		
-		
+		$toDate = $this->apimodel->getToDate();
+
+
 		/*------ Cache mechanism ------- */
-		
+
 		// Get the lastUpdateDate
 		$lastUpdateDate = $this->cachemodel->getLastUpdateDate()['data'];
-		
+
 		// If the ToDate < lastUpdateDate
 		$format = "Y-m-d";
 		$fromDateCompare = new DateTime($fromDate); // date($format, strtotime($fromDate)); // DateTime::createFromFormat($format, $fromDate); 2016-05-16
 		$toDateCompare  = new DateTime($toDate); // date($format, strtotime($toDate)); //DateTime::createFromFormat($format, $toDate);
 		$lastUpdateDateCompare  = new DateTime($lastUpdateDate); // date($format, strtotime($lastUpdateDate));//DateTime::createFromFormat($format, $lastUpdateDate."T23:59");
-		
+
 		// Build the Y-coordinate keys
 		$ykeys = array();
 		foreach ($this->engagementClassify as $category => $verbStateArray) {
 			$ykeys[] = $category;
 		}
-		
+
 		$oldData = array();
 		$newData = array();
-		
+
 		if ($toDateCompare < $lastUpdateDateCompare) {
 			//var_dump("1st case");
 			// Get data from Cache only
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
-			$oldData = $cacheOutputData['data'];			
-						
+			$oldData = $cacheOutputData['data'];
+
 		} else if ($fromDateCompare < $lastUpdateDateCompare) {
-			
+
 			//var_dump("second case");
 			// Else if fromDate < lastUpdate
 			// Get cache data fromDate - lastUpdate
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
-			
-			// Get LRS data from (lastUpdate + 1) - toDate			
-			$fromDate = $lastUpdateDateCompare->modify('+1 day');			
-									 
+
+			// Get LRS data from (lastUpdate + 1) - toDate
+			$fromDate = $lastUpdateDateCompare->modify('+1 day');
+
 			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate->format($format), $toDate);
-		
+
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		} else {
 			//var_dump("3rd case");
 			// else just get the data from LRS
-			
-			// Get LRS data from (lastUpdate + 1) - toDate			 
+
+			// Get LRS data from (lastUpdate + 1) - toDate
 			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate, $toDate);
 			var_dump($rawData);
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
-			
+
 		}
-				
-		array_merge($newData, $oldData);	
+
+		array_merge($newData, $oldData);
 
 		$this->returnData['ok'] = true;
-		$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);		
-		
+		$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);
+
 	}
-	
+
 	private function processOutputData($platform, $output, &$newData) {
-		
+
 		if (count($output['data'][$platform]['result']) > 0) {
-					
+
 			// init for first block
 			$lastDate = $this->removeTimeFromDate($output['data'][$platform]['result'][0]['statement']['timestamp']);
 			$newData[] = $this->createDataBlock($lastDate);
-			
+
 			// loop and do matching
 			for($i = 0; $i < count($output['data'][$platform]['result']); $i++){
-				
-				$currentResult = $output['data'][$platform]['result'][$i]['statement'];				
+
+				$currentResult = $output['data'][$platform]['result'][$i]['statement'];
 				$currentVerb = $currentResult['verb']['display']['en-us'];
 				$currentName = $currentResult['object']['definition']['name']['en-us'];
 				$currentDate = $this->removeTimeFromDate($currentResult['timestamp']);
-				
+
 				if ($currentDate != $lastDate) {
 					// create new block
-					$newData[] = $this->createDataBlock($currentDate);				
+					$newData[] = $this->createDataBlock($currentDate);
 					$lastDate = $currentDate;
 				}
-				
+
 				// update last block
-				$len = count($newData);	
-				$newData[$len-1][$this->checkCategory($currentVerb, $currentName)] += 1;		
+				$len = count($newData);
+				$newData[$len-1][$this->checkCategory($currentVerb, $currentName)] += 1;
 			}
-		}		
+		}
 	}
-	
+
 	private function getPipeline($platform, $fromDate, $toDate) {
-		
+
 		$key = getKey($platform);
-		
+
 		$match = array(
 			"\$match" => array(
 				"statement.context.extensions.".$key.".courseid" => array("\$eq" => $this->apimodel->getCourseId()),
@@ -178,7 +179,7 @@ class Engagement extends CI_Controller{
 		if($this->apimodel->getRole() == 'student'){
 			$match['$match']['statement.actor.name'] = array("\$eq" => $this->apimodel->getKeepId());
 		}
-		
+
 		$project = array(
 			"\$project" => array(
 				"_id" => 0,
@@ -187,41 +188,41 @@ class Engagement extends CI_Controller{
 				"statement.timestamp" => 1,
 			)
 		);
-		
+
 		$sort = array(
-			"\$sort" => array(				
-				"statement.timestamp" => -1,				
+			"\$sort" => array(
+				"statement.timestamp" => -1,
 			)
 		);
-		
+
 		return array(
 			$platform => array($match, $project, $sort)
-		);		
+		);
 	}
-	
+
 	private function getOrArray() {
-				
+
 		$returnArray = array();
-		
+
 		foreach ($this->engagementClassify as $category => $verbStateArray) {
 			foreach($verbStateArray as $verbState) {
 				$verb = $verbState[0];
 				$name = $verbState[1];
-				
+
 				$returnArray[] = array(
 					"\$and" => array(
 						array("statement.verb.display.en-us" => array("\$eq" => $verb)),
 						array("statement.object.definition.name.en-us" => array("\$eq" => $name)),
-					)	
+					)
 				);
-			}			
-		}		
-		
+			}
+		}
+
 		return $returnArray;
 	}
-	
+
 	private function checkCategory($inVerb, $inStatement) {
-		
+
 		foreach ($this->engagementClassify as $category => $verbStateArray) {
 			foreach($verbStateArray as $verbState) {
 				$verb = $verbState[0];
@@ -231,17 +232,17 @@ class Engagement extends CI_Controller{
 					return $category;
 				}
 			}
-		}		
+		}
 	}
-	
+
 	private function createDataBlock($inDate) {
 
 		$returnArray = array("date" => $inDate);
-		
+
 		foreach ($this->engagementClassify as $key => $value) {
 			$returnArray[$key] = 0;
 		}
-		
+
 		return $returnArray;
 	}
 
@@ -269,7 +270,7 @@ class Engagement extends CI_Controller{
 	// 	if($this->apimodel->getRole() == 'student'){
 	// 		$match['$match']['statement.actor.name'] = array("\$eq" => $this->apimodel->getKeepId());
 	// 	}
-		
+
 	// 	$sortDate = array(
 	// 		"\$sort" => array(
 	// 			"statement.timestamp" => -1,
@@ -298,7 +299,7 @@ class Engagement extends CI_Controller{
 	// 	);
 	// 	$pipeline = array(
 	// 		"edx" => array($match, $group, $sortEvent)
-	// 	); 
+	// 	);
 	// 	$output = $this->datamodel->getData($pipeline);
 
 	// 	$ykeys = array();
@@ -362,7 +363,7 @@ class Engagement extends CI_Controller{
 	// 			"\$or" => array(
 	// 				array(
 	// 				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_resource\\event\\course_module_viewed"),
-	// 				),//view file					
+	// 				),//view file
 	// 				array(
 	// 				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\local_youtube_events\\event\\video_played"),
 	// 				),//play a video
@@ -385,7 +386,7 @@ class Engagement extends CI_Controller{
 	// 				"statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname" => array("\$eq" => "\\mod_quiz\\event\\attempt_started"),
 	// 				),//attempt a quiz
 	// 			),
-				
+
 	// 			"statement.timestamp" =>array(
 	// 				"\$gte" => $this->apimodel->getFromDate(),
 	// 				"\$lt" => $this->apimodel->getToDate(),
@@ -395,7 +396,7 @@ class Engagement extends CI_Controller{
 	// 	if($this->apimodel->getRole() == 'student'){
 	// 		$match['$match']['statement.actor.name'] = array("\$eq" => $this->apimodel->getKeepId());
 	// 	}
-		
+
 	// 	$group = array(
 	// 		"\$group" => array(
 	// 			"_id" => array(
@@ -415,7 +416,7 @@ class Engagement extends CI_Controller{
 	// 	);
 	// 	$pipeline = array(
 	// 		"moodle" => array($match, $group, $sortEvent)
-	// 	); 
+	// 	);
 	// 	$result = $this->datamodel->getData($pipeline);
 
 	// 	$dataProcess = array();

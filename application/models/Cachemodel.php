@@ -200,6 +200,7 @@ class CacheModel extends CI_Model
             $this->output['course_id'] = $course_id;
             $this->output['data'] = $output_data;
         }
+        var_dump($this->output);
         return $this->output;
     }
 
@@ -376,13 +377,13 @@ class CacheModel extends CI_Model
                 '$lte' => $date.'T23:59',
             );
         }
-        
+
         $sortDate = array(
             '$sort' => array(
                 'statement.timestamp' => -1,
             ),
         );
-        
+
         $group = array(
         '$group' => array(
           '_id' => array(
@@ -414,7 +415,7 @@ class CacheModel extends CI_Model
                 $verb = $verbState[0];
                 $name = $verbState[1];
                 $returnArray[] = array(
-                    '\$and' => array(
+                    '$and' => array(
                         array('statement.verb.display.en-us' => array('$eq' => $verb)),
                         array('statement.object.definition.name.en-us' => array('$eq' => $name)),
                     ),
