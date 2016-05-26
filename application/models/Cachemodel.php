@@ -172,9 +172,11 @@ class CacheModel extends CI_Model
         if ($this->db->trans_status() == FALSE) {
             $this->output['ok'] = FALSE;
             $this->output['message'] = 'something wrong when select in database.';
+            $this->output['data'] = NULL;
         } elseif (count($query->result_array()) == 0) {
             $this->output['ok'] = FALSE;
-            $this->output['message'] = 'empty result';
+            $this->output['message'] = 'empty';
+            $this->output['data'] = NULL;
         } else {
             // change query results to output format
             $tmp_array = array();
@@ -200,7 +202,7 @@ class CacheModel extends CI_Model
             $this->output['course_id'] = $course_id;
             $this->output['data'] = $output_data;
         }
-        var_dump($this->output);
+        // var_dump($this->output);
         return $this->output;
     }
 
@@ -371,10 +373,15 @@ class CacheModel extends CI_Model
             ),
         );
 
+        $today = date("Y-m-d");
         if ($date != null) {
             $match['$match']['statement.timestamp'] = array(
                 '$gte' => $date.'T00:00',
                 '$lte' => $date.'T23:59',
+            );
+        } else {
+            $match['$match']['statement.timestamp'] = array(
+                '$lte' => $today.'T00:00',
             );
         }
 

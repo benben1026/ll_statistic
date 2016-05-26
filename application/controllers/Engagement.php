@@ -104,7 +104,7 @@ class Engagement extends CI_Controller{
 			// Else if fromDate < lastUpdate
 			// Get cache data fromDate - lastUpdate
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
-			$oldData = $cacheOutputData['data'];
+			$oldData = $cacheOutputData['ok'] ? $cacheOutputData['data'] : array();
 			// Get LRS data from (lastUpdate + 1) To toDate
 			$fromDate = $lastUpdateDateCompare->modify('+1 day');
 
@@ -122,7 +122,7 @@ class Engagement extends CI_Controller{
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		}
 
-		$outputData = $newData ? ($oldData?array($newData, $oldData):null) : $oldData;
+		$outputData = $newData ? array_merge($newData, $oldData) : $oldData;
 
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = array('data' => $outputData, 'ykeys' => $ykeys);
