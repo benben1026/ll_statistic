@@ -27,7 +27,7 @@ class ApiModel extends CI_Model{
 		}
 
 		$this->load->model('courseinfomodel');
-		if(ENVIRONMENT == 'development'){
+		/*if(ENVIRONMENT == 'development'){
 			//MARK: Set fake course info for testing purpose
 			$this->courseInfo = array(
 				'ok' => true,
@@ -65,7 +65,7 @@ class ApiModel extends CI_Model{
 					)
 				)
 			);
-		}else{
+		}else{*/
 			$preTime = $this->session->userdata('courseInfoSessExp');
 			$id = $this->session->userdata('courseInfoId');
 			if($id == null || $id != $this->keepId || $preTime == null || time() - $preTime > 300){
@@ -88,7 +88,7 @@ class ApiModel extends CI_Model{
 			}else{
 				$this->courseInfo = $this->session->userdata('courseInfo');
 			}								
-		}
+		//}
 		
 		
 		
