@@ -394,14 +394,14 @@ class CacheModel extends CI_Model
         ),
       );
 
-      // $project = array(
-      //   '$project' => array(
-      //     '_id' => 0,
-      //     'statement.verb.display.en-us' => 1,
-      //     'statement.object.definition.name.en-us' => 1,
-      //     'statement.timestamp' => 1,
-      //   ),
-      // );
+    //   $project = array(
+    //     '$project' => array(
+    //       '_id' => 0,
+    //       'statement.verb.display.en-us' => 1,
+    //       'statement.object.definition.name.en-us' => 1,
+    //       'statement.timestamp' => 1,
+    //     ),
+    //   );
       $pipeline[$platform] = array($match, $sortDate, $group);
       $output = $this->datamodel->getData($pipeline);
       return $output;

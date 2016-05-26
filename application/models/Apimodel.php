@@ -88,7 +88,7 @@ class ApiModel extends CI_Model{
 			}else{
 				$this->courseInfo = $this->session->userdata('courseInfo');
 			}
-		// }	
+		// }
 	}
 
 	function setRole($role){

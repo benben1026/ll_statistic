@@ -93,43 +93,39 @@ class Engagement extends CI_Controller{
 		$oldData = array();
 		$newData = array();
 
-		if ($toDateCompare < $lastUpdateDateCompare) {
-			//var_dump("1st case");
+		if ($toDateCompare <= $lastUpdateDateCompare) {
+
 			// Get data from Cache only
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
 			$oldData = $cacheOutputData['data'];
 
 		} else if ($fromDateCompare < $lastUpdateDateCompare) {
 
-			//var_dump("second case");
 			// Else if fromDate < lastUpdate
 			// Get cache data fromDate - lastUpdate
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
-
-			// Get LRS data from (lastUpdate + 1) - toDate
+			$oldData = $cacheOutputData['data'];
+			// Get LRS data from (lastUpdate + 1) To toDate
 			$fromDate = $lastUpdateDateCompare->modify('+1 day');
 
-			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate->format($format), $toDate);
-
+			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate->format($format), $this->removeTimeFromDate($toDate));
+		// var_dump($rawData);
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		} else {
-			//var_dump("3rd case");
-			// else just get the data from LRS
 
-			// Get LRS data from (lastUpdate + 1) - toDate
-			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate, $toDate);
-			var_dump($rawData);
+			// else just get the data from LRS
+			// Get LRS data from (lastUpdate + 1) To toDate
+			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $this->removeTimeFromDate($fromDate), $this->removeTimeFromDate($toDate));
+
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
-
 		}
 
-		array_merge($newData, $oldData);
+		$outputData = $newData ? ($oldDate?array($newData, $oldData):null) : $oldData;
 
 		$this->returnData['ok'] = true;
-		$this->returnData['data'] = array('data' => $newData, 'ykeys' => $ykeys);
-
+		$this->returnData['data'] = array('data' => $outputData, 'ykeys' => $ykeys);
 	}
 
 	private function processOutputData($platform, $output, &$newData) {

@@ -34,6 +34,10 @@ class EngagementDataModel extends DataModel{
     
     // process the raw data to data
     public function convertToDisplayData($rawData) {
+		
+		if ($rawData == null) {
+			return null;
+		}
         
         $newData = array();
         
