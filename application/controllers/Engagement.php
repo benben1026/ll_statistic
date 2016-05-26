@@ -121,7 +121,7 @@ class Engagement extends CI_Controller{
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);			
 		}		
 
-		$outputData = $newData ? ($oldDate?array($newData, $oldData):null) : $oldData;		
+		$outputData = $newData ? array($newData, $oldData) : $oldData;		
 
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = array('data' => $outputData, 'ykeys' => $ykeys);		
