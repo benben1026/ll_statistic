@@ -52,7 +52,7 @@ class Engagement extends CI_Controller{
 	}
 
 	public function cron_job() {
-		var_dump("Date: ".$this->input->get('date'));
+		// var_dump("Date: ".$this->input->get('date'));
 		$this->load->model('cachemodel');
 		$response = $this->cachemodel->createStatisticRecords($this->input->get('date'));
 		printJson($response);
@@ -109,7 +109,7 @@ class Engagement extends CI_Controller{
 			$fromDate = $lastUpdateDateCompare->modify('+1 day');
 
 			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $fromDate->format($format), $this->removeTimeFromDate($toDate));
-		// var_dump($rawData);
+			// var_dump($rawData);
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		} else {
@@ -122,7 +122,7 @@ class Engagement extends CI_Controller{
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		}
 
-		$outputData = $newData ? ($oldDate?array($newData, $oldData):null) : $oldData;
+		$outputData = $newData ? ($oldData?array($newData, $oldData):null) : $oldData;
 
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = array('data' => $outputData, 'ykeys' => $ykeys);

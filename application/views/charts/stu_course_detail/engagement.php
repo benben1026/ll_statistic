@@ -2,7 +2,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Engagement                
+                <i class="fa fa-bar-chart-o fa-fw"></i> Engagement
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body" style="height: 320px;">
@@ -106,7 +106,8 @@
 		  ykeys: data['ykeys'],
 		  // Labels for the ykeys -- will be displayed when you hover over the
 		  // chart.
-		  labels: data['ykeys']
+		  labels: data['ykeys'],
+		  hideHover: 'auto'
 		});
 	}
 </script>
