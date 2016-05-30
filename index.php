@@ -55,7 +55,7 @@
  */
 
 
-if ($_SERVER['HTTP_HOST']=='localhost:8600' || $_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='127.0.0.1:4567')
+if ($_SERVER['HTTP_HOST']=='localhost:8600' || $_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='127.0.0.1:4567'){
 	define('ENVIRONMENT', 'development');
 } elseif ($_SERVER['REMOTE_ADDR'] == '10.11.0.99') {
 	define('ENVIRONMENT', 'staging');
