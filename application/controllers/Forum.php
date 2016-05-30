@@ -35,11 +35,11 @@ class Forum extends CI_Controller{
 			for($i = 0; $i < $this->apimodel->getCourseInfo()['data']['moodle']['total_results']; $i++){
 				$t = array("statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.courseid" => array("\$eq" => $this->apimodel->getCourseInfo()['data']['moodle']['results'][$i]['course_id']));
 				array_push($moodleCourseId, $t);
-			}		
+			}
 			$moodle_match = $this->getOverviewMatchArray($moodleCourseId, $type);
-			
+
 			$moodle_group = $this->getOverviewGroupArray("moodle");
-			
+
 			$moodle_sort = array(
 				"\$sort" => array("count" => -1)
 			);
@@ -52,8 +52,8 @@ class Forum extends CI_Controller{
 				array_push($edxCourseId, $t);
 			}
 			$edx_match = $this->getOverviewMatchArray($edxCourseId, $type);
-			
-			
+
+
 			// TODO: update the pipeline to group comments of the same post together
 			//object id: https://edx.keep.edu.hk/courses/course-v1:cuhk+csci2100a+2015_2/discussion/forum/course/threads/571361123d97140a7c0000cc#response_5713b3ee3d97140a7f0000e6
 			//how to ignore the response id after #
@@ -74,7 +74,7 @@ class Forum extends CI_Controller{
 				$temp = array(
 					//$i + 1,
 					"",
-					"<a target=\"_blank\" href=\"" . $result['data']['edx']['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",										
+					"<a target=\"_blank\" href=\"" . $result['data']['edx']['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",
 					$this->apimodel->getCourseNameByCourseId($result['data']['edx']['result'][$i]['_id']['course_id'], "edx"),
 					'KEEP edX',
 					$result['data']['edx']['result'][$i]['count'],
@@ -83,12 +83,12 @@ class Forum extends CI_Controller{
 			}
 		}
 		if(array_key_exists('moodle', $result['data'])){
-			for($i = 0; $i < count($result['data']['edx']['result']); $i++){
+			for($i = 0; $i < count($result['data']['moodle']['result']); $i++){
 				$forum_name = array_key_exists("forum_name", $result['data']['moodle']['result'][$i]['_id']) ? $result['data']['moodle']['result'][$i]['_id']['forum_name'] : "Forum";
 				$temp = array(
 					//$i + 1,
 					"",
-					"<a target=\"_blank\" href=\"" . $result['data']['moodle']['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",										
+					"<a target=\"_blank\" href=\"" . $result['data']['moodle']['result'][$i]['_id']['forum_id'] . "\">" . $forum_name . "</a>",
 					$this->apimodel->getCourseNameByCourseId($result['data']['moodle']['result'][$i]['_id']['course_id'], "moodle"),
 					'KEEP Moodle',
 					$result['data']['moodle']['result'][$i]['count'],
@@ -96,7 +96,7 @@ class Forum extends CI_Controller{
 				array_push($data, $temp);
 			}
 		}
-		
+
 		$this->returnData['ok'] = true;
 		$this->returnData['data'] = $data;
 		printJson($this->returnData);
@@ -129,13 +129,13 @@ class Forum extends CI_Controller{
 		switch ($type) {
 	    case "view":
 	        $result = $this->getView($platform);
-			break;	        
+			break;
 	    case "reply":
 	        $result = $this->getReply($platform);
-			break;  	    
+			break;
 		case "active":
 	        $result = $this->getActive($platform);
-			break;			
+			break;
 		}
 		$data = array();
 
@@ -152,8 +152,8 @@ class Forum extends CI_Controller{
 		}
 		$this->returnData['data'] = $data;
 		$this->returnData['ok'] = true;
-		
-		printJson($this->returnData);		
+
+		printJson($this->returnData);
 	}
 
 	// - Private Function
@@ -252,15 +252,15 @@ class Forum extends CI_Controller{
 				"count" => -1,
 			)
 		);
-		
+
 		$pipeline[$platform] = array($match, $group, $sort);
 		return $this->datamodel->getData($pipeline);
 	}
-	
+
 	private function getOverviewGroupArray($platform) {
-		
+
 		$key = getKey($platform);
-				
+
 		return array(
 			"\$group" => array(
 				"_id" => array(
@@ -272,7 +272,7 @@ class Forum extends CI_Controller{
 			),
 		);
 	}
-	
+
 	private function getOverviewMatchArray($courseId, $type) {
 		return array(
 				"\$match" => array(
@@ -281,7 +281,7 @@ class Forum extends CI_Controller{
 					"\$or" => array(
 						array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion thread")),
 						array("statement.object.definition.name.en-us" => array("\$eq" => "a discussion response")),
-					),					
+					),
 					"statement.timestamp" =>array(
 						"\$gte" => $this->apimodel->getFromDate(),
 						"\$lte" => $this->apimodel->getToDate(),
