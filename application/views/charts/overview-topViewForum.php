@@ -8,7 +8,11 @@
 				<table id="overview-topViewForum">
 					<thead>
 						<tr>
-							<th>No.</th><th>Thread Name</th><th>Course Name</th><th>Platform</th><th>Num of Views</th>
+							<th>No.</th>
+							<th>Thread Name</th>
+							<th>Course Name</th>
+							<th>Platform</th>
+							<th>Num of Views</th>
 						</tr>
 					</thead>
 					<tbody></tbody>

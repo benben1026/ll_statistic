@@ -10,4 +10,11 @@ h1 {
 .sidebar ul li {
     border-bottom: 1px solid #dddddd;
 }
-		
+
+table.dataTable tbody td {
+    padding: 8px 18px;
+}
+
+.panel-default {
+	overflow: auto;
+}
