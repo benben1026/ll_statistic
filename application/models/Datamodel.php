@@ -3,7 +3,7 @@
 class DataModel extends CI_Model{
 	private $pipeline_url = "https://lrs.keep.edu.hk/api/v1/statements/aggregate?pipeline=";
 	private $auth;/* = array(
-		
+
 		// Production
 		//"moodle" => "ZGVmYTRiMjM5ODFhY2Q5YmRkNGU0OGM4N2I3NGU1NDhmYmNiNjEwYzplMzAwOWJkM2RiNTZiMTNmMjg5ZGQ2YTM2M2Y4MWQ3OGY4OTdkMzVm",
 		// "edx" => "Y2M5ZTQ0YmUwMmE2NTg4MTRmNDJlMmZmNDI1ODBkYjE3ZGVmMjMyMDo3ZGQyMzk5MjhmNmZkMzIyNjFjODgzODM1MmI0YjA4ZDQ5NzQ1Mjk3",
@@ -22,7 +22,7 @@ class DataModel extends CI_Model{
 		parent::__construct();
 		$ci = get_instance(); // CI_Loader instance
 		$ci->load->config('auth');
-		$this->auth = $ci->config->item('lrs_key');		
+		$this->auth = $ci->config->item('lrs_key');
 	}
 
 
@@ -112,7 +112,9 @@ class DataModel extends CI_Model{
 	}
 
 	function getInternalData($domain, $auth, $pipeline){
-		$proxy = "192.168.1.149:8000";
+		if(ENVIRONMENT == 'development'){
+			$proxy = "192.168.1.149:8000";
+		}
 
 		$header = array();
 		$header[] = 'Authorization: Basic ' . $auth;
@@ -120,24 +122,26 @@ class DataModel extends CI_Model{
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_PROXY, $proxy);
+		if(ENVIRONMENT == 'development'){
+			curl_setopt($ch, CURLOPT_PROXY, $proxy);
+		}
 		curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
 		curl_setopt($ch, CURLOPT_URL, $domain . $pipeline);
 		$result = curl_exec($ch);
 		curl_close($ch);
 		return json_decode($result, TRUE);
 	}
-	// function getDataAccToEventname($name, $reg){
-	// 	$output = array();
-	// 	$mongo = $this->mongo_db->getMongoInstance();
-	// 	$cursor = $mongo->statements->aggregate( '{"$match":  { $and: [ { "statement.actor.name": "stud00" }, { "statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname": { $regex: /user_loggedin/i } } ] }}, {"$group":{"_id": { date: { $substr: [ "$statement.timestamp", 0, 9] } }, "sum":{"$sum":1}}}'  ).toArray();
-	// 	$res = $cursor->getNext();
-	// 	while($res){
-	// 		$output.push($res);
-	// 		$res = $cursor->getNext();
-	// 	}
-	// 	return $output;
-	// }
+	function getDataAccToEventname($name, $reg){
+		$output = array();
+		$mongo = $this->mongo_db->getMongoInstance();
+		$cursor = $mongo->statements->aggregate( '{"$match":  { $and: [ { "statement.actor.name": "stud00" }, { "statement.context.extensions.http://lrs&46;learninglocker&46;net/define/extensions/moodle_logstore_standard_log.eventname": { $regex: /user_loggedin/i } } ] }}, {"$group":{"_id": { date: { $substr: [ "$statement.timestamp", 0, 9] } }, "sum":{"$sum":1}}}'  ).toArray();
+		$res = $cursor->getNext();
+		while($res){
+			$output.push($res);
+			$res = $cursor->getNext();
+		}
+		return $output;
+	}
 
 	// not used for now
 	function getDataAccToEventname($name, $reg, $from, $to){
