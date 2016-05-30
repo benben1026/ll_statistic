@@ -57,8 +57,12 @@
 
 if ($_SERVER['HTTP_HOST']=='localhost:8600' || $_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='127.0.0.1:4567')
 	define('ENVIRONMENT', 'development');
-else
+} elseif ($_SERVER['REMOTE_ADDR'] == '10.11.0.99') {
+	define('ENVIRONMENT', 'staging');
+} else {
 	define('ENVIRONMENT', 'production');
+}
+
 //	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
 /*
@@ -76,7 +80,7 @@ switch (ENVIRONMENT)
 		ini_set('display_errors', 1);
 	break;
 
-	case 'testing':
+	case 'staging':
 	case 'production':
 		ini_set('display_errors', 0);
 		if (version_compare(PHP_VERSION, '5.3', '>='))
