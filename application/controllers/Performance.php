@@ -48,17 +48,66 @@ class Performance extends CI_Controller
             $this->returnData['ok'] = false;
             $this->returnData['message'] = $this->apimodel->getMessage();
             printJson($this->returnData);
-
             return;
         }
-        $this->getDataFromPlatform($this->apimodel->getPlatform());
+        // get student numbers
+        $totalNumOfStudent = $this->get_student_num();
+        if ($totalNumOfStudent == 0) {
+            $this->returnData['ok'] = false;
+            $this->returnData['message'] = 'There is no student in this course';
+            printJson($this->returnData);
+            return;
+        }
+        // get personal actions
+        $personal = $this->get_personal_actions();
+        if (!$personal['ok']) {
+            $this->returnData['ok'] = false;
+            $this->returnData['message'] = $personal['message'];
+            printJson($this->returnData);
+            return;
+        }
+
+        $total = $this->get_total_actions();
+        if (!$total['ok']) {
+            $this->returnData['ok'] = false;
+            $this->returnData['message'] = $total['message'];
+            printJson($this->returnData);
+            return;
+        }
+        // var_dump($total);
+
+        $averageData = get_engagement_category();
+        $personalData = get_engagement_category();
+        foreach($personal['data'] as $record){
+            $personalData[$record['category']] += $record['count'];
+        }
+        foreach($total['data'] as $record){
+            $averageData[$record['category']] += $record['count'];
+        }
+        foreach($averageData as $key => $count){
+            $averageData[$key] = number_format($count / $totalNumOfStudent, 3);
+        }
+        $averageData = array_map('floatval', $averageData);
+
+        $indicator = array();
+        $outputAverageData = array();
+        $outputPersonalData = array();
+        foreach ($averageData as $key => $value) {
+            $max = (float)(number_format(max($averageData[$key], $personalData[$key]) * 1.2, 4));
+            array_push($indicator, array('name' => $key, 'max' => $max == 0 ? 1 : $max));
+            array_push($outputAverageData, $averageData[$key]);
+            array_push($outputPersonalData, $personalData[$key]);
+        }
+
+        $this->returnData['ok'] = true;
+        $this->returnData['data'] = array('indicator' => $indicator, 'personal' => $outputPersonalData, 'average' => $outputAverageData);
         printJson($this->returnData);
     }
 
-    private function getDataFromPlatform($platform)
+    private function get_student_num()
     {
+        $platform = $this->apimodel->getPlatform();
         $key = getKey($platform);
-        //get total number of students
         $match = array(
             '$match' => array(
                 'statement.context.extensions.'.$key.'.courseid' => array('$eq' => $this->apimodel->getCourseId()),
@@ -82,52 +131,19 @@ class Performance extends CI_Controller
             $this->returnData['ok'] = false;
             $this->returnData['message'] = $output['message'];
             printJson($this->returnData);
-
             return;
         }
         $totalNumOfStudent = 0;
-//$totalNumOfStudent = 10;
         if (isset($output['data'][$platform]['result'][0])) {
             $totalNumOfStudent = $output['ok'] && $output['data'][$platform]['ok'] ? $output['data'][$platform]['result'][0]['count'] : 0;
         }
-        if ($totalNumOfStudent == 0) {
-            $this->returnData['ok'] = false;
-            $this->returnData['message'] = 'There is no student in this course';
-            printJson($this->returnData);
+        return $totalNumOfStudent;
+    }
 
-            return;
-        }
-
-        //get the average number of each action
-        $match = array(
-            '$match' => array(
-                'statement.context.extensions.'.$key.'.courseid' => array('$eq' => $this->apimodel->getCourseId()),
-                'statement.context.extensions.'.$key.'.rolename' => array('$eq' => 'student'),
-                '$or' => $this->getOrArray(),
-            ),
-        );
-        $group = array(
-            '$group' => array(
-                '_id' => array(
-                    'verb' => '$statement.verb.display.en-us',
-                    'object' => '$statement.object.definition.name.en-us',
-                ),
-                'count' => array('$sum' => 1),
-            ),
-        );
-        $sort = array(
-            '$sort' => array('_id.verb' => 1, '_id.object' => 1),
-        );
-        $pipeline[$platform] = array($match, $group, $sort);
-        $total = $this->datamodel->getData($pipeline);
-        if (!$total['ok']) {
-            $this->returnData['ok'] = false;
-            $this->returnData['message'] = $total['message'];
-            printJson($this->returnData);
-            return;
-        }
-
-        //get personal actions
+    private function get_personal_actions()
+    {
+        $platform = $this->apimodel->getPlatform();
+        $key = getKey($platform);
         $match = array(
             '$match' => array(
                 'statement.actor.name' => array('$eq' => $this->apimodel->getKeepId()),
@@ -145,58 +161,92 @@ class Performance extends CI_Controller
                 'count' => array('$sum' => 1),
             ),
         );
+        $sort = array(
+            '$sort' => array('_id.verb' => 1, '_id.object' => 1),
+        );
 
         $pipeline[$platform] = array($match, $group, $sort);
-        $personal = $this->datamodel->getData($pipeline);
-        if (!$personal['ok']) {
-            $this->returnData['ok'] = false;
-            $this->returnData['message'] = $personal['message'];
-            printJson($this->returnData);
-            return;
-        }
-        $averageDataTemp = get_engagement_statement();
-        $personalDataTemp = get_engagement_statement();
-        foreach($total['data'][$platform]['result'] as $statement){
-            foreach($averageDataTemp as $key => $count){
-                if($key == $statement['_id']['verb'] . " " . $statement['_id']['object']){
-                    $averageDataTemp[$key]['count'] = $statement['count'];
-                    break;
+        $result = $this->datamodel->getData($pipeline);
+        $personal = array(
+            'ok' => $result['ok'],
+            'message' => $result['message']
+        );
+        if ($personal['ok']) {
+            $personalDataTemp = get_engagement_statement();
+            foreach($result['data'][$platform]['result'] as $statement){
+                foreach($personalDataTemp as $key => $count){
+                    if($key == $statement['_id']['verb'] . " " . $statement['_id']['object']){
+                        $personalDataTemp[$key]['count'] = $statement['count'];
+                        break;
+                    }
                 }
             }
+            $personal['data'] = $personalDataTemp;
         }
-        foreach($personal['data'][$platform]['result'] as $statement){
-            foreach($personalDataTemp as $key => $count){
-                if($key == $statement['_id']['verb'] . " " . $statement['_id']['object']){
-                    $personalDataTemp[$key]['count'] = $statement['count'];
-                    break;
+        return $personal;
+    }
+
+    private function get_total_actions()
+    {
+        $this->load->model('cachemodel');
+        $lastUpdateDate = new DateTime($this->cachemodel->getLastUpdateDate()['data']);
+        $today = new DateTime();
+        $course_id = $this->apimodel->getCourseId();
+        $platform = $this->apimodel->getPlatform();
+        $key = getKey($platform);
+        //get the average number of each action
+        $match = array(
+            '$match' => array(
+                'statement.context.extensions.'.$key.'.courseid' => array('$eq' => $this->apimodel->getCourseId()),
+                'statement.context.extensions.'.$key.'.rolename' => array('$eq' => 'student'),
+                '$or' => $this->getOrArray(),
+            ),
+        );
+        $match['$match']['statement.timestamp'] = array(
+            '$gt' => $lastUpdateDate->format('Y-m-d').'T23:59',
+            '$lte' => $today->format('Y-m-d').'T23:59',
+        );
+        $group = array(
+            '$group' => array(
+                '_id' => array(
+                    'verb' => '$statement.verb.display.en-us',
+                    'object' => '$statement.object.definition.name.en-us',
+                ),
+                'count' => array('$sum' => 1),
+            ),
+        );
+        $sort = array(
+            '$sort' => array('_id.verb' => 1, '_id.object' => 1),
+        );
+        $pipeline[$platform] = array($match, $group, $sort);
+
+        $totalDataTemp = get_engagement_statement(); // temp array to store statement and count
+        // get data from lrs, usually it's just today's data
+        $result = $this->datamodel->getData($pipeline);
+        if ($result['ok']) {
+            foreach($result['data'][$platform]['result'] as $statement){
+                foreach($totalDataTemp as $key => $count){
+                    if($key == $statement['_id']['verb'] . " " . $statement['_id']['object']){
+                        $totalDataTemp[$key]['count'] = $statement['count'];
+                        break;
+                    }
                 }
             }
-        }
-        $averageData = get_engagement_category();
-        $personalData = get_engagement_category();
-        foreach($personalDataTemp as $record){
-            $personalData[$record['category']] += $record['count'];
-        }
-        foreach($averageDataTemp as $record){
-            $averageData[$record['category']] += $record['count'];
-        }
-        foreach($averageData as $key => $count){
-            $averageData[$key] = number_format($count / $totalNumOfStudent, 3);
-        }
-        $averageData = array_map('floatval', $averageData);
 
-        $indicator = array();
-        $outputAverageData = array();
-        $outputPersonalData = array();
-        foreach ($averageData as $key => $value) {
-            $max = (float)(number_format(max($averageData[$key], $personalData[$key]) * 1.2, 4));
-            array_push($indicator, array('name' => $key, 'max' => $max == 0 ? 1 : $max));
-            array_push($outputAverageData, $averageData[$key]);
-            array_push($outputPersonalData, $personalData[$key]);
         }
-
-        $this->returnData['ok'] = true;
-        $this->returnData['data'] = array('indicator' => $indicator, 'personal' => $outputPersonalData, 'average' => $outputAverageData);
+        // get data from cache database
+        $cache_result = $this->cachemodel->read_total_cache($platform,$course_id);
+        if ($cache_result['ok']) {
+            foreach ($cache_result['data'] as $statement) {
+                $totalDataTemp[$statement['name']]['count'] += $statement['statement_count'];
+            }
+        }
+        $total = array(
+            'ok' => $result['ok'] && $cache_result['ok'],
+            'message' => $result['message']." ".$cache_result['message'],
+            'data' => $totalDataTemp
+        );
+        return $total;
     }
 
     private function getOrArray(){
