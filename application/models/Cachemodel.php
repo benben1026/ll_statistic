@@ -206,6 +206,43 @@ class CacheModel extends CI_Model
         return $this->output;
     }
 
+    public function read_total_cache($platform, $course_id)
+    {
+        $table_check = $this->check_tables();
+        if ($table_check['ok'] == FALSE) {
+            return $table_check;
+        }
+
+        $this->db->trans_start();
+        $this->db->select('name,category');
+        $this->db->select_sum('statement_count');
+        $this->db->from($this->engage_table);
+        $this->db->join($this->statement_table, "{$this->statement_table}.statement_id = {$this->engage_table}.statement_id");
+        $this->db->where(array('platform' => $platform, 'course_id' => $course_id));
+        $this->db->group_by('name');
+        // $sql = $this->db->get_compiled_select();
+        $query = $this->db->get();
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() == FALSE) {
+            $this->output['ok'] = FALSE;
+            $this->output['message'] = 'something wrong when select in database.';
+            $this->output['data'] = NULL;
+        } elseif (count($query->result_array()) == 0) {
+            $this->output['ok'] = FALSE;
+            $this->output['message'] = 'empty';
+            $this->output['data'] = NULL;
+        } else {
+            $this->output['ok'] = TRUE;
+            $this->output['message'] = 'success';
+            $this->output['platform'] = $platform;
+            $this->output['course_id'] = $course_id;
+            $this->output['data'] = $query->result_array();
+        }
+        // var_dump($this->output);
+        return $this->output;
+    }
+
     private function refresh_statement_db()
     {
         $response = array('ok' => false, 'needReload' => false);
@@ -374,14 +411,16 @@ class CacheModel extends CI_Model
         );
 
         $today = date("Y-m-d");
+        $lastUpdate = $this->getLastUpdateDate()['data'];
+
         if ($date != null) {
             $match['$match']['statement.timestamp'] = array(
-                '$gte' => $date.'T00:00',
+                '$gt' => $lastUpdate.'23:59',
                 '$lte' => $date.'T23:59',
             );
         } else {
             $match['$match']['statement.timestamp'] = array(
-                '$lte' => $today.'T00:00',
+                '$lt' => $today.'T00:00',
             );
         }
 
