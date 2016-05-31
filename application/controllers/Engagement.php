@@ -93,14 +93,19 @@ class Engagement extends CI_Controller{
 		$oldData = array();
 		$newData = array();
 
-		if ($toDateCompare <= $lastUpdateDateCompare) {
+		if ( ($this->apimodel->getRole() == 'student') OR ($fromDateCompare > $lastUpdateDateCompare) ) {
+			// just get the data from LRS
+			// Get LRS data from (lastUpdate + 1) To toDate
+			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $this->removeTimeFromDate($fromDate), $this->removeTimeFromDate($toDate));
 
+			// Process the data for display
+			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
+		} else if ($toDateCompare <= $lastUpdateDateCompare) {
 			// Get data from Cache only
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
 			$oldData = $cacheOutputData['data'];
 
-		} else if ($fromDateCompare < $lastUpdateDateCompare) {
-
+		} else {
 			// Else if fromDate < lastUpdate
 			// Get cache data fromDate - lastUpdate
 			$cacheOutputData = $this->cachemodel->readCacheStatisticRecord($platform, $courseId, $fromDate, $toDate);
@@ -114,16 +119,7 @@ class Engagement extends CI_Controller{
 			// var_dump($rawData);
 			// Process the data for display
 			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
-		} else {
-
-			// else just get the data from LRS
-			// Get LRS data from (lastUpdate + 1) To toDate
-			$rawData = $this->engagementdatamodel->getEngageData($platform, $courseId, $this->removeTimeFromDate($fromDate), $this->removeTimeFromDate($toDate));
-
-			// Process the data for display
-			$newData = $this->engagementdatamodel->convertToDisplayData($rawData);
 		}
-
 		$outputData = $newData ? array_merge($newData, $oldData) : $oldData;
 
 		$this->returnData['ok'] = true;
