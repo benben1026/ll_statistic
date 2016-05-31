@@ -1,3 +1,4 @@
+#!/bin/bash
 now=$(date -d "yesterday" +"%Y-%m-%d")
-wget http://127.0.0.1:4567/ll_statistic/index.php/engagement/cron_job?date=$now
-
+echo -e "\n\n###### $now ######" >> cron.log
+curl "https://dash.keep.edu.hk/index.php/engagement/cron_job?date=$now" >> cron.log 2>&1
