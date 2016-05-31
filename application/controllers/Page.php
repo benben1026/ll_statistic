@@ -45,7 +45,7 @@ class Page extends CI_Controller{
 			redirect('/Saml2Controller/login');
 			return;
 		}
-		$this->load->view('template/header', array('title' => 'KEEPER | Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
+		$this->load->view('template/header', array('title' => 'KEEPer | Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 		$this->load->view('tea_overview', array('role' => 'teacher'));
 		$this->load->view('template/footer');
 	}
@@ -56,7 +56,7 @@ class Page extends CI_Controller{
 			redirect('/Saml2Controller/login');
 			return;
 		}
-		$this->load->view('template/header', array('title' => 'KEEPER | Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
+		$this->load->view('template/header', array('title' => 'KEEPer | Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
 		$this->load->view('stu_overview', array('role' => 'student'));
 		$this->load->view('template/footer');
 	}
