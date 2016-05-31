@@ -411,14 +411,16 @@ class CacheModel extends CI_Model
         );
 
         $today = date("Y-m-d");
+        $lastUpdate = $this->getLastUpdateDate()['data'];
+
         if ($date != null) {
             $match['$match']['statement.timestamp'] = array(
-                '$gte' => $date.'T00:00',
+                '$gt' => $lastUpdate.'23:59',
                 '$lte' => $date.'T23:59',
             );
         } else {
             $match['$match']['statement.timestamp'] = array(
-                '$lte' => $today.'T00:00',
+                '$lt' => $today.'T00:00',
             );
         }
 
