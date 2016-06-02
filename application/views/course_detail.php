@@ -1,11 +1,10 @@
 <input type="hidden" id="courseId" value="<?php echo $_GET['courseId']; ?>" />
 <input type="hidden" id="platform" value="<?php echo $_GET['platform']; ?>" />
-<!--div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header"><?php echo $course_name; ?></h1>
-        </div>
-    </div-->
+
+<?php
+	echo isset($popup)?'<input type="hidden" id="keepId" value="'.$_GET['keepId'].'"/>':'';
+?>
+
     <div class="row" style="margin-bottom: 10px;">
         <div class="col-lg-12">
             <form id="dateForm" class="form-inline">
@@ -53,8 +52,14 @@
 			include_once "charts/stu_course_detail/asg_dis.php";
 		}
 		//include_once "charts/stu_course_detail/fake_asg_dis.php";
-		include_once "charts/stu_course_detail/engagement.php";
-		include_once "charts/stu_course_detail/forum.php";
+
+		if (isset($popup)) {
+		    include_once "charts/stu_course_detail/fake_asg_dis.php";
+    		include_once "charts/stu_course_detail/engagement.php";
+		} else {
+			include_once "charts/stu_course_detail/engagement.php";
+			include_once "charts/stu_course_detail/forum.php";
+		}
 
 	}  else {
 	// Teacher
@@ -69,3 +74,10 @@
 	}
 ?>
 <!--/div-->
+
+<?php 
+	if (isset($popup)) {
+		echo '</body>';
+		echo '</html>';
+	}
+?>
