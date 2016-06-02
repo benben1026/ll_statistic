@@ -50,7 +50,7 @@
 
 	function openTeaStuView(id, name){
 		var prefix = window.location.href.substr(0, window.location.href.indexOf('page'));
-		var url = prefix + "page/teaViewStu?courseId=" + $('#courseId').val() + "&platform=" + $('#platform').val() + "&keepId=" + id;
+		var url = prefix + "popupPage/teaViewStu?courseId=" + $('#courseId').val() + "&platform=" + $('#platform').val() + "&keepId=" + id;
 		$('#teaViewStuFrame').attr('src', url);
 		$('#stuViewModalLabel').html(name + ' (Student View)');
 		$('#openModal').click();
