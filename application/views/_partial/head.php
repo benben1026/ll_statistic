@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
     	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title><?php echo $title; ?></title>
+		<title>KEEPDashboard | <?php echo $title; ?></title>
 		<link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/bower_components/bootstrap/dist/css/bootstrap.css">
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/bower_components/components-font-awesome/css/font-awesome.css">
 	    <link rel="stylesheet" type="text/css" href="https://keep.edu.hk/keeplogo/keeplogo.css">

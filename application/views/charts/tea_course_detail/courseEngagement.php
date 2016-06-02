@@ -51,7 +51,7 @@
 	function draw_legend(ykeys){
 		$('#courseEngagement_legend').html('');
 		for(var i = 0; i < ykeys.length; i++){
-			$('#courseEngagement_legend').append('<input type="checkbox" class="courseEngagement_legendlist" value="' + ykeys[i] + '" checked />' + ykeys[i] + '<br/>');
+			$('#courseEngagement_legend').append('<input type="checkbox" class="courseEngagement_legendlist" value="' + ykeys[i] + '" checked /> ' + ykeys[i] + '<br/>');
 		}
 		legend_update();
 		$('.courseEngagement_legendlist').click(legend_update);

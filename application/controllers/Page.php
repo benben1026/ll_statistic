@@ -1,91 +1,66 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Page extends CI_Controller{
+class Page extends MY_Controller{
 
-	function __construct(){
-		parent::__construct();
-	}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('apimodel', 'api');
+    }
 
 	public function landing(){
-		$this->load->model('apimodel');
-		if($this->apimodel->getAccessGranted()){
+		
+		if($this->isAccessGranted()){
 			redirect('/page/overview');
 			return;
 		}
-		//$this->load->view('template/landing_header');
-		$this->load->view('landing');
-		//$this->load->view('template/footer');
+		
+		$this->load->view('landing');		
 	}
 
 	public function overview(){
-		$this->load->model('apimodel');
-		if(!$this->apimodel->getAccessGranted()){
+		// TODO: Duplicate		
+		if(!$this->isAccessGranted()){
 			redirect('/Saml2Controller/login');
 			return;
 		}
-		if(!$this->apimodel->getCourseInfo()['ok']){
-			printJson(array('ok' => false, 'message' => $this->apimodel->getMessage(), 'data' => null));
+		if(!$this->api->getCourseInfo()['ok']){
+			printJson(array('ok' => false, 'message' => $this->api->getMessage(), 'data' => null));
 			return;
 		}
-		foreach($this->apimodel->getCourseInfo()['data'] as $lrs => $result){
-			for($i = 0; array_key_exists('total_results', $this->apimodel->getCourseInfo()['data'][$lrs]) && $i < (int)$this->apimodel->getCourseInfo()['data'][$lrs]['total_results']; $i++){
-				if($this->apimodel->getCourseInfo()['data'][$lrs]['results'][$i]['role_name'] != "student"){
-					$this->overviewTea();
+
+		$courseInfoData = $this->api->getCourseInfo()['data'];
+		foreach($courseInfoData as $lrs => $result){
+			for($i = 0; array_key_exists('total_results', $courseInfoData[$lrs]) && $i < (int)$courseInfoData[$lrs]['total_results']; $i++){
+				if($courseInfoData[$lrs]['results'][$i]['role_name'] != "student"){
+					$this->loadOverview('teacher');
 					return;
 				}
 			}
 		}
-		$this->overviewStu();
+		$this->loadOverview('student');
 		return;
 	}
 
-	public function overviewTea(){
-		$this->load->model('apimodel');
-		if(!$this->apimodel->getAccessGranted()){
-			redirect('/Saml2Controller/login');
-			return;
-		}
-		$this->load->view('template/header', array('title' => 'KEEPer | Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-		$this->load->view('tea_overview', array('role' => 'teacher'));
-		$this->load->view('template/footer');
-	}
-
-	public function overviewStu(){
-		$this->load->model('apimodel');
-		if(!$this->apimodel->getAccessGranted()){
-			redirect('/Saml2Controller/login');
-			return;
-		}
-		$this->load->view('template/header', array('title' => 'KEEPer | Overview', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-		$this->load->view('stu_overview', array('role' => 'student'));
-		$this->load->view('template/footer');
-	}
-
 	public function courseDetail(){
-
-		$this->load->model('apimodel');
-		if(!$this->apimodel->getAccessGranted()){
+		
+		if(!$this->isAccessGranted()){
 			redirect('/Saml2Controller/login');
 			return;
 		}
-		$this->apimodel->setPlatform($this->input->get('platform'));
-		$this->apimodel->setCourseId($this->input->get('courseId'));
-		if(!$this->apimodel->getValidParameter()){
-			printJson(array('ok' => false, 'message' => $this->apimodel->getMessage(), 'data' => null));
+		$this->api->setPlatform($this->input->get('platform'));
+		$this->api->setCourseId($this->input->get('courseId'));
+		if(!$this->api->getValidParameter()){
+			printJson(array('ok' => false, 'message' => $this->api->getMessage(), 'data' => null));
 			return;
 		}
-		$courseInfoData = $this->apimodel->getCourseInfo()['data'];
-		if(isset($courseInfoData[$this->apimodel->getPlatform()])){
-			foreach($courseInfoData[$this->apimodel->getPlatform()]['results'] as $course){
-				if($course['course_id'] == $this->apimodel->getCourseId()){
+		$courseInfoData = $this->api->getCourseInfo()['data'];
+		if(isset($courseInfoData[$this->api->getPlatform()])){
+			foreach($courseInfoData[$this->api->getPlatform()]['results'] as $course){
+				if($course['course_id'] == $this->api->getCourseId()){
 
-					$this->load->view('template/header', array('title' => 'Course Detail', 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
-					if($course['role_name'] == 'student'){
-						$this->load->view('stu_course_detail', array('course_name' => $course['course_name'], ));
-					}else{
-						$this->load->view('tea_course_detail', array('course_name' => $course['course_name'], ));
-					}
-					$this->load->view('template/footer');
+					$this->load->view('course_detail', array('role' => $course['role_name'],'title' => $course['course_name'], 'firstname' => $this->session->userdata('samlUserData')['firstname'][0]));
+
 					return;
 				}
 			}
@@ -94,14 +69,25 @@ class Page extends CI_Controller{
 		return;
 	}
 
-	public function teaViewStu(){
-		$this->load->model('apimodel');
-		if(!$this->apimodel->getAccessGranted()){
+	public function teaViewStu(){		
+		
+		if(!$this->isAccessGranted()){
 			redirect('/Saml2Controller/login');
 			return;
 		}
 		$this->load->view('template/header_include');
 		$this->load->view('teastu_course_detail');
+	}
+
+	private function loadOverview($role){
+		$this->load->view(	'overview', 
+					array(	'title' => 'KEEPDashboard | Overview',
+							'firstname' => $this->session->userdata('samlUserData')['firstname'][0],
+							'role' => $role));
+	}
+
+	private function isAccessGranted(){		
+		return $this->api->getAccessGranted();		
 	}
 
 }

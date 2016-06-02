@@ -2,7 +2,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i><i id="forumTableName"></i>
+                <i class="fa fa-bar-chart-o fa-fw"></i><span id="forumTableName"></span>
                 <div class="pull-right">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -72,7 +72,7 @@
 		$('.courseForumTableContainer').hide();
 		datatableView.clear().draw();
 		$($('.courseForumTableContainer')[0]).show();
-		$('#forumTableName').html('Top Viewing Threads');
+		$('#forumTableName').html(' Top Viewing Threads');
 		datatableView.ajax.url('../forum/detail/view?courseId=' + $('#courseId').val() + '&platform=' + $('#platform').val() + '&from=' + $('#date-from').val() + '&to=' + $('#date-to').val()).load();
 	}
 

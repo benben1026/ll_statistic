@@ -1,6 +1,6 @@
 body {
     font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
-    
+    line-height: 1.6;    
 }
 
 h1 {
@@ -17,4 +17,11 @@ table.dataTable tbody td {
 
 .panel-default {
 	overflow: auto;
+}
+
+h3 {
+	font-family: inherit;
+	font-weight: 600;
+	line-height: 1.1;
+	color: inherit;
 }
