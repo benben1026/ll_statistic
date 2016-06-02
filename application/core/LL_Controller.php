@@ -28,3 +28,20 @@ class Saml_Controller extends CI_Controller {
 		$this->auth = new OneLogin_Saml2_Auth($this->CI->config->item('saml'));
 	}
 }
+
+class MY_Controller extends CI_Controller{
+
+	public $apimodel;
+
+	function __construct(){
+		parent::__construct();
+		$this->apimodel = $this->load->model('apimodel');
+	}
+
+	public function _output($content){
+
+		$data['content'] = &$content;
+		echo($this->load->view('base', $data, true));
+	}
+
+}

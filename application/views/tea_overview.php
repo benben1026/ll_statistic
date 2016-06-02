@@ -1,21 +1,6 @@
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">KEEPDashboard Instructor Overview</h1>
-        </div>
-        <!-- /.col-lg-12 -->
-    </div>
-    <!-- /.row -->
-
-
-<?php
-	include_once "charts/courseOverview.php";
-
-	include_once "charts/overview-topViewForum.php";
-
-	include_once "charts/overview-topReplyForum.php";
-
-    include_once "charts/overview-fileViewing.php"
+<?php   
+    $this->load->view("charts/courseOverview.php");
+    $this->load->view("charts/overview-topViewForum.php");
+    $this->load->view("charts/overview-topReplyForum.php");
+    $this->load->view("charts/overview-fileViewing.php");
 ?>
-
-</div>

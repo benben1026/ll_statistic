@@ -1,9 +1,10 @@
 <!DOCTYPE html>
- <html>
- 	<head>
- 		<meta charset="utf-8">
-     	<meta http-equiv="X-UA-Compatible" content="IE=edge">
- 		<link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/bower_components/bootstrap/dist/css/bootstrap.css">
+<html>
+	<head>
+		<meta charset="utf-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title><?php echo $title; ?></title>
+		<link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/bower_components/bootstrap/dist/css/bootstrap.css">
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/bower_components/components-font-awesome/css/font-awesome.css">
 	    <link rel="stylesheet" type="text/css" href="https://keep.edu.hk/keeplogo/keeplogo.css">
 	    <link rel="stylesheet" type="text/css" href="https://keep.edu.hk/keepmenu/keepmenu.css">
@@ -57,10 +58,10 @@
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.theme.min.css">
 	    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.structure.min.css">
 	    <script type="text/javascript" src="<?= base_url() ?>public/js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-
-   		<!-- Custom CSS -->
+		
+		<!-- Custom CSS -->
 		<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic" rel="stylesheet" type="text/css">
 		<link rel="stylesheet" type="text/css" href="<?= css_url() ?>keeper.css">
 
- 	</head>
- 	<body style="background-color: #fff; min-height:100%">
+	</head>
+	<body style="background-color: #ffffff; min-height:100%">
