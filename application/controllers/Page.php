@@ -6,6 +6,7 @@ class Page extends MY_Controller{
     {
         parent::__construct();
         $this->load->model('apimodel', 'api');
+        $this->lang->load('message', 'english');
     }
 
 	public function landing(){

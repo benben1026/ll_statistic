@@ -33,7 +33,7 @@
 				$('#courseFileView_loading').hide();
 				$('#tea-file-view').show();
 				if(data['data'][$('#platform').val()]['result'].length == 0){
-					$('#tea-file-view').html('No Data Available');
+					$('#tea-file-view').html('<?php echo lang('no_data'); ?>');
 					return;
 				}
 				var dataArray = [];
